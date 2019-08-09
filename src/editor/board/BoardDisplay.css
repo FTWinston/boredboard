@@ -1,0 +1,9 @@
+.board {
+    min-width: 30em;
+    min-height: 30em;
+}
+
+.board > svg *:hover {
+    fill: white;
+    cursor: pointer;
+}

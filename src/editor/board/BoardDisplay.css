@@ -3,7 +3,43 @@
     min-height: 30em;
 }
 
-.board > svg *:hover {
-    fill: white;
+.board--markCells svg [id],
+.board--unmarkCells svg [id] {
+    stroke: red !important;
+    stroke-width: 0.25em !important;
+    /* outline: dashed red 3px; */
+}
+
+.board--markCells svg [id],
+.board--unmarkCells svg :not([id]) {
+    pointer-events: none;
+}
+
+.board--markCells svg :not([id]):hover,
+.board--unmarkCells svg [id]:hover {
+    animation-duration: 1s;
+    animation-name: focusCell;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    
+    z-index: 0;
+    stroke-width: 1.75em;
+    opacity: 0.8;
     cursor: pointer;
+}
+
+@keyframes focusCell {
+    from {
+        /*
+        fill: #ffcc00;
+        */
+        stroke: #00ccff;
+    }
+
+    to {
+        /*
+        fill: #00ccff;
+        */
+        stroke: #ffcc00;
+    }
 }

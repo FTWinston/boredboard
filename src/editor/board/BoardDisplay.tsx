@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import useFetch from 'react-fetch-hook';
 import './BoardDisplay.css';
 import { Mode } from '.';
@@ -8,10 +8,18 @@ interface Props {
     mode: Mode;
 }
 
+interface CellInfo {
+    links: Map<string, string>;
+}
+
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
+    let rootDiv = React.createRef<HTMLDivElement>();
+
     const { isLoading, data: svgData } = useFetch(props.filepath,{
         formatter: (response) => response.text()
     });
+
+    const [cells, setCells] = useState(new Map<string, CellInfo>());
 
     const [nextId, setNextId] = useState(1);
 
@@ -21,6 +29,10 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     }, [nextId, setNextId])
 
     const classes = useMemo(() => {
+        if (isLoading || svgData === undefined) {
+            return 'board board--loading';
+        }
+
         switch (props.mode) {
             case 'mark cells': // TODO: priority 1
                 return 'board board--markCells';
@@ -33,16 +45,29 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             case 'manual link': //  TODO: priority 1
                 return 'board board--manualLink';
         }
-    }, [props.mode]);
+    }, [isLoading, svgData, props.mode]);
 
-    if (isLoading || svgData === undefined) {
-        return <div className="board board--loading" />
-    }
+    useEffect(() => {
+        if (svgData === undefined || rootDiv.current === null) {
+            return;
+        }
+
+        const elementsWithIDs = Array.from(rootDiv.current.querySelectorAll('svg [id]'));
+        const loadingCells = new Map<string, CellInfo>();
+        for (const element of elementsWithIDs) {
+            loadingCells.set(element.id, {
+                links: new Map<string, string>(),
+            });
+        }
+
+        setCells(loadingCells);
+    }, [svgData, rootDiv])
 
     return (
         <div
+            ref={rootDiv}
             className={classes}
-            dangerouslySetInnerHTML={{__html: svgData}}
+            dangerouslySetInnerHTML={svgData === undefined ? undefined : {__html: svgData}}
             onClick={e => elementClicked(e, props.mode, nextId, idAllocated)}
         />
     );
@@ -54,8 +79,12 @@ function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: M
     if (mode === 'mark cells') {
         target.setAttribute('id', `cell${nextId.toString()}`);
         idAllocated();
+
+        // TODO: update cells ... use a reducer?
     }
     else if (mode === 'unmark cells') {
         target.removeAttribute('id');
+
+        // TODO: update cells ... use a reducer?
     }
 }

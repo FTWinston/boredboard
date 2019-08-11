@@ -1,15 +1,12 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useEffect, useReducer } from 'react';
 import useFetch from 'react-fetch-hook';
 import './BoardDisplay.css';
 import { Mode } from '.';
+import { cellReducer, IEditCellInfo, CellAction, getInitialCellState } from './cellReducer';
 
 interface Props {
     filepath: string;
     mode: Mode;
-}
-
-interface CellInfo {
-    links: Map<string, string>;
 }
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
@@ -19,14 +16,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         formatter: (response) => response.text()
     });
 
-    const [cells, setCells] = useState(new Map<string, CellInfo>());
-
-    const [nextId, setNextId] = useState(1);
-
-    const idAllocated = useCallback(() => {
-        // TODO: ensure "new nextId" isn't in use ... and remember we're putting a prefix on it when we use it. Argh.
-        setNextId(nextId + 1);
-    }, [nextId, setNextId])
+    const [{ cells, nextId }, cellDispatch] = useReducer(cellReducer, getInitialCellState());
 
     const classes = useMemo(() => {
         if (isLoading || svgData === undefined) {
@@ -52,39 +42,52 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             return;
         }
 
-        const elementsWithIDs = Array.from(rootDiv.current.querySelectorAll('svg [id]'));
-        const loadingCells = new Map<string, CellInfo>();
-        for (const element of elementsWithIDs) {
-            loadingCells.set(element.id, {
-                links: new Map<string, string>(),
+        const loadingCells = Array.from(rootDiv.current.querySelectorAll('svg [id]'))
+            .map(element => {
+                const bounds = element.getBoundingClientRect();
+                return {
+                    id: element.id,
+                    bounds: bounds,
+                    links: new Map<string, IEditCellInfo[]>(),
+                }
             });
-        }
 
-        setCells(loadingCells);
+        cellDispatch({
+            type: 'set cells',
+            cells: loadingCells,
+        });
     }, [svgData, rootDiv])
+
+    // TODO: depending on mode, render an overlay of cell info ... e.g. their names
 
     return (
         <div
             ref={rootDiv}
             className={classes}
             dangerouslySetInnerHTML={svgData === undefined ? undefined : {__html: svgData}}
-            onClick={e => elementClicked(e, props.mode, nextId, idAllocated)}
+            onClick={e => elementClicked(e, props.mode, nextId, cellDispatch)}
         />
     );
 }
 
-function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: Mode, nextId: number, idAllocated: () => void) {
+function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: Mode, nextId: string, cellDispatch: React.Dispatch<CellAction>) {
     const target = e.target as HTMLElement;
 
     if (mode === 'mark cells') {
-        target.setAttribute('id', `cell${nextId.toString()}`);
-        idAllocated();
+        target.setAttribute('id', nextId);
 
-        // TODO: update cells ... use a reducer?
+        cellDispatch({
+            type: 'add cell',
+            id: nextId,
+            bounds: target.getBoundingClientRect(),
+        });
     }
     else if (mode === 'unmark cells') {
         target.removeAttribute('id');
 
-        // TODO: update cells ... use a reducer?
+        cellDispatch({
+            type: 'remove cell',
+            id: target.getAttribute('id')!,
+        });
     }
 }

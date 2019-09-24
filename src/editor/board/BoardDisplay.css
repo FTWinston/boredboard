@@ -13,6 +13,7 @@
 .board--markCells svg [id],
 .board--unmarkCells svg :not([id]) {
     pointer-events: none;
+    opacity: 0.2;
 }
 
 .board--markCells svg :not([id]):hover,

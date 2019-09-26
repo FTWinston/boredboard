@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './BoardDisplay.css';
-import { BoardDisplay } from './BoardDisplay';
+import { EditableBoard } from './EditableBoard';
 
 interface Props {
     filepath: string;
@@ -13,7 +13,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
 
     return (
         <div className="boardEditor">
-            <BoardDisplay
+            <EditableBoard
                 filepath={props.filepath}
                 mode={mode}
             />

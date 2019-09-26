@@ -1,93 +1,85 @@
-import React, { useMemo, useEffect, useReducer } from 'react';
+import React, { useMemo } from 'react';
 import useFetch from 'react-fetch-hook';
 import './BoardDisplay.css';
-import { Mode } from '.';
-import { cellReducer, IEditCellInfo, CellAction, getInitialCellState } from './cellReducer';
 
 interface Props {
     filepath: string;
-    mode: Mode;
+    className: string;
+    cellClicked?: (element: SVGElement) => void;
+    nonCellClicked?: (element: SVGElement) => void;
+    cellContent?: Map<string, JSX.Element[]>;
+    cellClasses?: Map<string, string>;
 }
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
     let rootDiv = React.createRef<HTMLDivElement>();
 
-    const { isLoading, data: svgData } = useFetch(props.filepath,{
-        formatter: (response) => response.text()
+    const { isLoading, data: rawSvgData } = useFetch(props.filepath,{
+        formatter: async (response) => new DOMParser().parseFromString(await response.text(), 'image/svg+xml'),
     });
 
-    const [{ cells, nextId }, cellDispatch] = useReducer(cellReducer, getInitialCellState());
-
-    const classes = useMemo(() => {
-        if (isLoading || svgData === undefined) {
-            return 'board board--loading';
+    const modifiedSvgData = useMemo(() => {
+        if (rawSvgData === undefined) {
+            return undefined;
         }
 
-        switch (props.mode) {
-            case 'mark cells': // TODO: priority 1
-                return 'board board--markCells';
-            case 'unmark cells': // TODO: priority 2
-                return 'board board--unmarkCells';
-            case 'create cells': // TODO: priority 4
-                return 'board board--createCells';
-            case 'auto link': // TODO: priority 3
-                return 'board board--autoLink';
-            case 'manual link': //  TODO: priority 1
-                return 'board board--manualLink';
-        }
-    }, [isLoading, svgData, props.mode]);
+        const modifiedSvgData = rawSvgData.cloneNode(true) as Document;
 
-    useEffect(() => {
-        if (svgData === undefined || rootDiv.current === null) {
-            return;
-        }
-
-        const loadingCells = Array.from(rootDiv.current.querySelectorAll('svg [id]'))
-            .map(element => {
-                const bounds = element.getBoundingClientRect();
-                return {
-                    id: element.id,
-                    bounds: bounds,
-                    links: new Map<string, IEditCellInfo[]>(),
+        if (props.cellClasses) {
+            for (const [id, className] of props.cellClasses) {
+                const element = modifiedSvgData.getElementById(id);
+                if (element) {
+                    element.classList.add(className);
                 }
-            });
+            }
+        }
 
-        cellDispatch({
-            type: 'set cells',
-            cells: loadingCells,
-        });
-    }, [svgData, rootDiv])
+        /*
+        if (props.cellContent) {
+            for (const [id, content] of props.cellContent) {
+                const element = modifiedSvgData.getElementById(id);
+                if (element) {
+                    element.innerHTML = content;
+                }
+            }
+        }
+        */
 
-    // TODO: depending on mode, render an overlay of cell info ... e.g. their names
+        return new XMLSerializer().serializeToString(modifiedSvgData);
+    }, [rawSvgData, props.cellContent, props.cellClasses]);
+
+    const className = useMemo(() => {
+        let classes = 'board';
+        if (isLoading || modifiedSvgData === undefined) {
+            classes += ' board--loading';
+        }
+        if (props.className !== undefined) {
+            classes = `${classes} ${props.className}`;
+        }
+        return classes;
+    }, [isLoading, modifiedSvgData, props.className]);
+
+    const elementClicked = useMemo(() => {
+        return (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            const target = e.target as SVGElement;
+
+            if (target.hasAttribute('id')) {
+                if (props.cellClicked) {
+                    props.cellClicked(target);
+                }
+            }
+            else if (props.nonCellClicked) {
+                props.nonCellClicked(target);
+            }
+        }
+    }, [props.cellClicked, props.nonCellClicked]);
 
     return (
         <div
             ref={rootDiv}
-            className={classes}
-            dangerouslySetInnerHTML={svgData === undefined ? undefined : {__html: svgData}}
-            onClick={e => elementClicked(e, props.mode, nextId, cellDispatch)}
+            className={className}
+            onClick={elementClicked}
+            dangerouslySetInnerHTML={{__html: modifiedSvgData ? modifiedSvgData : 'Loading...'}}
         />
     );
-}
-
-function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: Mode, nextId: string, cellDispatch: React.Dispatch<CellAction>) {
-    const target = e.target as HTMLElement;
-
-    if (mode === 'mark cells') {
-        target.setAttribute('id', nextId);
-
-        cellDispatch({
-            type: 'add cell',
-            id: nextId,
-            bounds: target.getBoundingClientRect(),
-        });
-    }
-    else if (mode === 'unmark cells') {
-        target.removeAttribute('id');
-
-        cellDispatch({
-            type: 'remove cell',
-            id: target.getAttribute('id')!,
-        });
-    }
 }

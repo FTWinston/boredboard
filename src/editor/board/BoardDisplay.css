@@ -2,6 +2,12 @@
     min-width: 30em;
     min-height: 30em;
 }
+.board--markCells svg [id] {
+    animation-duration: 0.5s;
+    animation-name: indicateIsCell;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
 
 .board--markCells svg [id],
 .board--unmarkCells svg [id] {
@@ -42,5 +48,14 @@
         fill: #00ccff;
         */
         stroke: #ffcc00;
+    }
+}
+
+@keyframes indicateIsCell {
+    from {
+        opacity: 0.6;
+    }   
+    to {
+        opacity: 1;
     }
 }

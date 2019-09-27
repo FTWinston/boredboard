@@ -52,7 +52,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             <SvgLoader
                 path={props.filepath}
                 className="board__svg"
-                onSVGReady={removeDimensions}
+                onSVGReady={modifyImage}
             >
                 {selectionProxy}
                 {moveProxy}
@@ -64,11 +64,29 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     );
 }
 
-function removeDimensions(svg: SVGElement) {
+function modifyImage(svg: SVGElement) {
     svg.removeAttribute('width');
     svg.removeAttribute('height');
     svg.removeAttribute('x');
     svg.removeAttribute('y');
+
+    let filter = svg.ownerDocument!.createElement('filter');
+    svg.appendChild(filter);
+    filter.outerHTML = `<filter id="selectFilter">
+    <feColorMatrix type="matrix" values="0.4 0 0 0 0 0.2 0.8 0.2 0 0.1 0.4 0.4 1 0 0.2 0 0 0 1 0" />
+</filter>`;
+
+    filter = svg.ownerDocument!.createElement('filter');
+    svg.appendChild(filter);
+    filter.outerHTML = `<filter id="moveFilter">
+    <feColorMatrix type="matrix" values="1 0.4 0.4 0 0.2 0.2 0.8 0.2 0 0.1 0 0 0.2 0 0 0 0 0 1 0" />
+</filter>`;
+
+    filter = svg.ownerDocument!.createElement('filter');
+    svg.appendChild(filter);
+    filter.outerHTML = `<filter id="attackFilter">
+    <feColorMatrix type="matrix" values="1 0.4 0.4 0 0.2 0 0.4 0 0 0 0 0 0.4 0 0 0 0 0 1 0" />
+</filter>`;
 }
 
 function createProxy(cellIDs: string[] | undefined, className: string) {
@@ -79,7 +97,7 @@ function createProxy(cellIDs: string[] | undefined, className: string) {
 
         return <SvgProxy
             selector={'#' + cellIDs.join(',#')}
-            className={className}
+            class={className}
         />
     }
 }

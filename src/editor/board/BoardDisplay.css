@@ -34,12 +34,6 @@
     animation-iteration-count: infinite;
 }
 
-.board--markCells .board__svg [id],
-.board--unmarkCells .board__svg [id] {
-    stroke: red !important;
-    stroke-width: 0.25em !important;
-    /* outline: dashed red 3px; */
-}
 
 .board--markCells .board__svg [id],
 .board--unmarkCells .board__svg :not([id]) {
@@ -60,40 +54,25 @@
     cursor: pointer;
 }
 
-@keyframes focusCell {
-    from {
-        /*
-        fill: #ffcc00;
-        */
-        stroke: #00ccff;
-    }
-
-    to {
-        /*
-        fill: #00ccff;
-        */
-        stroke: #ffcc00;
-    }
-}
 
 @keyframes indicateIsCell {
     from {
         opacity: 0.6;
     }   
     to {
-        opacity: 1;
+        opacity: 0.7;
     }
 }
 
 
 .board__cell--select {
-    fill: #66aaff;
+    filter: url(#selectFilter);
 }
 
 .board__cell--move {
-    fill: #ffcc66;
+    filter: url(#moveFilter);
 }
 
 .board__cell--attack {
-    fill: #ff6666;
+    filter: url(#attackFilter);
 }

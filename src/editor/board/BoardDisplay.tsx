@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import useFetch from 'react-fetch-hook';
+import { SvgLoader, SvgProxy } from 'react-svgmt';
 import './BoardDisplay.css';
 
 interface Props {
@@ -7,55 +7,30 @@ interface Props {
     className: string;
     cellClicked?: (cellID: string) => void;
     nonCellClicked?: (element: SVGElement) => void;
-    cellClasses?: Map<string, string>;
+    selectableCells?: string[];
+    moveableCells?: string[];
+    attackableCells?: string[];
 }
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
-    let rootDiv = React.createRef<HTMLDivElement>();
+    const selectionProxy = useMemo(
+        createProxy(props.selectableCells, 'board__cell--select'),
+        [props.selectableCells]
+    );
 
-    const { isLoading, data: rawSvgData } = useFetch(props.filepath, {
-        formatter: async (response) => {
-            const data = new DOMParser().parseFromString(await response.text(), 'image/svg+xml')
-            data.documentElement.removeAttribute('width');
-            data.documentElement.removeAttribute('height');
-            data.documentElement.removeAttribute('x');
-            data.documentElement.removeAttribute('y');
-            return data;
-        },
-    });
+    const moveProxy = useMemo(
+        createProxy(props.moveableCells, 'board__cell--move'),
+        [props.moveableCells]
+    );
 
-    const modifiedSvgData = useMemo(() => {
-        if (rawSvgData === undefined) {
-            return undefined;
-        }
+    const attackProxy = useMemo(
+        createProxy(props.attackableCells, 'board__cell--attack'),
+        [props.attackableCells]
+    );
 
-        const modifiedSvgData = rawSvgData.cloneNode(true) as Document;
-
-        if (props.cellClasses) {
-            for (const [id, className] of props.cellClasses) {
-                const element = modifiedSvgData.getElementById(id);
-                if (element) {
-                    element.classList.add(className);
-                }
-            }
-        }
-
-        return new XMLSerializer().serializeToString(modifiedSvgData);
-    }, [rawSvgData, props.cellClasses]);
-
-    const className = useMemo(() => {
-        let classes = 'board';
-        if (isLoading) {
-            classes += ' board--loading';
-        }
-        else if (rawSvgData === undefined) {
-            classes += ' board--error';
-        }
-        if (props.className !== undefined) {
-            classes = `${classes} ${props.className}`;
-        }
-        return classes;
-    }, [isLoading, rawSvgData, props.className]);
+    const className = props.className
+        ? 'board ' + props.className
+        : 'board';
 
     const elementClicked = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.target as SVGElement;
@@ -71,12 +46,40 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         }
     };
 
+    // TODO: hook up elementClicked through onSVGReady ... somehow
     return (
-        <div
-            ref={rootDiv}
-            className={className}
-            onClick={elementClicked}
-            dangerouslySetInnerHTML={{__html: modifiedSvgData ? modifiedSvgData : 'Loading...'}}
-        />
+        <div className={className}>
+            <SvgLoader
+                path={props.filepath}
+                className="board__svg"
+                onSVGReady={removeDimensions}
+            >
+                {selectionProxy}
+                {moveProxy}
+                {attackProxy}
+            </SvgLoader>
+
+            {props.children}
+        </div>
     );
+}
+
+function removeDimensions(svg: SVGElement) {
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    svg.removeAttribute('x');
+    svg.removeAttribute('y');
+}
+
+function createProxy(cellIDs: string[] | undefined, className: string) {
+    return () => {
+        if (cellIDs === undefined) {
+            return undefined;
+        }
+
+        return <SvgProxy
+            selector={'#' + cellIDs.join(',#')}
+            className={className}
+        />
+    }
 }

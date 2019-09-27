@@ -48,14 +48,17 @@ export const EditableBoard: React.FunctionComponent<Props> = props => {
 */
     // TODO: depending on mode, render an overlay of cell info ... e.g. their names
 
-    const cellClasses = new Map<string, string>();
-    cellClasses.set('rect3990', 'totallyCustom');
+    const selectable = ['rect4084', 'rect4064'];
+    const moveable = ['rect3990', 'rect3980'];
+    const attackable = ['rect4096', 'rect4098'];
 
     return (
         <BoardDisplay
             className={classes}
             filepath={props.filepath}
-            cellClasses={cellClasses}
+            selectableCells={selectable}
+            moveableCells={moveable}
+            attackableCells={attackable}
         />
     )
 // onClick={e => elementClicked(e, props.mode, nextId, cellDispatch)}

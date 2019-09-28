@@ -5,17 +5,23 @@ import './BoardDisplay.css';
 interface Props {
     filepath: string;
     className: string;
-    cellClicked?: (element: SVGElement) => void;
+    cellClicked?: (cellID: string) => void;
     nonCellClicked?: (element: SVGElement) => void;
-    cellContent?: Map<string, JSX.Element[]>;
     cellClasses?: Map<string, string>;
 }
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
     let rootDiv = React.createRef<HTMLDivElement>();
 
-    const { isLoading, data: rawSvgData } = useFetch(props.filepath,{
-        formatter: async (response) => new DOMParser().parseFromString(await response.text(), 'image/svg+xml'),
+    const { isLoading, data: rawSvgData } = useFetch(props.filepath, {
+        formatter: async (response) => {
+            const data = new DOMParser().parseFromString(await response.text(), 'image/svg+xml')
+            data.documentElement.removeAttribute('width');
+            data.documentElement.removeAttribute('height');
+            data.documentElement.removeAttribute('x');
+            data.documentElement.removeAttribute('y');
+            return data;
+        },
     });
 
     const modifiedSvgData = useMemo(() => {
@@ -34,45 +40,36 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             }
         }
 
-        /*
-        if (props.cellContent) {
-            for (const [id, content] of props.cellContent) {
-                const element = modifiedSvgData.getElementById(id);
-                if (element) {
-                    element.innerHTML = content;
-                }
-            }
-        }
-        */
-
         return new XMLSerializer().serializeToString(modifiedSvgData);
-    }, [rawSvgData, props.cellContent, props.cellClasses]);
+    }, [rawSvgData, props.cellClasses]);
 
     const className = useMemo(() => {
         let classes = 'board';
-        if (isLoading || modifiedSvgData === undefined) {
+        if (isLoading) {
             classes += ' board--loading';
+        }
+        else if (rawSvgData === undefined) {
+            classes += ' board--error';
         }
         if (props.className !== undefined) {
             classes = `${classes} ${props.className}`;
         }
         return classes;
-    }, [isLoading, modifiedSvgData, props.className]);
+    }, [isLoading, rawSvgData, props.className]);
 
-    const elementClicked = useMemo(() => {
-        return (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            const target = e.target as SVGElement;
+    const elementClicked = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const target = e.target as SVGElement;
 
-            if (target.hasAttribute('id')) {
-                if (props.cellClicked) {
-                    props.cellClicked(target);
-                }
-            }
-            else if (props.nonCellClicked) {
-                props.nonCellClicked(target);
+        const cellID = target.getAttribute('id');
+        if (cellID !== null) {
+            if (props.cellClicked) {
+                props.cellClicked(cellID);
             }
         }
-    }, [props.cellClicked, props.nonCellClicked]);
+        else if (props.nonCellClicked) {
+            props.nonCellClicked(target);
+        }
+    };
 
     return (
         <div

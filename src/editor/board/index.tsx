@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './BoardDisplay.css';
+import './BoardEditor.css';
 import { EditableBoard } from './EditableBoard';
 
 interface Props {

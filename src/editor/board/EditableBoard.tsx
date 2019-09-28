@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useReducer } from 'react';
+import React, { useMemo, useReducer } from 'react';
 import { Mode } from '.';
 import { cellReducer, CellAction, getInitialCellState } from './cellReducer';
 import { BoardDisplay } from './BoardDisplay';

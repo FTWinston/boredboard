@@ -34,8 +34,14 @@
 .board__contentItem {
     pointer-events: none;
     user-select: none;
+    
     position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.75s;
+    transition-property: top, left, width, height;
 }

@@ -1,7 +1,7 @@
-import React, { useMemo, useReducer } from 'react';
-import { Mode } from '.';
+import React, { useMemo, useReducer, useState } from 'react';
+import { Mode } from './BoardEditor';
 import { cellReducer, CellAction, getInitialCellState } from './cellReducer';
-import { BoardDisplay } from './BoardDisplay';
+import { BoardDisplay } from '../../components/BoardDisplay';
 
 interface Props {
     filepath: string;
@@ -46,22 +46,31 @@ export const EditableBoard: React.FunctionComponent<Props> = props => {
         });
     }, [rootDiv])
 */
-    // TODO: depending on mode, render an overlay of cell info ... e.g. their names
-
-    const selectable = ['rect4084', 'rect4064'];
-    const moveable = ['rect3990', 'rect3980'];
-    const attackable = ['rect4096', 'rect4098'];
+    const [selectable, setSelectable] = useState([] as string[]);
 
     return (
         <BoardDisplay
             className={classes}
             filepath={props.filepath}
             selectableCells={selectable}
-            moveableCells={moveable}
-            attackableCells={attackable}
+            cellClicked={cell => cellClicked(cell, selectable, setSelectable)}
         />
     )
 // onClick={e => elementClicked(e, props.mode, nextId, cellDispatch)}
+}
+
+function cellClicked(cell: string, selectable: string[], setSelectable: (ids: string[]) => void) {
+    const index = selectable.indexOf(cell);
+    const newSelectable = selectable.slice();
+
+    if (index === -1) {
+        newSelectable.push(cell);
+    }
+    else {
+        newSelectable.splice(index, 1)
+    }
+
+    setSelectable(newSelectable);
 }
 
 function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: Mode, nextId: string, cellDispatch: React.Dispatch<CellAction>) {

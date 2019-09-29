@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SvgLoader, SvgProxy } from 'react-svgmt';
 import './BoardDisplay.css';
 
@@ -14,25 +14,23 @@ interface Props {
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
     const selectionProxy = useMemo(
-        createProxy(props.selectableCells, 'board__cell--select'),
+        () => createProxy(props.selectableCells, 'board__cell--select'),
         [props.selectableCells]
     );
 
     const moveProxy = useMemo(
-        createProxy(props.moveableCells, 'board__cell--move'),
+        () => createProxy(props.moveableCells, 'board__cell--move'),
         [props.moveableCells]
     );
 
     const attackProxy = useMemo(
-        createProxy(props.attackableCells, 'board__cell--attack'),
+        () => createProxy(props.attackableCells, 'board__cell--attach'),
         [props.attackableCells]
     );
 
-    const className = props.className
-        ? 'board ' + props.className
-        : 'board';
+    const [svg, setSvg] = useState(undefined as SVGElement | undefined);
 
-    const elementClicked = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const elementClicked = useMemo(() => (e: MouseEvent) => {
         const target = e.target as SVGElement;
 
         const cellID = target.getAttribute('id');
@@ -44,16 +42,35 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         else if (props.nonCellClicked) {
             props.nonCellClicked(target);
         }
-    };
+    }, [props.cellClicked, props.nonCellClicked]);
 
-    // TODO: hook up elementClicked through onSVGReady ... somehow
+    const onReady = (svg: SVGElement) => {
+        modifyImage(svg);
+        setSvg(svg);
+    }
+
+    const className = props.className
+        ? 'board ' + props.className
+        : 'board';
+
+    // TODO: how the hell do we get the modified board out once IDs have been assigned to the cells?
+    // Can that be worked around?
+
+    // Actually I find myself wondering if giving elements IDs is something to be avoided.
+    // Could we just require that to have been done in advance when creating the SVG?
+
+    // Can we store a ref to the root of the SVG from onReady?
+    // If not, I guess a click anywhere in the SVG can trace its way up the tree to the root again.
+
     return (
         <div className={className}>
             <SvgLoader
                 path={props.filepath}
                 className="board__svg"
-                onSVGReady={modifyImage}
+                onSVGReady={onReady}
+                onClick={elementClicked}
             >
+                <SvgProxy selector="[id]" class="" />
                 {selectionProxy}
                 {moveProxy}
                 {attackProxy}
@@ -90,14 +107,12 @@ function modifyImage(svg: SVGElement) {
 }
 
 function createProxy(cellIDs: string[] | undefined, className: string) {
-    return () => {
-        if (cellIDs === undefined) {
-            return undefined;
-        }
-
-        return <SvgProxy
-            selector={'#' + cellIDs.join(',#')}
-            class={className}
-        />
+    if (cellIDs === undefined || cellIDs.length === 0) {
+        return undefined;
     }
+
+    return <SvgProxy
+        selector={'#' + cellIDs.join(',#')}
+        class={className}
+    />
 }

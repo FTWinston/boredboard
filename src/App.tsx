@@ -1,7 +1,7 @@
 import React from 'react';
 import svg from './chessboard.svg';
 import './App.css';
-import { BoardEditor } from './editor/board';
+import { BoardEditor } from './editor/board/BoardEditor';
 
 const App: React.FC = () => {
   return (

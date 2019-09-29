@@ -1,7 +1,7 @@
 import React, { useMemo, useReducer, useState } from 'react';
 import { Mode } from './BoardEditor';
 import { cellReducer, CellAction, getInitialCellState } from './cellReducer';
-import { BoardDisplay } from '../../components/BoardDisplay';
+import { BoardDisplay, ICellItem } from '../../components/BoardDisplay';
 
 interface Props {
     filepath: string;
@@ -9,21 +9,15 @@ interface Props {
 }
 
 export const EditableBoard: React.FunctionComponent<Props> = props => {
-    let rootDiv = React.createRef<HTMLDivElement>();
-
     const [{ cells, nextId }, cellDispatch] = useReducer(cellReducer, getInitialCellState());
 
     const classes = useMemo(() => {
         switch (props.mode) {
-            case 'mark cells': // TODO: priority 1
-                return 'board--markCells';
-            case 'unmark cells': // TODO: priority 2
-                return 'board--unmarkCells';
-            case 'create cells': // TODO: priority 4
-                return 'board--createCells';
-            case 'auto link': // TODO: priority 3
+            case 'check cells':
+                return 'board--checkCells';
+            case 'auto link':
                 return 'board--autoLink';
-            case 'manual link': //  TODO: priority 1
+            case 'manual link':
                 return 'board--manualLink';
         }
     }, [props.mode]);
@@ -47,6 +41,10 @@ export const EditableBoard: React.FunctionComponent<Props> = props => {
     }, [rootDiv])
 */
     const [selectable, setSelectable] = useState([] as string[]);
+    
+    const contents: ICellItem[] = [
+        { id: 'item1', cell: 'rect4080', display: <div>In Rect 4080</div>}
+    ];
 
     return (
         <BoardDisplay
@@ -54,9 +52,9 @@ export const EditableBoard: React.FunctionComponent<Props> = props => {
             filepath={props.filepath}
             selectableCells={selectable}
             cellClicked={cell => cellClicked(cell, selectable, setSelectable)}
+            contents={contents}
         />
     )
-// onClick={e => elementClicked(e, props.mode, nextId, cellDispatch)}
 }
 
 function cellClicked(cell: string, selectable: string[], setSelectable: (ids: string[]) => void) {
@@ -76,21 +74,13 @@ function cellClicked(cell: string, selectable: string[], setSelectable: (ids: st
 function elementClicked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, mode: Mode, nextId: string, cellDispatch: React.Dispatch<CellAction>) {
     const target = e.target as HTMLElement;
 
-    if (mode === 'mark cells') {
+    if (mode === 'check cells') {
         target.setAttribute('id', nextId);
 
         cellDispatch({
             type: 'add cell',
             id: nextId,
             bounds: target.getBoundingClientRect(),
-        });
-    }
-    else if (mode === 'unmark cells') {
-        target.removeAttribute('id');
-
-        cellDispatch({
-            type: 'remove cell',
-            id: target.getAttribute('id')!,
         });
     }
 }

@@ -30,3 +30,12 @@
 .board__cell--attack {
     filter: url(#attackFilter);
 }
+
+.board__contentItem {
+    pointer-events: none;
+    user-select: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

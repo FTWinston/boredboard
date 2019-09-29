@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useCallback, useLayoutEffect } from 'react';
 import { SvgLoader, SvgProxy } from 'react-svgmt';
 import './BoardDisplay.css';
 
@@ -19,15 +19,8 @@ export interface ICellItem {
     display: JSX.Element | string;
 }
 
-interface IRect {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-}
-
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
-    const root = useRef<HTMLDivElement>(null);
+    const root = useRef<HTMLDivElement>({offsetWidth: 0, offsetHeight: 0} as any as HTMLDivElement);
 
     const selectionProxy = useMemo(
         () => createProxy(props.selectableCells, 'board__cell--select'),
@@ -47,7 +40,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     const cellClicked = props.cellClicked;
     const nonCellClicked = props.nonCellClicked;
 
-    const elementClicked = useMemo(() => (e: MouseEvent) => {
+    const elementClicked = useCallback((e: MouseEvent) => {
         const target = e.target as SVGGraphicsElement;
 
         const cellID = target.getAttribute('id');
@@ -61,31 +54,56 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         }
     }, [cellClicked, nonCellClicked]);
 
-    const [cellBounds, setCellPositions] = useState(new Map<string, IRect>());
+    const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 
-    const contentItems = useMemo(
+    const rootWidth = root.current.offsetWidth;
+    const rootHeight = root.current.offsetHeight;
+
+    const [contentItems, setContentItems] = useState([] as Array<JSX.Element | undefined>);
+
+    useLayoutEffect(
         () => {
-            if (props.contents === undefined || root.current === null) {
-                return undefined;
+            if (props.contents === undefined || root.current.getBoundingClientRect === undefined) {
+                setContentItems([]);
+                return;
             }
 
             const rootBounds = root.current.getBoundingClientRect();
 
-            return props.contents.map(item => {
-                const bounds = cellBounds.get(item.cell);
+            /*
+            BUG: this call to setContentItems stops selection changes from rendering
+            (or rather, rerenders again immediately without them ... looks like)
+            even if contentItems aren't used in the render. It's the callback that counts.
 
-                if (bounds === undefined) {
+            When this is in useLayoutEffect instead of useEffect, we don't get a re-render,
+            so there isn't the brief flash of correctly-highlighted cells.
+
+            This is weird. cellElements is the only place we refer to the SVG,
+            and highlighting is done entirely in the SVG! (Adding/removing class, like)
+
+            As it is, it renders twice with each change:
+                Once cos the selection changed, and then once for the effect.
+                ...why does the effect change?
+                Cos props.contents is remade each render of the parent.
+                If I remove the dependency on that, selection works fine!
+            */
+            setContentItems(props.contents.map(item => {
+                const element = cellElements.get(item.cell);
+
+                if (element === undefined) {
                     return undefined;
                 }
 
-                const xPadding = bounds.width * 0.1;
-                const yPadding = bounds.height * 0.1;
-
+                const bounds = element.getBoundingClientRect();
+                const minSize = Math.min(bounds.width, bounds.height);
+                
                 const style = {
-                    top: `${bounds.top + yPadding - rootBounds.top}px`,
-                    left: `${bounds.left + xPadding - rootBounds.left}px`,
-                    width: `${bounds.width - xPadding - xPadding}px`,
-                    height: `${bounds.height - yPadding - yPadding}px`,
+                    top: `${bounds.top - rootBounds.top}px`,
+                    left: `${bounds.left - rootBounds.left}px`,
+                    width: `${bounds.width}px`,
+                    height: `${bounds.height}px`,
+                    fontSize: `${minSize / 4}px`,
+                    padding: `${minSize / 10}px`,
                 };
 
                 return (
@@ -93,16 +111,16 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
                         {item.display}
                     </div>
                 )
-            });
+            }));
         },
-        [props.contents, cellBounds]
+        [props.contents, props.filepath, cellElements, rootWidth, rootHeight]
     );
 
     const className = props.className
         ? 'board ' + props.className
         : 'board';
 
-    const onReady = (svg: SVGElement) => prepareImage(svg, setCellPositions);
+    const onReady = (svg: SVGElement) => prepareImage(svg, setCellElements);
 
     return (
         <div className={className} ref={root}>
@@ -123,9 +141,9 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     );
 }
 
-function prepareImage(svg: SVGElement, setCellPositions: (pos: Map<string, IRect>) => void) {
+function prepareImage(svg: SVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
     removeProblematicAttributes(svg);
-    determineCellPositions(svg, setCellPositions);
+    getCellElements(svg, setCellElements);
     createFilters(svg);
 }
 
@@ -137,16 +155,15 @@ function removeProblematicAttributes(svg: SVGElement) {
     svg.removeAttribute('id');
 }
 
-function determineCellPositions(svg: SVGElement, setCellPositions: (pos: Map<string, IRect>) => void) {
-    const cellElements = svg.querySelectorAll('[id]') as NodeListOf<SVGGraphicsElement>;
-    const cellPositions = new Map<string, IRect>();
+function getCellElements(svg: SVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
+    const elementList = svg.querySelectorAll('[id]') as NodeListOf<SVGGraphicsElement>;
+    const cellElements = new Map<string, SVGGraphicsElement>();
 
-    for (const cellElement of cellElements) {
-        const point = getBounds(cellElement, svg);
-        cellPositions.set(cellElement.id, point);
+    for (const cellElement of elementList) {
+        cellElements.set(cellElement.id, cellElement);
     }
 
-    setCellPositions(cellPositions);
+    setCellElements(cellElements);
 }
 
 function createFilters(svg: SVGElement) {
@@ -178,15 +195,4 @@ function createProxy(cellIDs: string[] | undefined, className: string) {
         selector={'#' + cellIDs.join(',#')}
         class={className}
     />
-}
-
-function getBounds(element: SVGGraphicsElement, svg: SVGElement): IRect {
-    const bounds = element.getBoundingClientRect();
-    
-    return {
-        left: bounds.left,
-        top: bounds.top,
-        width: bounds.width,
-        height: bounds.height,
-    }
 }

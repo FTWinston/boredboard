@@ -9,7 +9,7 @@ interface Props {
 export type Mode = 'check cells' | 'auto link' | 'manual link';
 
 export const BoardEditor: React.FunctionComponent<Props> = props => {
-    const [ mode, setMode ] = useState('mark cells' as Mode);
+    const [ mode, setMode ] = useState('check cells' as Mode);
 
     return (
         <div className="boardEditor">

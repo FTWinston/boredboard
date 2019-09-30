@@ -1,6 +1,8 @@
-import React, { useMemo, useState, useRef, useCallback, useLayoutEffect } from 'react';
+import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import { SvgLoader, SvgProxy } from 'react-svgmt';
+import ResizeObserver from 'resize-observer-polyfill';
 import './BoardDisplay.css';
+import { ICellItem, ContentItems } from './ContentItems';
 
 interface Props {
     filepath: string;
@@ -11,12 +13,6 @@ interface Props {
     moveableCells?: string[];
     attackableCells?: string[];
     contents?: ICellItem[];
-}
-
-export interface ICellItem {
-    id: string;
-    cell: string;
-    display: JSX.Element | string;
 }
 
 export const BoardDisplay: React.FunctionComponent<Props> = props => {
@@ -56,72 +52,39 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
 
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 
-    const rootWidth = root.current.offsetWidth;
-    const rootHeight = root.current.offsetHeight;
-
-    const [contentItems, setContentItems] = useState([] as Array<JSX.Element | undefined>);
-
-    useLayoutEffect(
-        () => {
-            if (props.contents === undefined || root.current.getBoundingClientRect === undefined) {
-                setContentItems([]);
-                return;
-            }
-
-            const rootBounds = root.current.getBoundingClientRect();
-
-            /*
-            BUG: this call to setContentItems stops selection changes from rendering
-            (or rather, rerenders again immediately without them ... looks like)
-            even if contentItems aren't used in the render. It's the callback that counts.
-
-            When this is in useLayoutEffect instead of useEffect, we don't get a re-render,
-            so there isn't the brief flash of correctly-highlighted cells.
-
-            This is weird. cellElements is the only place we refer to the SVG,
-            and highlighting is done entirely in the SVG! (Adding/removing class, like)
-
-            As it is, it renders twice with each change:
-                Once cos the selection changed, and then once for the effect.
-                ...why does the effect change?
-                Cos props.contents is remade each render of the parent.
-                If I remove the dependency on that, selection works fine!
-            */
-            setContentItems(props.contents.map(item => {
-                const element = cellElements.get(item.cell);
-
-                if (element === undefined) {
-                    return undefined;
-                }
-
-                const bounds = element.getBoundingClientRect();
-                const minSize = Math.min(bounds.width, bounds.height);
-                
-                const style = {
-                    top: `${bounds.top - rootBounds.top}px`,
-                    left: `${bounds.left - rootBounds.left}px`,
-                    width: `${bounds.width}px`,
-                    height: `${bounds.height}px`,
-                    fontSize: `${minSize / 4}px`,
-                    padding: `${minSize / 10}px`,
-                };
-
-                return (
-                    <div className="board__contentItem" key={item.id} style={style} data-cell={item.cell}>
-                        {item.display}
-                    </div>
-                )
-            }));
-        },
-        [props.contents, props.filepath, cellElements, rootWidth, rootHeight]
-    );
-
     const className = props.className
         ? 'board ' + props.className
         : 'board';
 
     const onReady = (svg: SVGElement) => prepareImage(svg, setCellElements);
 
+    const [[leftOffset, topOffset], setRootOffsets] = useState([0, 0]);
+
+    useEffect(() => {
+        const observer = new ResizeObserver(entries => {
+            const bounds = entries[0].contentRect;  // scrolling and offset-from-zero cause position errors
+            //const bounds = entries[0].target.getBoundingClientRect(); // scrolling not quite right, can still move out of position
+            // Presumably these bugs relate to what resizes ContentItmes and what doesn't.
+            // Should we give it width and height properties? probably
+            setRootOffsets([bounds.left, bounds.top]);
+        });
+        observer.observe(root.current);
+        
+        return () => observer.disconnect();
+    }, []);
+/*
+    const [[leftOffset2, topOffset2], setRootOffsets2] = useState([0, 0]);
+    useLayoutEffect(() => {
+        if (root.current.getBoundingClientRect === undefined) {
+            setRootOffsets2([0, 0]);
+            return;
+        }
+        const bounds = root.current.getBoundingClientRect(); // TODO THIS INCLUDES SCROLL!! FFS!
+        setRootOffsets2([bounds.left, bounds.top]);
+    }, [root.current.offsetWidth, root.current.offsetHeight, props.className]);//, cellElements, props.contents]);
+
+    console.log(`first mode gives ${leftOffset} x ${topOffset}, second gives ${leftOffset2} x ${topOffset2}`)
+*/
     return (
         <div className={className} ref={root}>
             <SvgLoader
@@ -136,7 +99,12 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
                 {attackProxy}
             </SvgLoader>
 
-            {contentItems}
+            <ContentItems
+                cellElements={cellElements}
+                contents={props.contents === undefined ? [] : props.contents}
+                leftOffset={leftOffset}
+                topOffset={topOffset}
+            />
         </div>
     );
 }

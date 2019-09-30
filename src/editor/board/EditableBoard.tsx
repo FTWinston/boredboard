@@ -1,7 +1,7 @@
 import React, { useMemo, useReducer, useState } from 'react';
 import { Mode } from './BoardEditor';
 import { cellReducer, CellAction, getInitialCellState } from './cellReducer';
-import { BoardDisplay, ICellItem } from '../../components/BoardDisplay';
+import { BoardDisplay, ICellItem } from '../../components/board';
 
 interface Props {
     filepath: string;

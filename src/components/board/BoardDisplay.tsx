@@ -52,39 +52,34 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
 
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 
+    const [rootBounds, setRootBounds] = useState({ left: 0, top: 0, width: 0, height: 0 });
+
+    useEffect(() => {
+        const observer = new ResizeObserver(entries => {
+            const bounds = entries[0].target.getBoundingClientRect(); // goes right but once it's right scrolling makes it go wrong. Weird!
+            // Presumably these bugs relate to what resizes ContentItmes and what doesn't.
+            // Should we give it width and height properties? probably
+
+            setRootBounds({
+                top: bounds.top + window.scrollY,
+                left: bounds.left + window.scrollX,
+                width: bounds.width,
+                height: bounds.height,
+            });
+        });
+        observer.observe(root.current);
+        
+        return () => observer.disconnect();
+    }, []);
+    
     const className = props.className
         ? 'board ' + props.className
         : 'board';
 
     const onReady = (svg: SVGElement) => prepareImage(svg, setCellElements);
 
-    const [[leftOffset, topOffset], setRootOffsets] = useState([0, 0]);
+    console.log('rendering, bounds is', rootBounds);
 
-    useEffect(() => {
-        const observer = new ResizeObserver(entries => {
-            const bounds = entries[0].contentRect;  // scrolling and offset-from-zero cause position errors
-            //const bounds = entries[0].target.getBoundingClientRect(); // scrolling not quite right, can still move out of position
-            // Presumably these bugs relate to what resizes ContentItmes and what doesn't.
-            // Should we give it width and height properties? probably
-            setRootOffsets([bounds.left, bounds.top]);
-        });
-        observer.observe(root.current);
-        
-        return () => observer.disconnect();
-    }, []);
-/*
-    const [[leftOffset2, topOffset2], setRootOffsets2] = useState([0, 0]);
-    useLayoutEffect(() => {
-        if (root.current.getBoundingClientRect === undefined) {
-            setRootOffsets2([0, 0]);
-            return;
-        }
-        const bounds = root.current.getBoundingClientRect(); // TODO THIS INCLUDES SCROLL!! FFS!
-        setRootOffsets2([bounds.left, bounds.top]);
-    }, [root.current.offsetWidth, root.current.offsetHeight, props.className]);//, cellElements, props.contents]);
-
-    console.log(`first mode gives ${leftOffset} x ${topOffset}, second gives ${leftOffset2} x ${topOffset2}`)
-*/
     return (
         <div className={className} ref={root}>
             <SvgLoader
@@ -102,8 +97,10 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             <ContentItems
                 cellElements={cellElements}
                 contents={props.contents === undefined ? [] : props.contents}
-                leftOffset={leftOffset}
-                topOffset={topOffset}
+                leftOffset={rootBounds.left}
+                topOffset={rootBounds.top}
+                width={rootBounds.width}
+                height={rootBounds.height}
             />
         </div>
     );

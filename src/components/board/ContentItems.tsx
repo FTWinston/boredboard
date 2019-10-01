@@ -3,6 +3,8 @@ import React from 'react';
 interface Props {
     leftOffset: number;
     topOffset: number;
+    width: number;
+    height: number;
     contents: ICellItem[];
     cellElements: Map<string, SVGGraphicsElement>;
 }
@@ -21,12 +23,12 @@ export const ContentItems: React.FunctionComponent<Props> = props => {
             return undefined;
         }
 
-        const bounds = element.getBoundingClientRect();
+        const bounds = element.getBoundingClientRect(); // is this what's 1 step behind? Should it be in useLayoutEffect?
         const minSize = Math.min(bounds.width, bounds.height);
         
         const style = {
-            top: `${bounds.top - props.topOffset}px`,
-            left: `${bounds.left - props.leftOffset}px`,
+            top: `${bounds.top + window.scrollY - props.topOffset}px`,
+            left: `${bounds.left + window.scrollX - props.leftOffset}px`,
             width: `${bounds.width}px`,
             height: `${bounds.height}px`,
             fontSize: `${minSize / 4}px`,
@@ -42,7 +44,7 @@ export const ContentItems: React.FunctionComponent<Props> = props => {
             >
                 {item.display}
             </div>
-        )
+        );
     });
 
     return (

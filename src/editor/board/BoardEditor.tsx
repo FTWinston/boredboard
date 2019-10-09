@@ -1,30 +1,59 @@
-import React, { useState } from 'react';
+import React, { useReducer, createContext, Dispatch } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { IBoard } from '../../data/IBoard';
 import './BoardEditor.css';
-import { EditableBoard } from './EditableBoard';
+import { reducer, getInitialState, BoardAction } from './boardReducer';
+import { ImageSelector } from './pages/ImageSelector';
+import { CellSelector } from './pages/CellSelector';
+import { CellLinker } from './pages/CellLinker';
+import { RegionCreator } from './pages/RegionCreator';
+import { BoardSummary } from './pages/BoardSummary';
 
 interface Props {
-    filepath: string;
+    name: string;
+    initialData?: IBoard;
+    saveData: (board: IBoard) => void;
 }
 
-export type Mode = 'check cells' | 'auto link' | 'manual link';
+export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
 
 export const BoardEditor: React.FunctionComponent<Props> = props => {
-    const [ mode, setMode ] = useState('check cells' as Mode);
+    const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
 
     return (
-        <div className="boardEditor">
-            <EditableBoard
-                filepath={props.filepath}
-                mode={mode}
-            />
-
-            <div className="boardEditor__buttons">
-                <button onClick={() => setMode('check cells')} disabled={mode === 'check cells'}>check cells</button>
-
-                <button onClick={() => setMode('auto link')}>auto link</button>
-
-                <button onClick={() => setMode('manual link')}>manual link</button>
-            </div>
-        </div>
+        <BoardDispatch.Provider value={dispatch}>
+            <Switch>
+                <Route path="/image">
+                    <ImageSelector
+                        initialUrl={state.imageUrl === '' ? undefined : state.imageUrl}
+                    />
+                </Route>
+                <Route path="/cells">
+                    <CellSelector
+                        boardUrl={state.imageUrl}
+                    />
+                </Route>
+                <Route path="/links">
+                    <CellLinker
+                        boardUrl={state.imageUrl}
+                    />
+                </Route>
+                <Route path="/regions">
+                    <RegionCreator
+                        boardUrl={state.imageUrl}
+                    />
+                </Route>
+                <Route render={() => {
+                    if (state.imageUrl === '') {
+                        return <Redirect to="/image" />
+                    }
+                    return (
+                        <BoardSummary
+                            boardUrl={state.imageUrl}
+                        />
+                    );
+                }} />
+            </Switch>
+        </BoardDispatch.Provider>
     );
 }

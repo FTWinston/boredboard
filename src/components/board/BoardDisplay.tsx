@@ -9,7 +9,6 @@ interface Props {
     filePath: string;
     className: string;
     cellClicked?: (cellID: string) => void;
-    nonCellClicked?: (element: SVGElement) => void;
     selectableCells?: string[];
     moveableCells?: string[];
     attackableCells?: string[];
@@ -35,7 +34,6 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     );
 
     const cellClicked = props.cellClicked;
-    const nonCellClicked = props.nonCellClicked;
 
     const elementClicked = useCallback((e: MouseEvent) => {
         const target = e.target as SVGGraphicsElement;
@@ -46,10 +44,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
                 cellClicked(cellID);
             }
         }
-        else if (nonCellClicked) {
-            nonCellClicked(target);
-        }
-    }, [cellClicked, nonCellClicked]);
+    }, [cellClicked]);
 
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 

@@ -1,4 +1,4 @@
-import { ICellItem } from './ContentItems';
+import { ICellItem } from './ICellItem';
 
 export { BoardDisplay } from './BoardDisplay';
 

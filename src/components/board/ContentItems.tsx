@@ -1,4 +1,5 @@
 import React from 'react';
+import { ICellItem } from './ICellItem';
 
 interface Props {
     leftOffset: number;
@@ -9,12 +10,6 @@ interface Props {
     cellElements: Map<string, SVGGraphicsElement>;
 }
 
-export interface ICellItem {
-    id: string;
-    cell: string;
-    display: JSX.Element | string;
-}
-
 export const ContentItems: React.FunctionComponent<Props> = props => {
     const contentItems = props.contents.map(item => {
         const element = props.cellElements.get(item.cell);
@@ -23,7 +18,7 @@ export const ContentItems: React.FunctionComponent<Props> = props => {
             return undefined;
         }
 
-        const bounds = element.getBoundingClientRect(); // is this what's 1 step behind? Should it be in useLayoutEffect?
+        const bounds = element.getBoundingClientRect();
         const minSize = Math.min(bounds.width, bounds.height);
         
         const style = {

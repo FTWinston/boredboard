@@ -49,7 +49,7 @@ export const EditableBoard: React.FunctionComponent<Props> = props => {
     return (
         <BoardDisplay
             className={classes}
-            filepath={props.filepath}
+            filePath={props.filepath}
             selectableCells={selectable}
             cellClicked={cell => cellClicked(cell, selectable, setSelectable)}
             contents={contents}

@@ -2,10 +2,11 @@ import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react'
 import { SvgLoader, SvgProxy } from 'react-svgmt';
 import ResizeObserver from 'resize-observer-polyfill';
 import './BoardDisplay.css';
-import { ICellItem, ContentItems } from './ContentItems';
+import { ContentItems } from './ContentItems';
+import { ICellItem } from './ICellItem';
 
 interface Props {
-    filepath: string;
+    filePath: string;
     className: string;
     cellClicked?: (cellID: string) => void;
     nonCellClicked?: (element: SVGElement) => void;
@@ -83,7 +84,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     return (
         <div className={className} ref={root}>
             <SvgLoader
-                path={props.filepath}
+                path={props.filePath}
                 className="board__svg"
                 onSVGReady={onReady}
                 onClick={elementClicked}

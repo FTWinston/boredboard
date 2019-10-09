@@ -1,13 +1,15 @@
 import React from 'react';
-import svg from './chessboard.svg';
 import './App.css';
-import { BoardEditor } from './editor/board/BoardEditor';
+import { BoardEditor } from './editor/board';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <BoardEditor filepath={svg} />
-    </div>
+    <Router>
+      <div className="App">
+        <BoardEditor name="sample" saveData={board => {}} />
+      </div>
+    </Router>
   );
 }
 

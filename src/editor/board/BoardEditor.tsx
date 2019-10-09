@@ -31,6 +31,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/cells">
                     <CellSelector
                         boardUrl={state.imageUrl}
+                        cells={state.cellsAndLinks.keys()}
                     />
                 </Route>
                 <Route path="/links">

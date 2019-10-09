@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ImageSelector.css';
 import { BoardDispatch } from '../BoardEditor';
+import svg from '../../../chessboard.svg';
 
 interface Props {
     initialUrl?: string;
@@ -10,7 +11,7 @@ interface Props {
 export const ImageSelector: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
-    const [url, setUrl] = useState(props.initialUrl === undefined ? '' : props.initialUrl);
+    const [url, setUrl] = useState(props.initialUrl === undefined ? /*''*/svg : props.initialUrl);
 
     return (
         <div className="boardEditor boardEditor--image">

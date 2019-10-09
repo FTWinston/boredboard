@@ -8,6 +8,7 @@ import { ICellItem } from './ICellItem';
 interface Props {
     filePath: string;
     className: string;
+    onReady?: (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => void;
     cellClicked?: (cellID: string) => void;
     selectableCells?: string[];
     moveableCells?: string[];
@@ -52,9 +53,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
 
     useEffect(() => {
         const observer = new ResizeObserver(entries => {
-            const bounds = entries[0].target.getBoundingClientRect(); // goes right but once it's right scrolling makes it go wrong. Weird!
-            // Presumably these bugs relate to what resizes ContentItmes and what doesn't.
-            // Should we give it width and height properties? probably
+            const bounds = entries[0].target.getBoundingClientRect();
 
             setRootBounds({
                 top: bounds.top + window.scrollY,
@@ -72,9 +71,13 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         ? 'board ' + props.className
         : 'board';
 
-    const onReady = (svg: SVGElement) => prepareImage(svg, setCellElements);
+    const onReady = (svg: SVGSVGElement) => {
+        const elements = prepareImage(svg, setCellElements);
 
-    console.log('rendering, bounds is', rootBounds);
+        if (props.onReady !== undefined) {
+            props.onReady(svg, Array.from(elements));
+        }
+    };
 
     return (
         <div className={className} ref={root}>
@@ -102,13 +105,14 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     );
 }
 
-function prepareImage(svg: SVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
+function prepareImage(svg: SVGSVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
     removeProblematicAttributes(svg);
-    getCellElements(svg, setCellElements);
+    const elements = getCellElements(svg, setCellElements);
     createFilters(svg);
+    return elements;
 }
 
-function removeProblematicAttributes(svg: SVGElement) {
+function removeProblematicAttributes(svg: SVGSVGElement) {
     svg.removeAttribute('width');
     svg.removeAttribute('height');
     svg.removeAttribute('x');
@@ -116,7 +120,7 @@ function removeProblematicAttributes(svg: SVGElement) {
     svg.removeAttribute('id');
 }
 
-function getCellElements(svg: SVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
+function getCellElements(svg: SVGSVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {
     const elementList = svg.querySelectorAll('[id]') as NodeListOf<SVGGraphicsElement>;
     const cellElements = new Map<string, SVGGraphicsElement>();
 
@@ -125,6 +129,7 @@ function getCellElements(svg: SVGElement, setCellElements: (pos: Map<string, SVG
     }
 
     setCellElements(cellElements);
+    return elementList;
 }
 
 function createFilters(svg: SVGElement) {

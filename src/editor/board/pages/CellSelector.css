@@ -1,3 +1,11 @@
 .boardEditor--cells {
     display: flex;
 }
+
+.cellSelector__cellID {
+    cursor: pointer;
+}
+
+.cellSelector__cellID--selected {
+    font-weight: bold;
+}

@@ -30,7 +30,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     );
 
     const attackProxy = useMemo(
-        () => createProxy(props.attackableCells, 'board__cell--attach'),
+        () => createProxy(props.attackableCells, 'board__cell--attack'),
         [props.attackableCells]
     );
 
@@ -38,12 +38,10 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
 
     const elementClicked = useCallback((e: MouseEvent) => {
         const target = e.target as SVGGraphicsElement;
-
         const cellID = target.getAttribute('id');
-        if (cellID !== null) {
-            if (cellClicked) {
-                cellClicked(cellID);
-            }
+        
+        if (cellID !== null && cellClicked) {
+            cellClicked(cellID);
         }
     }, [cellClicked]);
 

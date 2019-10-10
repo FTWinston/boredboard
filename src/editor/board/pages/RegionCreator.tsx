@@ -12,16 +12,20 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
     return (
-        <div className="boardEditor boardEditor--regions">
+        <div className="boardEditor regionCreator">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
             />
-            
-            Ability to create board regions, both general and per-player
 
-            <Link to="/links">Back</Link>
-            <Link to="/">Continue</Link>
+            <div className="boardEditor__content">
+                Ability to create board regions, both general and per-player
+            </div>
+
+            <div className="boardEditor__navigation">
+                <Link to="/links">Back</Link>
+                <Link to="/">Continue</Link>
+            </div>
         </div>
     );
 }

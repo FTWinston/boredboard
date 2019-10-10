@@ -1,4 +1,26 @@
 .boardEditor {
-    width: 30em;
-    height: 30em;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr 2em;
+    height: 100vh;
+    grid-template-areas:
+        "board content"
+        "board nav";
+}
+
+.boardEditor__board {
+    grid-area: board;
+}
+
+.boardEditor__content {
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.boardEditor__navigation {
+    grid-area: nav;
+    display: flex;
+    justify-content: space-evenly;
 }

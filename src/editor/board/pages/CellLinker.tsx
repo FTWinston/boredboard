@@ -12,16 +12,20 @@ export const CellLinker: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
     return (
-        <div className="boardEditor boardEditor--links">
+        <div className="boardEditor cellLinker">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
             />
             
-            Ability to manage link types and link cells
+            <div className="boardEditor__content">
+                Ability to manage link types and link cells
+            </div>
 
-            <Link to="/cells">Back</Link>
-            <Link to="/regions">Continue</Link>
+            <div className="boardEditor__navigation">
+                <Link to="/cells">Back</Link>
+                <Link to="/regions">Continue</Link>
+            </div>
         </div>
     );
 }

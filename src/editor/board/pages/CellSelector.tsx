@@ -46,7 +46,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
         }
     };
 
-    const cellNames = elementIDs.map(id => {
+    const cellList = elementIDs.map(id => {
         const selected = props.cells.indexOf(id) !== -1;
 
         const classes = selected
@@ -69,7 +69,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
     });
 
     return (
-        <div className="boardEditor boardEditor--cells">
+        <div className="boardEditor cellSelector">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
@@ -78,14 +78,18 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                 selectableCells={props.cells}
             />
             
-            <p>Below are listed the IDs of all the elements in this image. Please specify which elements are cells on the board.</p>
-            
-            <ul className="cellSelector__cellList">
-                {cellNames}
-            </ul>
+            <div className="boardEditor__content">
+                <p>Below are listed the IDs of all the elements in this image. Please specify which elements are cells on the board.</p>
+                
+                <ul className="cellSelector__cellList">
+                    {cellList}
+                </ul>
+            </div>
 
-            <Link to="/image">Back</Link>
-            <Link to="/links">Continue</Link>
+            <div className="boardEditor__navigation">
+                <Link to="/image">Back</Link>
+                <Link to="/links">Continue</Link>
+            </div>
         </div>
     );
 }

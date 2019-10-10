@@ -1,5 +1,5 @@
 export interface ICellItem {
-    id: string;
+    id?: string;
     cell: string;
     display: JSX.Element | string;
 }

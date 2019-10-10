@@ -14,13 +14,19 @@ export const ImageSelector: React.FunctionComponent<Props> = props => {
     const [url, setUrl] = useState(props.initialUrl === undefined ? /*''*/svg : props.initialUrl);
 
     return (
-        <div className="boardEditor boardEditor--image">
-            <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
-            Select or upload image. This textbox is a cheeky placeholder.
+        <div className="boardEditor">
+            <div className="boardEditor__board">
+                <input  type="text" value={url} onChange={e => setUrl(e.target.value)} />
+                Select or upload image. This textbox is a cheeky placeholder.
+            </div>
 
-            Need to disable the following link if no (valid) image url is present.
+            <div className="boardEditor__content">
+                Need to disable the following link if no (valid) image url is present.
+            </div>
 
-            <Link to="/cells" onClick={() => context({ type: 'set image', url })}>Continue</Link>
+            <div className="boardEditor__navigation">
+                <Link to="/cells" onClick={() => context({ type: 'set image', url })}>Continue</Link>
+            </div>
         </div>
     );
 }

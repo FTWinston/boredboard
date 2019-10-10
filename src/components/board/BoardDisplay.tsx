@@ -69,6 +69,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         }
 
         return props.labelCells.map(id => ({
+            key: id,
             cell: id,
             display: <div className={className}>{id}</div>
         }));

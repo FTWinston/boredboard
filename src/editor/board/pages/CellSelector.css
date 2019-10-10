@@ -1,5 +1,22 @@
+.cellSelector__allNone {
+    display: flex;
+    justify-content: center;
+}
+
+.cellSelector__allNone > * + * {
+    margin-left: 2em;
+}
+
+.cellSelector__cellList {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1em 0;
+}
+
 .cellSelector__cellID {
+    display: inline-block;
     cursor: pointer;
+    margin: 0.2em 0.5em;
 }
 
 .cellSelector__cellID--selected {

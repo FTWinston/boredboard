@@ -1,7 +1,7 @@
 .boardEditor {
     display: grid;
     grid-template-columns: 3fr 2fr;
-    grid-template-rows: 1fr 2em;
+    grid-template-rows: 1fr 3em;
     height: 100vh;
     grid-template-areas:
         "board content"
@@ -23,4 +23,5 @@
     grid-area: nav;
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
 }

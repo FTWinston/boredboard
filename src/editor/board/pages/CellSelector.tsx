@@ -19,15 +19,8 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
         const ids = elements.map(e => e.id).sort();
         setElementIDs(ids);
 
-        if (props.cells.length === 0) {
-            // if we had no previous cells/image, select all elements from the current image
-            context({
-                type: 'set cells',
-                cells: ids,
-            });
-        }
-        else {
-            // if we had cells from a previous image, only keep those that exist in the new one
+        // if we had cells from a previous image, remove any that don't exist in the new one
+        if (props.cells.length > 0) {
             const remainingCells = props.cells.filter(id => ids.indexOf(id) !== -1);
             if (remainingCells.length !== props.cells.length) {
                 context({
@@ -45,18 +38,23 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
             ? 'cellSelector__cellID cellSelector__cellID--selected'
             : 'cellSelector__cellID cellSelector__cellID--unselected';
 
-        const clicked = selected
-            ? () => context({ type: 'remove cell', cell: id })
-            : () => context({ type: 'add cell', cell: id })
+        const clicked = (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.currentTarget.checked) {
+                context({ type: 'add cell', cell: id })
+            }
+            else {
+                context({ type: 'remove cell', cell: id })
+            }
+        };
 
         return (
-            <li
+            <label
                 key={id}
                 className={classes}
-                onClick={clicked}
             >
+                <input type="checkbox" checked={selected} onChange={clicked} />
                 {id}
-            </li>
+            </label>
         )
     });
 
@@ -72,11 +70,26 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
             />
             
             <div className="boardEditor__content">
-                <p>Below are listed the IDs of all the elements in this image. Please specify which elements are cells on the board.</p>
+                <p>
+                    Below are listed the IDs of all the elements in this image.
+                    <br/>Please select all the elements which represent cells on the board.
+                </p>
+                <p>
+                    The IDs shown here will be used as cell names.
+                    <br/>If you want to change them, go back a step and edit your board image.
+                </p>
+                <p>
+                    If there's any elements that should be board cells, edit your board image (in notepad?) to give them IDs.
+                </p>
                 
-                <ul className="cellSelector__cellList">
+                <div className="cellSelector__allNone">
+                    <button disabled={props.cells.length === elementIDs.length} onClick={() => context({ type: 'set cells', cells: elementIDs})}>select all</button>
+                    <button disabled={props.cells.length === 0} onClick={() => context({ type: 'set cells', cells: []})}>select none</button>
+                </div>
+
+                <div className="cellSelector__cellList">
                     {cellList}
-                </ul>
+                </div>
             </div>
 
             <div className="boardEditor__navigation">

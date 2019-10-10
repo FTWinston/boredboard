@@ -23,7 +23,7 @@ export const CellLinker: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/cells">Back</Link>
+                <Link to="/linktypes">Back</Link>
                 <Link to="/regions">Continue</Link>
             </div>
         </div>

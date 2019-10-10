@@ -58,6 +58,10 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
         )
     });
 
+    const continueLink = props.cells.length === 0
+        ? <div title="Cannot continue until cells are selected">Continue</div>
+        : <Link to="/linktypes">Continue</Link>
+
     return (
         <div className="boardEditor cellSelector">
             <BoardDisplay
@@ -94,7 +98,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
 
             <div className="boardEditor__navigation">
                 <Link to="/image">Back</Link>
-                <Link to="/links">Continue</Link>
+                {continueLink}
             </div>
         </div>
     );

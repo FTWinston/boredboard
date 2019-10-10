@@ -8,6 +8,7 @@ import { CellSelector } from './pages/CellSelector';
 import { CellLinker } from './pages/CellLinker';
 import { RegionCreator } from './pages/RegionCreator';
 import { BoardSummary } from './pages/BoardSummary';
+import { LinkTypes } from './pages/LinkTypes';
 
 interface Props {
     name: string;
@@ -31,6 +32,13 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/cells">
                     <CellSelector
                         boardUrl={state.imageUrl}
+                        cells={state.cells}
+                    />
+                </Route>
+                <Route path="/linktypes">
+                    <LinkTypes
+                        boardUrl={state.imageUrl}
+                        linkTypes={state.linkTypes}
                         cells={state.cells}
                     />
                 </Route>

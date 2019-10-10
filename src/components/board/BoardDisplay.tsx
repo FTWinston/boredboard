@@ -4,12 +4,15 @@ import ResizeObserver from 'resize-observer-polyfill';
 import './BoardDisplay.css';
 import { ContentItems } from './ContentItems';
 import { ICellItem } from './ICellItem';
+import { LabelStyle } from '../../data/LabelSize';
 
 interface Props {
     filePath: string;
     className: string;
     onReady?: (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => void;
     cellClicked?: (cellID: string) => void;
+    labelStyle?: LabelStyle;
+    labelCells?: string[];
     selectableCells?: string[];
     moveableCells?: string[];
     attackableCells?: string[];
@@ -39,13 +42,37 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     const elementClicked = useCallback((e: MouseEvent) => {
         const target = e.target as SVGGraphicsElement;
         const cellID = target.getAttribute('id');
-        
+
         if (cellID !== null && cellClicked) {
             cellClicked(cellID);
         }
     }, [cellClicked]);
 
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
+
+    const labelElements = useMemo(() => {
+        if (props.labelStyle === undefined || props.labelCells === undefined) {
+            return [];
+        }
+
+        let className: string;
+        switch (props.labelStyle) {
+            case LabelStyle.FillCell:
+                className = 'board__label board__label--fill';
+                break;
+            case LabelStyle.SmallCorner:
+                className = 'board__label board__label--smallCorner';
+                break;
+            default:
+                className = 'board__label';
+                break;
+        }
+
+        return props.labelCells.map(id => ({
+            cell: id,
+            display: <div className={className}>{id}</div>
+        }));
+    }, [props.labelStyle, props.labelCells]);
 
     const [rootBounds, setRootBounds] = useState({ left: 0, top: 0, width: 0, height: 0 });
 
@@ -94,6 +121,15 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
             <ContentItems
                 cellElements={cellElements}
                 contents={props.contents === undefined ? [] : props.contents}
+                leftOffset={rootBounds.left}
+                topOffset={rootBounds.top}
+                width={rootBounds.width}
+                height={rootBounds.height}
+            />
+
+            <ContentItems
+                cellElements={cellElements}
+                contents={labelElements}
                 leftOffset={rootBounds.left}
                 topOffset={rootBounds.top}
                 width={rootBounds.width}

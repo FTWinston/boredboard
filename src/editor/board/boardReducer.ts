@@ -1,6 +1,4 @@
 import { IBoard } from '../../data/IBoard';
-import { returnStatement } from '@babel/types';
-
 
 interface ILink {
     fromCell: string;

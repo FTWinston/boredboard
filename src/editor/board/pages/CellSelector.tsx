@@ -1,8 +1,9 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './CellSelector.css';
-import { BoardDisplay, ICellItem } from '../../../components/board';
+import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
+import { LabelStyle } from '../../../data/LabelSize';
 
 interface Props {
     boardUrl: string;
@@ -13,15 +14,6 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
     const [elementIDs, setElementIDs] = useState([] as string[]);
-
-    const cellIdentifiers: ICellItem[] = useMemo(
-        () => elementIDs.map(id => ({
-            id: id,
-            cell: id,
-            display: <div>{id}</div>
-        })),
-        [elementIDs]
-    );
     
     const readBoardElements = (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => {
         const ids = elements.map(e => e.id).sort();
@@ -74,7 +66,8 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                 className="boardEditor__board"
                 filePath={props.boardUrl}
                 onReady={readBoardElements}
-                contents={cellIdentifiers}
+                labelCells={elementIDs}
+                labelStyle={LabelStyle.FillCell}
                 selectableCells={props.cells}
             />
             

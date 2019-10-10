@@ -32,7 +32,7 @@ export const ContentItems: React.FunctionComponent<Props> = props => {
 
         return (
             <div
-                key={item.id}
+                key={item.key}
                 className="board__contentItem"
                 style={style}
                 data-cell={item.cell}

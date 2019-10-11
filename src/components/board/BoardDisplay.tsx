@@ -12,7 +12,7 @@ interface Props {
     onReady?: (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => void;
     cellClicked?: (cellID: string) => void;
     labelStyle?: LabelStyle;
-    labelCells?: string[];
+    cells: string[];
     selectableCells?: string[];
     moveableCells?: string[];
     attackableCells?: string[];
@@ -43,7 +43,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         const target = e.target as SVGGraphicsElement;
         const cellID = target.getAttribute('id');
 
-        if (cellID !== null && cellClicked) {
+        if (cellID !== null && props.cells.indexOf(cellID) !== -1 && cellClicked) {
             cellClicked(cellID);
         }
     }, [cellClicked]);
@@ -51,7 +51,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 
     const labelElements = useMemo(() => {
-        if (props.labelStyle === undefined || props.labelCells === undefined) {
+        if (props.labelStyle === undefined || props.cells === undefined) {
             return [];
         }
 
@@ -68,12 +68,12 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
                 break;
         }
 
-        return props.labelCells.map(id => ({
+        return props.cells.map(id => ({
             key: id,
             cell: id,
             display: <div className={className}>{id}</div>
         }));
-    }, [props.labelStyle, props.labelCells]);
+    }, [props.labelStyle, props.cells]);
 
     const [rootBounds, setRootBounds] = useState({ left: 0, top: 0, width: 0, height: 0 });
 

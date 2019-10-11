@@ -68,7 +68,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                 className="boardEditor__board"
                 filePath={props.boardUrl}
                 onReady={readBoardElements}
-                labelCells={elementIDs}
+                cells={elementIDs}
                 labelStyle={LabelStyle.FillCell}
                 selectableCells={props.cells}
             />

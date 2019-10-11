@@ -6,6 +6,7 @@ import { BoardDispatch } from '../BoardEditor';
 
 interface Props {
     boardUrl: string;
+    cells: string[];
 }
 
 export const RegionCreator: React.FunctionComponent<Props> = props => {
@@ -16,6 +17,7 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
+                cells={props.cells}
             />
 
             <div className="boardEditor__content">

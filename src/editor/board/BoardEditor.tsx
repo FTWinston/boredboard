@@ -39,13 +39,14 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/linktypes">
                     <LinkTypes
                         boardUrl={state.imageUrl}
-                        linkTypes={state.linkTypes}
                         cells={state.cells}
+                        linkTypes={state.linkTypes}
                     />
                 </Route>
                 <Route path="/bulklinks">
                     <BulkLinker
                         boardUrl={state.imageUrl}
+                        cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
                     />
@@ -53,6 +54,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/manuallinks">
                     <ManualLinker
                         boardUrl={state.imageUrl}
+                        cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
                     />
@@ -60,6 +62,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/regions">
                     <RegionCreator
                         boardUrl={state.imageUrl}
+                        cells={state.cells}
                     />
                 </Route>
                 <Route render={() => {
@@ -69,6 +72,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                     return (
                         <BoardSummary
                             boardUrl={state.imageUrl}
+                            cells={state.cells}
                         />
                     );
                 }} />

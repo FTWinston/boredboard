@@ -5,6 +5,7 @@ import { BoardDisplay } from '../../../components/board';
 
 interface Props {
     boardUrl: string;
+    cells: string[];
 }
 
 export const BoardSummary: React.FunctionComponent<Props> = props => {
@@ -15,6 +16,7 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
+                cells={props.cells}
             />
 
             <div className="boardEditor__content">            

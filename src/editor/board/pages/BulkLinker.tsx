@@ -7,6 +7,7 @@ import { ILink } from '../boardReducer';
 
 interface Props {
     boardUrl: string;
+    cells: string[];
     linkTypes: string[];
     links: ILink[];
 }
@@ -19,6 +20,7 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
+                cells={props.cells}
             />
             
             <div className="boardEditor__content">

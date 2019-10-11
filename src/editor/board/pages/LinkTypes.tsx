@@ -60,7 +60,7 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
-                labelCells={props.cells}
+                cells={props.cells}
                 labelStyle={LabelStyle.FillCell}
             />
             

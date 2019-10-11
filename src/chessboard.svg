@@ -10,8 +10,8 @@
    viewBox="0 0 1200 1200"
    enable-background="new 0 0 1200 1200">
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect3208"
+	   style="fill:#000000;stroke:none"
+	   id="A1"
 	   width="150"
 	   height="150"
 	   x="0"
@@ -22,28 +22,28 @@
 	   x="150"
 	   height="150"
 	   width="150"
-	   id="rect3978"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="A2"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="1050"
 	   x="300"
 	   height="150"
 	   width="150"
-	   id="rect3980"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="A3"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect3982"
+	   style="fill:#ffffff;stroke:none"
+	   id="A4"
 	   width="150"
 	   height="150"
 	   x="450"
 	   y="1050"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect3984"
+	   style="fill:#000000;stroke:none"
+	   id="A5"
 	   width="150"
 	   height="150"
 	   x="600"
@@ -54,20 +54,20 @@
 	   x="750"
 	   height="150"
 	   width="150"
-	   id="rect3986"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="A6"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="1050"
 	   x="900"
 	   height="150"
 	   width="150"
-	   id="rect3988"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="A7"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect3990"
+	   style="fill:#ffffff;stroke:none"
+	   id="A8"
 	   width="150"
 	   height="150"
 	   x="1050"
@@ -78,13 +78,13 @@
 	   x="-1200"
 	   height="150"
 	   width="150"
-	   id="rect4004"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="B8"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4006"
+	   style="fill:#ffffff;stroke:none"
+	   id="B7"
 	   width="150"
 	   height="150"
 	   x="-1050"
@@ -92,8 +92,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4008"
+	   style="fill:#000000;stroke:none"
+	   id="B6"
 	   width="150"
 	   height="150"
 	   x="-900"
@@ -105,8 +105,8 @@
 	   x="-750"
 	   height="150"
 	   width="150"
-	   id="rect4010"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="B5"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -114,13 +114,13 @@
 	   x="-600"
 	   height="150"
 	   width="150"
-	   id="rect4012"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="B4"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4014"
+	   style="fill:#ffffff;stroke:none"
+	   id="B3"
 	   width="150"
 	   height="150"
 	   x="-450"
@@ -128,8 +128,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4016"
+	   style="fill:#000000;stroke:none"
+	   id="B2"
 	   width="150"
 	   height="150"
 	   x="-300"
@@ -141,8 +141,8 @@
 	   x="-150"
 	   height="150"
 	   width="150"
-	   id="rect4018"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="B1"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -150,20 +150,20 @@
 	   x="0"
 	   height="150"
 	   width="150"
-	   id="rect4022"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="C1"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4024"
+	   style="fill:#ffffff;stroke:none"
+	   id="C2"
 	   width="150"
 	   height="150"
 	   x="150"
 	   y="750"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4026"
+	   style="fill:#000000;stroke:none"
+	   id="C3"
 	   width="150"
 	   height="150"
 	   x="300"
@@ -174,28 +174,28 @@
 	   x="450"
 	   height="150"
 	   width="150"
-	   id="rect4028"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="C4"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="750"
 	   x="600"
 	   height="150"
 	   width="150"
-	   id="rect4030"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="C5"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4032"
+	   style="fill:#ffffff;stroke:none"
+	   id="C6"
 	   width="150"
 	   height="150"
 	   x="750"
 	   y="750"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4034"
+	   style="fill:#000000;stroke:none"
+	   id="C7"
 	   width="150"
 	   height="150"
 	   x="900"
@@ -206,12 +206,12 @@
 	   x="1050"
 	   height="150"
 	   width="150"
-	   id="rect4036"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="C8"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4040"
+	   style="fill:#000000;stroke:none"
+	   id="D8"
 	   width="150"
 	   height="150"
 	   x="-1200"
@@ -223,8 +223,8 @@
 	   x="-1050"
 	   height="150"
 	   width="150"
-	   id="rect4042"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="D7"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -232,13 +232,13 @@
 	   x="-900"
 	   height="150"
 	   width="150"
-	   id="rect4044"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="D6"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4046"
+	   style="fill:#ffffff;stroke:none"
+	   id="D5"
 	   width="150"
 	   height="150"
 	   x="-750"
@@ -246,8 +246,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4048"
+	   style="fill:#000000;stroke:none"
+	   id="D4"
 	   width="150"
 	   height="150"
 	   x="-600"
@@ -259,8 +259,8 @@
 	   x="-450"
 	   height="150"
 	   width="150"
-	   id="rect4050"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="D3"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -268,13 +268,13 @@
 	   x="-300"
 	   height="150"
 	   width="150"
-	   id="rect4052"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="D2"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4054"
+	   style="fill:#ffffff;stroke:none"
+	   id="D1"
 	   width="150"
 	   height="150"
 	   x="-150"
@@ -282,8 +282,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4058"
+	   style="fill:#000000;stroke:none"
+	   id="E1"
 	   width="150"
 	   height="150"
 	   x="0"
@@ -294,28 +294,28 @@
 	   x="150"
 	   height="150"
 	   width="150"
-	   id="rect4060"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="E2"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="450"
 	   x="300"
 	   height="150"
 	   width="150"
-	   id="rect4062"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="E3"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4064"
+	   style="fill:#ffffff;stroke:none"
+	   id="E4"
 	   width="150"
 	   height="150"
 	   x="450"
 	   y="450"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4066"
+	   style="fill:#000000;stroke:none"
+	   id="E5"
 	   width="150"
 	   height="150"
 	   x="600"
@@ -326,20 +326,20 @@
 	   x="750"
 	   height="150"
 	   width="150"
-	   id="rect4068"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="E6"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="450"
 	   x="900"
 	   height="150"
 	   width="150"
-	   id="rect4070"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="E7"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4072"
+	   style="fill:#ffffff;stroke:none"
+	   id="E8"
 	   width="150"
 	   height="150"
 	   x="1050"
@@ -350,13 +350,13 @@
 	   x="-1200"
 	   height="150"
 	   width="150"
-	   id="rect4076"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="F8"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4078"
+	   style="fill:#ffffff;stroke:none"
+	   id="F7"
 	   width="150"
 	   height="150"
 	   x="-1050"
@@ -364,8 +364,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4080"
+	   style="fill:#000000;stroke:none"
+	   id="F6"
 	   width="150"
 	   height="150"
 	   x="-900"
@@ -377,8 +377,8 @@
 	   x="-750"
 	   height="150"
 	   width="150"
-	   id="rect4082"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="F5"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -386,13 +386,13 @@
 	   x="-600"
 	   height="150"
 	   width="150"
-	   id="rect4084"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="F4"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4086"
+	   style="fill:#ffffff;stroke:none"
+	   id="F3"
 	   width="150"
 	   height="150"
 	   x="-450"
@@ -400,8 +400,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4088"
+	   style="fill:#000000;stroke:none"
+	   id="F2"
 	   width="150"
 	   height="150"
 	   x="-300"
@@ -413,8 +413,8 @@
 	   x="-150"
 	   height="150"
 	   width="150"
-	   id="rect4090"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="F1"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -422,20 +422,20 @@
 	   x="0"
 	   height="150"
 	   width="150"
-	   id="rect4094"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="G1"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4096"
+	   style="fill:#ffffff;stroke:none"
+	   id="G2"
 	   width="150"
 	   height="150"
 	   x="150"
 	   y="150"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4098"
+	   style="fill:#000000;stroke:none"
+	   id="G3"
 	   width="150"
 	   height="150"
 	   x="300"
@@ -446,28 +446,28 @@
 	   x="450"
 	   height="150"
 	   width="150"
-	   id="rect4100"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="G4"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
 	   y="150"
 	   x="600"
 	   height="150"
 	   width="150"
-	   id="rect4102"
-	   style="fill:#000000;fill-opacity:1;stroke:none"	
+	   id="G5"
+	   style="fill:#000000;stroke:none"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4104"
+	   style="fill:#ffffff;stroke:none"
+	   id="G6"
 	   width="150"
 	   height="150"
 	   x="750"
 	   y="150"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4106"
+	   style="fill:#000000;stroke:none"
+	   id="G7"
 	   width="150"
 	   height="150"
 	   x="900"
@@ -478,12 +478,12 @@
 	   x="1050"
 	   height="150"
 	   width="150"
-	   id="rect4108"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"	
+	   id="G8"
+	   style="fill:#ffffff;stroke:none"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4112"
+	   style="fill:#000000;stroke:none"
+	   id="H8"
 	   width="150"
 	   height="150"
 	   x="-1200"
@@ -495,8 +495,8 @@
 	   x="-1050"
 	   height="150"
 	   width="150"
-	   id="rect4114"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="H7"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -504,13 +504,13 @@
 	   x="-900"
 	   height="150"
 	   width="150"
-	   id="rect4116"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="H6"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4118"
+	   style="fill:#ffffff;stroke:none"
+	   id="H5"
 	   width="150"
 	   height="150"
 	   x="-750"
@@ -518,8 +518,8 @@
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#000000;fill-opacity:1;stroke:none"
-	   id="rect4120"
+	   style="fill:#000000;stroke:none"
+	   id="H4"
 	   width="150"
 	   height="150"
 	   x="-600"
@@ -531,8 +531,8 @@
 	   x="-450"
 	   height="150"
 	   width="150"
-	   id="rect4122"
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
+	   id="H3"
+	   style="fill:#ffffff;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
@@ -540,13 +540,13 @@
 	   x="-300"
 	   height="150"
 	   width="150"
-	   id="rect4124"
-	   style="fill:#000000;fill-opacity:1;stroke:none"
+	   id="H2"
+	   style="fill:#000000;stroke:none"
 	   transform="scale(-1,1)"	
 	/>
 	<rect
-	   style="fill:#ffffff;fill-opacity:1;stroke:none"
-	   id="rect4126"
+	   style="fill:#ffffff;stroke:none"
+	   id="H1"
 	   width="150"
 	   height="150"
 	   x="-150"
@@ -559,7 +559,6 @@
 	   x="-1195"
 	   height="1190"
 	   width="1190"
-	   id="rect4386"
 	   style="fill:none;stroke:#333333;stroke-width:10;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"	
 	/>
 </svg>

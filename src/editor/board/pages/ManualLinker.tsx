@@ -1,10 +1,12 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ManualLinker.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { ILink } from '../boardReducer';
-import { LinkTypes } from './LinkTypes';
+import { BoardLinkList } from '../components/BoardLinkList';
+import { SingleLinkSetup } from '../components/SingleLinkSetup';
+import { LabelStyle } from '../../../data/LabelSize';
 
 interface Props {
     boardUrl: string;
@@ -22,87 +24,44 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
 
     const [linkedTo, setLinkedTo] = useState(null as string | null);
 
-    const linkTypeSelectors = useMemo(
-        () => props.linkTypes.map(type => {
-            const selected = type === selectedLinkType;
-
-            const classes = selected
-                ? 'manualLinker__linkType manualLinker__linkType--selected'
-                : 'manualLinker__linkType'
-
-            return (
-                <label key={type} className={classes}>
-                    {type}
-                    <input
-                        type="radio"
-                        radioGroup="linkType"
-                        checked={selected}
-                        onChange={() => {
-                            setSelectedLinkType(type);
-                            
-                            // Changing link type makes it unclear what you would undo,
-                            // so remove the ability to undo.
-                            if (linkedTo !== null) {
-                                setLinkFrom(null);
-                                setLinkedTo(null);
-                            }
-                        }}
-                    />
-                </label>
-            );
-        }),
-        [props.linkTypes, selectedLinkType]
-    );
-
-    const createCellsDisplay = useMemo(() => {
-        if (linkFrom === null) {
-            return <p>&nbsp;</p>
+    const cellClicked = (cell: string) => {
+        if (linkFrom === null || linkedTo !== null) {
+            setLinkFrom(cell);
+            setLinkedTo(null);
+            return;
         }
 
-        if (linkedTo === null) {
-            return <p>Creating link from {linkFrom}...</p>
+        if (cell === linkFrom) {
+            setLinkFrom(null);
+            setLinkedTo(null);
+            return;
         }
 
-        return <p>Created link from {linkFrom} to {linkedTo}.</p>
-    }, [linkFrom, linkedTo]);
+        // TODO: if there's already a link with the same from / to / type,
+        // don't add a new one. But also make it clear that this is the case.
 
-    const undoDisplay = useMemo(() => {
-        const disabled = linkedTo === null || linkFrom === null;
-
-        const clicked = disabled
-            ? undefined
-            : () => {
-                context({
-                    type: 'remove link',
-                    fromCell: linkFrom!,
-                    toCell: linkedTo!,
-                    linkType: selectedLinkType,
-                });
-                setLinkFrom(null);
-                setLinkedTo(null);
-            };
-
-        return (
-            <button onClick={clicked} disabled={disabled}>
-                remove this link
-            </button>
-        );
-    }, [linkFrom, linkedTo, selectedLinkType])
-
-    const existingLinkDisplays = useMemo(() => props.links.map((link, i) => (
-        <div
-            className="manualLinker__link"
-            key={i}
-            onClick={() => context({
+        setLinkedTo(cell);
+        context({
+            type: 'add link',
+            fromCell: linkFrom,
+            toCell: cell,
+            linkType: selectedLinkType,
+        });
+    };
+    
+    const undoAdd = () => {
+        if (linkFrom !== null && linkedTo !== null) {
+            context({
                 type: 'remove link',
-                fromCell: link.fromCell,
-                toCell: link.toCell,
-                linkType: link.type,
-            })}
-        >
-            {link.type} from {link.fromCell} to {link.toCell}
-        </div>
-    )), [props.links]);
+                fromCell: linkFrom,
+                toCell: linkedTo,
+                linkType: selectedLinkType,
+            });
+        }
+
+        setLinkFrom(null);
+        setLinkedTo(null);
+    };
 
     return (
         <div className="boardEditor manualLinker">
@@ -110,33 +69,10 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                 className="boardEditor__board"
                 filePath={props.boardUrl}
                 cells={props.cells}
+                labelStyle={LabelStyle.FillCell}
                 selectableCells={linkFrom === null ? undefined : [linkFrom]}
                 moveableCells={linkedTo === null ? undefined : [linkedTo]}
-                cellClicked={cell => {
-                    if (linkFrom === null || linkedTo !== null) {
-                        setLinkFrom(cell);
-                        setLinkedTo(null);
-                        return;
-                    }
-
-                    if (cell === linkFrom) {
-                        setLinkFrom(null);
-                        setLinkedTo(null);
-                        return;
-                    }
-
-                    // TODO: if there's already a link with the same from / to / type,
-                    // don't add a new one. But also make it clear that this is the case.
-
-                    setLinkedTo(cell);
-
-                    context({
-                        type: 'add link',
-                        fromCell: linkFrom,
-                        toCell: cell,
-                        linkType: selectedLinkType,
-                    });
-                }}
+                cellClicked={cellClicked}
             />
             
             <div className="boardEditor__content">
@@ -145,33 +81,25 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                 </p>
 
                 <div className="manualLinker__columns">
-                    <div className="manualLinker__createLink">
-                        <div className="boardEditor__listTitle">Create links</div>
+                    <SingleLinkSetup
+                        className="manualLinker__createLink"
+                        linkTypes={props.linkTypes}
+                        selectedLinkType={selectedLinkType}
+                        linkFrom={linkFrom}
+                        linkedTo={linkedTo}
+                        selectLinkType={type => {
+                            setSelectedLinkType(type);
 
-                        <p>
-                            Select a link type, then click a cell to link <em>from</em>, then a cell to link <em>to</em>.
-                        </p>
-
-                        <p>
-                            You can click the <em>from</em> cell again to cancel, and you can easily undo the last link added.
-                        </p>
-
-                        <p>
-                            Link type: 
-                            {linkTypeSelectors}
-                        </p>
-
-                        {createCellsDisplay}
-
-                        {undoDisplay}
-                    </div>
-
-                    <div className="manualLinker__existingLinks">
-                        <div className="boardEditor__listTitle">Remove links</div>
-                        <p>Click an existing link to remove it.</p>
-
-                        {existingLinkDisplays}
-                    </div>
+                            // Changing link type makes it unclear what you would undo,
+                            // so remove the ability to undo.
+                            if (linkedTo !== null) {
+                                setLinkFrom(null);
+                                setLinkedTo(null);
+                            }
+                        }}
+                        undoAdd={undoAdd}
+                    />
+                    <BoardLinkList links={props.links} className="manualLinker__existingLinks" />
                 </div>
             </div>
 

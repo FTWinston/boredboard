@@ -46,7 +46,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         if (cellID !== null && props.cells.indexOf(cellID) !== -1 && cellClicked) {
             cellClicked(cellID);
         }
-    }, [cellClicked]);
+    }, [cellClicked, props.cells]);
 
     const [cellElements, setCellElements] = useState(new Map<string, SVGGraphicsElement>());
 

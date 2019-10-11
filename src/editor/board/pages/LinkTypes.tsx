@@ -4,7 +4,7 @@ import './LinkTypes.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
-import { UniqueTextBox } from '../../../components/UniqueTextBox';
+import { UniqueTextBox } from '../components/UniqueTextBox';
 
 interface Props {
     boardUrl: string;

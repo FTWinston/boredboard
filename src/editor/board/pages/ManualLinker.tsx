@@ -56,7 +56,7 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
 
     const createCellsDisplay = useMemo(() => {
         if (linkFrom === null) {
-            return undefined;
+            return <p>&nbsp;</p>
         }
 
         if (linkedTo === null) {
@@ -67,25 +67,42 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
     }, [linkFrom, linkedTo]);
 
     const undoDisplay = useMemo(() => {
-        if (linkedTo === null || linkFrom === null) {
-            return undefined;
-        }
+        const disabled = linkedTo === null || linkFrom === null;
 
-        return (
-            <button onClick={() => {
+        const clicked = disabled
+            ? undefined
+            : () => {
                 context({
                     type: 'remove link',
-                    fromCell: linkFrom,
-                    toCell: linkedTo,
+                    fromCell: linkFrom!,
+                    toCell: linkedTo!,
                     linkType: selectedLinkType,
                 });
                 setLinkFrom(null);
                 setLinkedTo(null);
-            }}>
+            };
+
+        return (
+            <button onClick={clicked} disabled={disabled}>
                 remove this link
             </button>
         );
     }, [linkFrom, linkedTo, selectedLinkType])
+
+    const existingLinkDisplays = useMemo(() => props.links.map((link, i) => (
+        <div
+            className="manualLinker__link"
+            key={i}
+            onClick={() => context({
+                type: 'remove link',
+                fromCell: link.fromCell,
+                toCell: link.toCell,
+                linkType: link.type,
+            })}
+        >
+            {link.type} from {link.fromCell} to {link.toCell}
+        </div>
+    )), [props.links]);
 
     return (
         <div className="boardEditor manualLinker">
@@ -93,12 +110,38 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                 className="boardEditor__board"
                 filePath={props.boardUrl}
                 cells={props.cells}
+                selectableCells={linkFrom === null ? undefined : [linkFrom]}
+                moveableCells={linkedTo === null ? undefined : [linkedTo]}
+                cellClicked={cell => {
+                    if (linkFrom === null || linkedTo !== null) {
+                        setLinkFrom(cell);
+                        setLinkedTo(null);
+                        return;
+                    }
+
+                    if (cell === linkFrom) {
+                        setLinkFrom(null);
+                        setLinkedTo(null);
+                        return;
+                    }
+
+                    // TODO: if there's already a link with the same from / to / type,
+                    // don't add a new one. But also make it clear that this is the case.
+
+                    setLinkedTo(cell);
+
+                    context({
+                        type: 'add link',
+                        fromCell: linkFrom,
+                        toCell: cell,
+                        linkType: selectedLinkType,
+                    });
+                }}
             />
             
             <div className="boardEditor__content">
                 <p>
-                    To add single links, first select a link type, then click on a cell to start creating a link <em>from</em> that cell,
-                    then click another to create a link <em>to</em> that cell. Click the "from" cell again to cancel.
+                    You can link individual pairs of cells here, or remove specific links.
                 </p>
 
                 <div className="manualLinker__columns">
@@ -106,7 +149,11 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                         <div className="boardEditor__listTitle">Create links</div>
 
                         <p>
-                            Select a link type, then click a cell to link from, then a cell to link to.
+                            Select a link type, then click a cell to link <em>from</em>, then a cell to link <em>to</em>.
+                        </p>
+
+                        <p>
+                            You can click the <em>from</em> cell again to cancel, and you can easily undo the last link added.
                         </p>
 
                         <p>
@@ -118,9 +165,12 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
 
                         {undoDisplay}
                     </div>
+
                     <div className="manualLinker__existingLinks">
                         <div className="boardEditor__listTitle">Remove links</div>
                         <p>Click an existing link to remove it.</p>
+
+                        {existingLinkDisplays}
                     </div>
                 </div>
             </div>

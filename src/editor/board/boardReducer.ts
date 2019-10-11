@@ -165,10 +165,27 @@ export function reducer(state: IState, action: BoardAction): IState {
             };
 
         case 'add link':
-            return state;
+            return {
+                ...state,
+                links: [
+                    ...state.links,
+                    {
+                        fromCell: action.fromCell,
+                        toCell: action.toCell,
+                        type: action.linkType,
+                    }
+                ],
+            };
 
         case 'remove link':
-            return state;
+            return {
+                ...state,
+                links: state.links.filter(
+                    link => link.fromCell !== action.fromCell
+                        || link.toCell !== action.toCell
+                        || link.type !== action.linkType
+                ),
+            };
 
         case 'add link type':
             return {

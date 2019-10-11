@@ -30,3 +30,7 @@
 .manualLinker__linkType > input {
     display: none;
 }
+
+.manualLinker__link {
+    cursor: pointer;
+}

@@ -36,6 +36,16 @@ export type BoardAction = {
     type: 'set link types';
     linkTypes: string[];
 } | {
+    type: 'add link type';
+    linkType: string;
+} | {
+    type: 'remove link type';
+    linkType: string;
+} | {
+    type: 'rename link type';
+    oldName: string;
+    newName: string;
+} | {
     type: 'set links';
     links: ILink[];
 } | {
@@ -142,6 +152,31 @@ export function reducer(state: IState, action: BoardAction): IState {
                     && state.cells.indexOf(l.toCell) !== -1
                     && state.linkTypes.indexOf(l.type) !== -1
                 ),
+            };
+
+        case 'add link type':
+            return {
+                ...state,
+                linkTypes: [
+                    ...state.linkTypes,
+                    action.linkType,
+                ],
+            };
+
+        case 'remove link type':
+            return {
+                ...state,
+                linkTypes: state.linkTypes.filter(t => t !== action.linkType),
+            };
+
+        case 'rename link type':
+            return {
+                ...state,
+                linkTypes: state.linkTypes.map(t => t === action.oldName ? action.newName : t),
+                links: state.links.map(l => ({
+                    ...l,
+                    type: l.type === action.oldName ? action.newName : l.type,
+                }))
             };
 
         case 'set regions':

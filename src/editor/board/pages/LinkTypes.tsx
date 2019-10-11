@@ -21,19 +21,18 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
 
     const existingTypes = props.linkTypes.map((type, i) => {
         const editType = (val: string) => {
-            const linkTypes = props.linkTypes.slice();
-
             if (val === '') {
-                linkTypes.splice(i, 1);
-            }
-            else {
-                linkTypes[i] = val;
+                context({
+                    type: 'remove link type',
+                    linkType: type,
+                });
             }
 
             context({
-                type: 'set link types',
-                linkTypes,
-            })
+                type: 'rename link type',
+                oldName: type,
+                newName: val,
+            });
         };
 
         return (
@@ -48,13 +47,10 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
     });
 
     const addType = (val: string) => {
-        const linkTypes = props.linkTypes.slice();
-        linkTypes.push(val);
-
         context({
-            type: 'set link types',
-            linkTypes,
-        })
+            type: 'add link type',
+            linkType: val,
+        });
     };
 
     return (
@@ -77,6 +73,9 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
                 <p>
                     If pieces in your game care about what directions they move in (e.g. chess pawns move forward, not backwards or sideways),
                     then you'll need a different link type for each direction.
+                </p>
+                <p>
+                    These should be absolute directions (e.g. north, south, east, west) - if different players have different concepts of "forward" (such as in chess), this will be handled at a later step.
                 </p>
                 <p>
                     If pieces in your game follow different paths (e.g. up ladders and down snakes), then you'll need a different link type for each type of path.

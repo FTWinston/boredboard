@@ -1,0 +1,32 @@
+.manualLinker__columns {
+    flex-grow: 1;
+    display: flex;
+}
+
+.manualLinker__createLink,
+.manualLinker__existingLinks {
+    flex-basis: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.manualLinker__createLink {
+    padding-right: 1em;
+}
+
+.manualLinker__existingLinks {
+    border-left: solid grey 1px;
+    padding-left: 1em;
+}
+
+.manualLinker__linkType {
+    margin: 0.2em 0.5em;
+}
+
+.manualLinker__linkType--selected {
+    font-weight: bold;
+}
+
+.manualLinker__linkType > input {
+    display: none;
+}

@@ -1,6 +1,6 @@
 import { IBoard } from '../../data/IBoard';
 
-interface ILink {
+export interface ILink {
     fromCell: string;
     toCell: string;
     type: string;
@@ -48,6 +48,16 @@ export type BoardAction = {
 } | {
     type: 'set links';
     links: ILink[];
+} | {
+    type: 'add link';
+    fromCell: string;
+    toCell: string;
+    linkType: string;
+} | {
+    type: 'remove link';
+    fromCell: string;
+    toCell: string;
+    linkType: string;
 } | {
     type: 'set regions';
     regions: IRegion[];
@@ -153,6 +163,12 @@ export function reducer(state: IState, action: BoardAction): IState {
                     && state.linkTypes.indexOf(l.type) !== -1
                 ),
             };
+
+        case 'add link':
+            return state;
+
+        case 'remove link':
+            return state;
 
         case 'add link type':
             return {

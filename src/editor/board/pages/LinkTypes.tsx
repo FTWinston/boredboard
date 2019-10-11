@@ -17,7 +17,7 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
     
     const continueLink = props.linkTypes.length === 0
         ? <div title="Cannot continue until at least one link type is defined">Continue</div>
-        : <Link to="/links">Continue</Link>
+        : <Link to="/bulklinks">Continue</Link>
 
     const existingTypes = props.linkTypes.map((type, i) => {
         const editType = (val: string) => {

@@ -5,10 +5,11 @@ import './BoardEditor.css';
 import { reducer, getInitialState, BoardAction } from './boardReducer';
 import { ImageSelector } from './pages/ImageSelector';
 import { CellSelector } from './pages/CellSelector';
-import { CellLinker } from './pages/CellLinker';
+import { BulkLinker } from './pages/BulkLinker';
 import { RegionCreator } from './pages/RegionCreator';
 import { BoardSummary } from './pages/BoardSummary';
 import { LinkTypes } from './pages/LinkTypes';
+import { ManualLinker } from './pages/ManualLinker';
 
 interface Props {
     name: string;
@@ -42,9 +43,18 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                     />
                 </Route>
-                <Route path="/links">
-                    <CellLinker
+                <Route path="/bulklinks">
+                    <BulkLinker
                         boardUrl={state.imageUrl}
+                        linkTypes={state.linkTypes}
+                        links={state.links}
+                    />
+                </Route>
+                <Route path="/manuallinks">
+                    <ManualLinker
+                        boardUrl={state.imageUrl}
+                        linkTypes={state.linkTypes}
+                        links={state.links}
                     />
                 </Route>
                 <Route path="/regions">

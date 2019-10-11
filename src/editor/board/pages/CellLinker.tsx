@@ -19,7 +19,7 @@ export const CellLinker: React.FunctionComponent<Props> = props => {
             />
             
             <div className="boardEditor__content">
-                Ability to manage link types and link cells
+                Ability to automatically link cells
             </div>
 
             <div className="boardEditor__navigation">

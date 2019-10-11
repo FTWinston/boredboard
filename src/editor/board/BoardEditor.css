@@ -25,3 +25,9 @@
     justify-content: space-evenly;
     align-items: center;
 }
+
+.boardEditor__listTitle {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 1em;
+}

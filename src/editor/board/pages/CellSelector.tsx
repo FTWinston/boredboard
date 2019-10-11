@@ -91,6 +91,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                     <button disabled={props.cells.length === 0} onClick={() => context({ type: 'set cells', cells: []})}>select none</button>
                 </div>
 
+                <div className="boardEditor__listTitle">Element IDs</div>
                 <div className="cellSelector__cellList">
                     {cellList}
                 </div>

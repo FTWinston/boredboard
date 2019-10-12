@@ -2,7 +2,7 @@ import React, { useReducer, createContext, Dispatch } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { IBoard } from '../../data/IBoard';
 import './BoardEditor.css';
-import { reducer, getInitialState, BoardAction } from './boardReducer';
+import { reducer, getInitialState, BoardAction, saveBoardData } from './boardReducer';
 import { ImageSelector } from './pages/ImageSelector';
 import { CellSelector } from './pages/CellSelector';
 import { BulkLinker } from './pages/BulkLinker';
@@ -73,6 +73,9 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         <BoardSummary
                             boardUrl={state.imageUrl}
                             cells={state.cells}
+                            links={state.links}
+                            regions={state.regions}
+                            saveData={() => props.saveData(saveBoardData(state))}
                         />
                     );
                 }} />

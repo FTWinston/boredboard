@@ -25,7 +25,7 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/links">Back</Link>
+                <Link to="/manuallinks">Back</Link>
                 <Link to="/">Continue</Link>
             </div>
         </div>

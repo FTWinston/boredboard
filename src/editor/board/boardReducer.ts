@@ -6,18 +6,18 @@ export interface ILink {
     type: string;
 }
 
+export interface IRegion {
+    name: string;
+    player: number; // 0 for none, 1, 2 etc otherwise
+    cells: string[];
+}
+
 interface IState {
     imageUrl: string;
     cells: string[];
     linkTypes: string[];
     links: ILink[];
     regions: IRegion[];
-}
-
-interface IRegion {
-    name: string;
-    player: number; // 0 for none, 1, 2 etc otherwise
-    cells: string[];
 }
 
 export type BoardAction = {
@@ -126,6 +126,11 @@ function readBoardRegions(board: IBoard) {
         }
     }
     return regions;
+}
+
+export function saveBoardData(state: IState): IBoard {
+    // TODO: saving logic
+    return undefined as any as IBoard;
 }
 
 export function reducer(state: IState, action: BoardAction): IState {

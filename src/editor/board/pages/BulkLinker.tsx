@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import './BulkLinker.css';
-import { BoardDisplay } from '../../../components/board';
+import { BoardDisplay, ICellItem } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { ILink } from '../boardReducer';
 import { SelectAllNone } from '../components/SelectAllNone';
@@ -14,12 +14,32 @@ interface Props {
     links: ILink[];
 }
 
+type ScreenDirection = 'up' | 'down' | 'left' | 'right' | 'up & left' | 'up & right' | 'down & left' | 'down & right';
+const screenDirections: ScreenDirection[] = ['up', 'down', 'left', 'right', 'up & left', 'up & right', 'down & left', 'down & right'];
+
 export const BulkLinker: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
     const [selectedLinkType, setSelectedLinkType] = useState(props.linkTypes[0]);
 
     const [selectedCells, setSelectedCells] = useState([] as string[]);
+
+    const [distance, setDistance] = useState(50);
+
+    const [direction, setDirection] = useState('up' as ScreenDirection);
+
+    const linkDisplays = useMemo(
+        () => {
+            const display = renderLinkPointer(direction, Math.round(distance));
+
+            return selectedCells.map(cell => ({
+                key: cell,
+                cell: cell,
+                display,
+            } as ICellItem))
+        },
+        [selectedCells, distance, direction]
+    );
 
     return (
         <div className="boardEditor bulkLinker">
@@ -28,6 +48,7 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
                 filePath={props.boardUrl}
                 cells={props.cells}
                 selectableCells={selectedCells}
+                contents={linkDisplays}
                 cellClicked={cell => {
                     let cells: string[];
                     const index = selectedCells.indexOf(cell);
@@ -72,9 +93,19 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
                     selectValue={setSelectedLinkType}
                 />
 
-                <p>Screen direction</p>
+                <SelectorSingle
+                    prefixText="Screen direction:"
+                    radioGroup="screenDir"
+                    options={screenDirections}
+                    selectedValue={direction}
+                    selectValue={val => setDirection(val as ScreenDirection)}
+                />
 
-                <p>Distance</p>
+                <p>
+                    <button onClick={() => setDistance(distance * 1.2)}>Increase distance</button>
+                    &nbsp;
+                    <button onClick={() => setDistance(distance / 1.2)}>Decrease distance</button>
+                </p>
 
                 <button>Create links</button>
             </div>
@@ -85,4 +116,36 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
             </div>
         </div>
     );
+}
+
+function renderLinkPointer(direction: ScreenDirection, distance: number) {
+    let angle: number;
+
+    switch (direction) {
+        case 'up':
+            angle = -90; break;
+        case 'down':
+            angle = 90; break;
+        case 'left':
+            angle = 180; break;
+        case 'up & left':
+            angle = -135; break;
+        case 'up & right':
+            angle = -45; break;
+        case 'down & left':
+            angle = 135; break;
+        case 'down & right':
+            angle = 45; break;
+        default:
+            angle = 0; break;
+    }
+
+    const style: CSSProperties = {
+        width: `${distance}px`,
+        transform: `rotate(${angle}deg)`,
+    };
+
+    return (
+        <div style={style} className="bulkLinker__pointer" />
+    )
 }

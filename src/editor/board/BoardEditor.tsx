@@ -10,6 +10,9 @@ import { RegionCreator } from './pages/RegionCreator';
 import { BoardSummary } from './pages/BoardSummary';
 import { LinkTypes } from './pages/LinkTypes';
 import { ManualLinker } from './pages/ManualLinker';
+import { DirectionSetup } from './pages/DirectionSetup';
+import { DirectionGroups } from './pages/DirectionGroups';
+import { PlayerDirections } from './pages/PlayerDirections';
 
 interface Props {
     name: string;
@@ -57,6 +60,27 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
+                    />
+                </Route>
+                <Route path="/directions">
+                    <DirectionSetup
+                        boardUrl={state.imageUrl}
+                        cells={state.cells}
+                        linkTypes={state.linkTypes}
+                    />
+                </Route>
+                <Route path="/directiongroups">
+                    <DirectionGroups
+                        boardUrl={state.imageUrl}
+                        cells={state.cells}
+                        linkTypes={state.linkTypes}
+                    />
+                </Route>
+                <Route path="/playerdirections">
+                    <PlayerDirections
+                        boardUrl={state.imageUrl}
+                        cells={state.cells}
+                        linkTypes={state.linkTypes}
                     />
                 </Route>
                 <Route path="/regions">

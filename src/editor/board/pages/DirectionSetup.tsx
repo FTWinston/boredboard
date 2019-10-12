@@ -1,19 +1,20 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './RegionCreator.css';
+import './DirectionSetup.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 
 interface Props {
     boardUrl: string;
     cells: string[];
+    linkTypes: string[];
 }
 
-export const RegionCreator: React.FunctionComponent<Props> = props => {
+export const DirectionSetup: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
     return (
-        <div className="boardEditor regionCreator">
+        <div className="boardEditor directionSetup">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
@@ -21,12 +22,12 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
             />
 
             <div className="boardEditor__content">
-                Ability to create board regions, both general and per-player
+                Ability to specify how one link type is "relative" to another. E.g. north is "left" of east. Need a fixed list of relative direction types, and a list of link types. Relative direction names shouldn’t match link types.
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/playerdirections">Back</Link>
-                <Link to="/">Continue</Link>
+                <Link to="/manuallinks">Back</Link>
+                <Link to="/directiongroups">Continue</Link>
             </div>
         </div>
     );

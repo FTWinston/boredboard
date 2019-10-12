@@ -1,19 +1,20 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './RegionCreator.css';
+import './PlayerDirections.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 
 interface Props {
     boardUrl: string;
     cells: string[];
+    linkTypes: string[];
 }
 
-export const RegionCreator: React.FunctionComponent<Props> = props => {
+export const PlayerDirections: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
     return (
-        <div className="boardEditor regionCreator">
+        <div className="boardEditor playerDirections">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
@@ -21,12 +22,12 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
             />
 
             <div className="boardEditor__content">
-                Ability to create board regions, both general and per-player
+                Ability to optionally associate each player with a direction. This will be their "forward" direction.
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/playerdirections">Back</Link>
-                <Link to="/">Continue</Link>
+                <Link to="/directiongroups">Back</Link>
+                <Link to="/regions">Continue</Link>
             </div>
         </div>
     );

@@ -71,17 +71,21 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
                     To test your board, select a cell, and its region(s) will be shown, all linked cell will be highlighted, and their link types will be shown.
                 </p>
 
-                <div>
-                    <button onClick={props.saveData}>save board</button>
-                </div>
+                <ol>
+                    <li><Link to="/image">Change image</Link></li>
+                    <li><Link to="/cells">Modify cells</Link></li>
+                    <li><Link to="/linktypes">Link types</Link></li>
+                    <li><Link to="/bulklinks">Bulk links</Link></li>
+                    <li><Link to="/manuallinks">Manual links</Link></li>
+                    <li><Link to="/directions">Relative directions</Link></li>
+                    <li><Link to="/directiongroups">Direction groups</Link></li>
+                    <li><Link to="/playerdirections">Player directions</Link></li>
+                    <li><Link to="/regions">Modify regions</Link></li>
+                </ol>
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/image">Change image</Link>
-                <Link to="/cells">Modify cells</Link>
-                <Link to="/bulklinks">Bulk links</Link>
-                <Link to="/manuallinks">Manual links</Link>
-                <Link to="/regions">Modify regions</Link>
+                <button onClick={props.saveData}>save board</button>
             </div>
         </div>
     );

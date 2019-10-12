@@ -105,7 +105,7 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
 
             <div className="boardEditor__navigation">
                 <Link to="/bulklinks">Back</Link>
-                <Link to="/regions">Continue</Link>
+                <Link to="/directions">Continue</Link>
             </div>
         </div>
     );

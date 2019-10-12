@@ -1,0 +1,8 @@
+.selectAllNone {
+    display: flex;
+    justify-content: center;
+}
+
+.selectAllNone > * + * {
+    margin-left: 2em;
+}

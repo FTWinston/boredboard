@@ -33,19 +33,3 @@
     border-left: solid grey 1px;
     padding-left: 1em;
 }
-
-.manualLinker__linkType {
-    margin: 0.2em 0.5em;
-}
-
-.manualLinker__linkType--selected {
-    font-weight: bold;
-}
-
-.manualLinker__linkType > input {
-    display: none;
-}
-
-.manualLinker__link {
-    cursor: pointer;
-}

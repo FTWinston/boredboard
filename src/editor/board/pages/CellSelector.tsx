@@ -4,6 +4,8 @@ import './CellSelector.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
+import { SelectAllNone } from '../components/SelectAllNone';
+import { SelectorMulti } from '../components/SelectorMulti';
 
 interface Props {
     boardUrl: string;
@@ -30,33 +32,6 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
             }
         }
     };
-
-    const cellList = elementIDs.map(id => {
-        const selected = props.cells.indexOf(id) !== -1;
-
-        const classes = selected
-            ? 'cellSelector__cellID cellSelector__cellID--selected'
-            : 'cellSelector__cellID cellSelector__cellID--unselected';
-
-        const clicked = (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.currentTarget.checked) {
-                context({ type: 'add cell', cell: id })
-            }
-            else {
-                context({ type: 'remove cell', cell: id })
-            }
-        };
-
-        return (
-            <label
-                key={id}
-                className={classes}
-            >
-                <input type="checkbox" checked={selected} onChange={clicked} />
-                {id}
-            </label>
-        )
-    });
 
     const continueLink = props.cells.length === 0
         ? <div title="Cannot continue until cells are selected">Continue</div>
@@ -85,16 +60,34 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                 <p>
                     If there's any elements that should be board cells, edit your board image (in notepad?) to give them IDs.
                 </p>
-                
-                <div className="cellSelector__allNone">
-                    <button disabled={props.cells.length === elementIDs.length} onClick={() => context({ type: 'set cells', cells: elementIDs})}>select all</button>
-                    <button disabled={props.cells.length === 0} onClick={() => context({ type: 'set cells', cells: []})}>select none</button>
-                </div>
 
+                <SelectAllNone
+                    selectAll={
+                        props.cells.length === elementIDs.length
+                            ? undefined
+                            : () => context({ type: 'set cells', cells: elementIDs})
+                    }
+                    selectNone={
+                        props.cells.length === 0
+                            ? undefined
+                            : () => context({ type: 'set cells', cells: []})
+                    }
+                />
+                
                 <div className="boardEditor__listTitle">Element IDs</div>
-                <div className="cellSelector__cellList">
-                    {cellList}
-                </div>
+
+                <SelectorMulti
+                    options={elementIDs}
+                    selectedValues={props.cells}
+                    changeValue={(cell, selected) => {
+                        if (selected) {
+                            context({ type: 'add cell', cell })
+                        }
+                        else {
+                            context({ type: 'remove cell', cell })
+                        }
+                    }}
+                />
             </div>
 
             <div className="boardEditor__navigation">

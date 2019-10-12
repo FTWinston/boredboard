@@ -1,0 +1,18 @@
+.selector {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.selector__value {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 0.5em 0.4em 0.5em;
+}
+
+.selector__value--selected {
+    font-weight: bold;
+}
+
+.selector--single .selector__value--selected {
+    cursor: default;
+}

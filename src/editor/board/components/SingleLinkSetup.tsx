@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { SelectorSingle } from './SelectorSingle';
 
 interface Props {
     className?: string;
@@ -11,30 +12,7 @@ interface Props {
 }
 
 export const SingleLinkSetup: React.FunctionComponent<Props> = props => {
-    const { linkTypes, selectedLinkType, selectLinkType, linkFrom, linkedTo, undoAdd } = props;
-
-    const linkTypeSelectors = useMemo(
-        () => linkTypes.map(type => {
-            const selected = type === selectedLinkType;
-
-            const classes = selected
-                ? 'manualLinker__linkType manualLinker__linkType--selected'
-                : 'manualLinker__linkType'
-
-            return (
-                <label key={type} className={classes}>
-                    {type}
-                    <input
-                        type="radio"
-                        radioGroup="linkType"
-                        checked={selected}
-                        onChange={() => selectLinkType(type)}
-                    />
-                </label>
-            );
-        }),
-        [linkTypes, selectedLinkType, selectLinkType]
-    );
+    const { linkFrom, linkedTo, undoAdd } = props;
 
     const stateDescription = useMemo(() => {
         if (props.linkFrom === null) {
@@ -72,10 +50,13 @@ export const SingleLinkSetup: React.FunctionComponent<Props> = props => {
                 You can click the <em>from</em> cell again to cancel, and you can easily undo the last link added.
             </p>
 
-            <p>
-                Link type: 
-                {linkTypeSelectors}
-            </p>
+            <SelectorSingle
+                prefixText="Link type:"
+                radioGroup="linkType"
+                options={props.linkTypes}
+                selectedValue={props.selectedLinkType}
+                selectValue={props.selectLinkType}
+            />
 
             {stateDescription}
 

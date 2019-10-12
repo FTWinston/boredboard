@@ -1,9 +1,9 @@
-import React, { useContext, useState, useMemo, CSSProperties } from 'react';
+import React, { useContext, useState, useMemo, CSSProperties, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './BulkLinker.css';
 import { BoardDisplay, ICellItem } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
-import { ILink } from '../boardReducer';
+import { ILink, BoardAction } from '../boardReducer';
 import { SelectAllNone } from '../components/SelectAllNone';
 import { SelectorSingle } from '../components/SelectorSingle';
 
@@ -19,6 +19,8 @@ const screenDirections: ScreenDirection[] = ['up', 'down', 'left', 'right', 'up 
 
 export const BulkLinker: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
+
+    const root = useRef<HTMLDivElement>(null);
 
     const [selectedLinkType, setSelectedLinkType] = useState(props.linkTypes[0]);
 
@@ -42,7 +44,7 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
     );
 
     return (
-        <div className="boardEditor bulkLinker">
+        <div className="boardEditor bulkLinker" ref={root}>
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}
@@ -107,7 +109,12 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
                     <button onClick={() => setDistance(distance / 1.2)}>Decrease distance</button>
                 </p>
 
-                <button>Create links</button>
+                <button
+                    disabled={selectedCells.length === 0}
+                    onClick={() => findAndLinkCells(root.current!, selectedCells, distance, direction, selectedLinkType, context)}
+                >
+                    Create links
+                </button>
             </div>
 
             <div className="boardEditor__navigation">
@@ -119,26 +126,7 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
 }
 
 function renderLinkPointer(direction: ScreenDirection, distance: number) {
-    let angle: number;
-
-    switch (direction) {
-        case 'up':
-            angle = -90; break;
-        case 'down':
-            angle = 90; break;
-        case 'left':
-            angle = 180; break;
-        case 'up & left':
-            angle = -135; break;
-        case 'up & right':
-            angle = -45; break;
-        case 'down & left':
-            angle = 135; break;
-        case 'down & right':
-            angle = 45; break;
-        default:
-            angle = 0; break;
-    }
+    const angle = getAngle(direction);
 
     const style: CSSProperties = {
         width: `${distance}px`,
@@ -148,4 +136,78 @@ function renderLinkPointer(direction: ScreenDirection, distance: number) {
     return (
         <div style={style} className="bulkLinker__pointer" />
     )
+}
+
+function getAngle(direction: ScreenDirection) {
+    switch (direction) {
+        case 'up':
+            return -90;
+        case 'down':
+            return 90;
+        case 'left':
+            return 180;
+        case 'up & left':
+            return -135;
+        case 'up & right':
+            return -45;
+        case 'down & left':
+            return 135;
+        case 'down & right':
+            return 45;
+        default:
+            return 0;
+    }
+}
+
+function findAndLinkCells(
+    root: HTMLDivElement,
+    selectedCells: string[],
+    distance: number,
+    screenDir: ScreenDirection,
+    linkType: string,
+    context: React.Dispatch<BoardAction>
+) {
+    const angle = getAngle(screenDir);
+
+    const contentItems = root.querySelectorAll('.board > .board__contentItem');
+
+    const newLinks: ILink[] = [];
+    let numFailed = 0;
+
+    for (const item of contentItems) {
+        const fromCell = item.getAttribute('data-cell');
+        if (fromCell === null || selectedCells.indexOf(fromCell) === -1) {
+            continue;
+        }
+        
+        const bounds = item.getBoundingClientRect();
+        const centerX = bounds.left + bounds.width / 2;
+        const centerY = bounds.top + bounds.height / 2;
+
+        // TODO project to get these points
+        const testX = centerX + 100;
+        const testY = centerY + 100;
+
+        const toElement = document.elementFromPoint(testX, testY);
+        if (toElement === null) {
+            numFailed++;
+            continue;
+        }
+
+        // TODO: ensure we're still in the svg
+
+        const toCell = toElement.id;
+        if (toCell === '') {
+            numFailed++;
+            continue;
+        }
+
+        newLinks.push({
+            fromCell,
+            toCell,
+            type: linkType,
+        });
+    }
+
+    // TODO: create links into context, report on number created & failed
 }

@@ -49,6 +49,9 @@ export type BoardAction = {
     type: 'set links';
     links: ILink[];
 } | {
+    type: 'add links';
+    links: ILink[];
+} | {
     type: 'add link';
     fromCell: string;
     toCell: string;
@@ -162,23 +165,34 @@ export function reducer(state: IState, action: BoardAction): IState {
         case 'set links':
             return {
                 ...state,
-                links: action.links.filter( // only take valid links
-                    l => state.cells.indexOf(l.fromCell) !== -1
-                    && state.cells.indexOf(l.toCell) !== -1
-                    && state.linkTypes.indexOf(l.type) !== -1
-                ),
+                links: action.links.filter(l => isValidLink(l, state)),
             };
 
-        case 'add link':
+        case 'add links':
             return {
                 ...state,
                 links: [
                     ...state.links,
-                    {
-                        fromCell: action.fromCell,
-                        toCell: action.toCell,
-                        type: action.linkType,
-                    }
+                    ...action.links.filter(l => isValidLink(l, state) && !isDuplicateLink(l, state.links)),
+                ],
+            };
+    
+        case 'add link':
+            const newLink = {
+                fromCell: action.fromCell,
+                toCell: action.toCell,
+                type: action.linkType,
+            };
+
+            if (!isValidLink(newLink, state) || isDuplicateLink(newLink, state.links)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                links: [
+                    ...state.links,
+                    newLink,
                 ],
             };
 
@@ -265,4 +279,18 @@ function removeFromListCopy<T>(list: T[], item: T): T[] {
     list.splice(pos, 1);
 
     return list;
+}
+
+function isValidLink(link: ILink, state: IState) {
+    return state.cells.indexOf(link.fromCell) !== -1
+        && state.cells.indexOf(link.toCell) !== -1
+        && state.linkTypes.indexOf(link.type) !== -1;
+}
+
+export function isDuplicateLink(link: ILink, existingLinks: ILink[]) {
+    return existingLinks.find(
+        l => l.fromCell === link.fromCell
+        && l.toCell === link.toCell
+        && l.type === link.type
+    ) !== undefined;
 }

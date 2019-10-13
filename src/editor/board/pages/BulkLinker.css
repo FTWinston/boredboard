@@ -15,3 +15,22 @@
     transition-duration: 1s;
     transition-property: transform;
 }
+
+.bulkLinker__columns {
+    flex-grow: 1;
+    display: flex;
+}
+
+.bulkLinker__createLinks {
+    padding-right: 1em;
+}
+
+.bulkLinker__existingLinks {
+    border-left: solid grey 1px;
+    padding-left: 1em;
+    min-width: 12em;
+}
+
+.bulkLinker__link {
+    cursor: pointer;
+}

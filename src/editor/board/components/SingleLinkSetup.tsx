@@ -40,7 +40,7 @@ export const SingleLinkSetup: React.FunctionComponent<Props> = props => {
 
     return (
         <div className={props.className}>
-            <div className="boardEditor__listTitle">Create links</div>
+            <div className="boardEditor__listTitle">Create a link</div>
 
             <p>
                 Select a link type, then click a cell to link <em>from</em>, then a cell to link <em>to</em>.

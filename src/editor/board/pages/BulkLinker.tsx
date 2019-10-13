@@ -1,11 +1,10 @@
-import React, { useContext, useState, useMemo, CSSProperties, useRef } from 'react';
+import React, { useState, useMemo, CSSProperties, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './BulkLinker.css';
 import { BoardDisplay, ICellItem } from '../../../components/board';
-import { BoardDispatch } from '../BoardEditor';
-import { ILink, BoardAction } from '../boardReducer';
-import { SelectAllNone } from '../components/SelectAllNone';
-import { SelectorSingle } from '../components/SelectorSingle';
+import { ILink } from '../boardReducer';
+import { MultiLinkSetup, ScreenDirection, getAngle } from '../components/MultiLinkSetup';
+import { BoardLinkGroups } from '../components/BoardLinkGroups';
 
 interface Props {
     boardUrl: string;
@@ -14,15 +13,17 @@ interface Props {
     links: ILink[];
 }
 
-type ScreenDirection = 'up' | 'down' | 'left' | 'right' | 'up & left' | 'up & right' | 'down & left' | 'down & right';
-const screenDirections: ScreenDirection[] = ['up', 'down', 'left', 'right', 'up & left', 'up & right', 'down & left', 'down & right'];
+interface ICreationInfo {
+    previousLinks: ILink[];
+    numAdded: number;
+    numNoCell: number;
+    numSelf: number;
+    numDuplicate: number;
+    linkType: string;
+}
 
 export const BulkLinker: React.FunctionComponent<Props> = props => {
-    const context = useContext(BoardDispatch);
-
     const root = useRef<HTMLDivElement>(null);
-
-    const [selectedLinkType, setSelectedLinkType] = useState(props.linkTypes[0]);
 
     const [selectedCells, setSelectedCells] = useState([] as string[]);
 
@@ -66,55 +67,35 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
             />
             
             <div className="boardEditor__content">
-                <p>Click cells to select them, or select all with the button below.</p>
-                
-                <p>Choose a link type, a direction (relative to the screen) and a distance.</p>
-
-                <p>Click <em>link</em> to trace outward from each starting point in the specified direction, and create a link of the selected type to any cell that is reached.</p>
-                
-                <p>If you want to manually add/remove individual links, the next step makes this easier.</p>
-
-                <SelectAllNone
-                    selectAll={
-                        props.cells.length === selectedCells.length
-                            ? undefined
-                            : () => setSelectedCells(props.cells)
-                    }
-                    selectNone={
-                        selectedCells.length === 0
-                            ? undefined
-                            : () => setSelectedCells([])
-                    }
-                />
-                
-                <SelectorSingle
-                    prefixText="Link type:"
-                    radioGroup="linkType"
-                    options={props.linkTypes}
-                    selectedValue={selectedLinkType}
-                    selectValue={setSelectedLinkType}
-                />
-
-                <SelectorSingle
-                    prefixText="Screen direction:"
-                    radioGroup="screenDir"
-                    options={screenDirections}
-                    selectedValue={direction}
-                    selectValue={val => setDirection(val as ScreenDirection)}
-                />
-
                 <p>
-                    <button onClick={() => setDistance(distance * 1.2)}>Increase distance</button>
-                    &nbsp;
-                    <button onClick={() => setDistance(distance / 1.2)}>Decrease distance</button>
+                    Click cells to select them, or select all with the button below.<br/>
+                    Choose a link type, a direction (relative to the screen) and a distance.
                 </p>
 
-                <button
-                    disabled={selectedCells.length === 0}
-                    onClick={() => findAndLinkCells(root.current!, selectedCells, distance, direction, selectedLinkType, context)}
-                >
-                    Create links
-                </button>
+                <p>Click <em>create links</em> to trace from each selected cell in the specified direction, and create links of the selected type to the cells that are reached.</p>
+                
+                <p>If you want to manually add/remove individual links, this is easier in the next step.</p>
+
+                <div className="bulkLinker__columns">
+                    <MultiLinkSetup
+                        className="bulkLinker__createLinks"
+                        cells={props.cells}
+                        linkTypes={props.linkTypes}
+                        links={props.links}
+                        direction={direction}
+                        setDirection={setDirection}
+                        distance={distance}
+                        setDistance={setDistance}
+                        selectedCells={selectedCells}
+                        setSelectedCells={setSelectedCells}
+                        getBoardElements={() => root.current!.querySelectorAll('.board > .board__contentItem')}
+                    />
+                    
+                    <BoardLinkGroups
+                        className="bulkLinker__existingLinks"
+                        links={props.links}
+                    />
+                </div>
             </div>
 
             <div className="boardEditor__navigation">
@@ -136,78 +117,4 @@ function renderLinkPointer(direction: ScreenDirection, distance: number) {
     return (
         <div style={style} className="bulkLinker__pointer" />
     )
-}
-
-function getAngle(direction: ScreenDirection) {
-    switch (direction) {
-        case 'up':
-            return -90;
-        case 'down':
-            return 90;
-        case 'left':
-            return 180;
-        case 'up & left':
-            return -135;
-        case 'up & right':
-            return -45;
-        case 'down & left':
-            return 135;
-        case 'down & right':
-            return 45;
-        default:
-            return 0;
-    }
-}
-
-function findAndLinkCells(
-    root: HTMLDivElement,
-    selectedCells: string[],
-    distance: number,
-    screenDir: ScreenDirection,
-    linkType: string,
-    context: React.Dispatch<BoardAction>
-) {
-    const angle = getAngle(screenDir);
-
-    const contentItems = root.querySelectorAll('.board > .board__contentItem');
-
-    const newLinks: ILink[] = [];
-    let numFailed = 0;
-
-    for (const item of contentItems) {
-        const fromCell = item.getAttribute('data-cell');
-        if (fromCell === null || selectedCells.indexOf(fromCell) === -1) {
-            continue;
-        }
-        
-        const bounds = item.getBoundingClientRect();
-        const centerX = bounds.left + bounds.width / 2;
-        const centerY = bounds.top + bounds.height / 2;
-
-        // TODO project to get these points
-        const testX = centerX + 100;
-        const testY = centerY + 100;
-
-        const toElement = document.elementFromPoint(testX, testY);
-        if (toElement === null) {
-            numFailed++;
-            continue;
-        }
-
-        // TODO: ensure we're still in the svg
-
-        const toCell = toElement.id;
-        if (toCell === '') {
-            numFailed++;
-            continue;
-        }
-
-        newLinks.push({
-            fromCell,
-            toCell,
-            type: linkType,
-        });
-    }
-
-    // TODO: create links into context, report on number created & failed
 }

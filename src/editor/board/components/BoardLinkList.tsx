@@ -54,7 +54,7 @@ export const BoardLinkList: React.FunctionComponent<Props> = props => {
 
     return (
         <div className={props.className}>
-            <div className="boardEditor__listTitle">Remove links</div>
+            <div className="boardEditor__listTitle">Existing links</div>
             <p>Click an existing link to remove it.</p>
 
             <div className="manualLinker__existingLinkList">

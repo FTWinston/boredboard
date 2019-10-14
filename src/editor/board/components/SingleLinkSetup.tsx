@@ -26,6 +26,16 @@ export const SingleLinkSetup: React.FunctionComponent<Props> = props => {
         return <p>Created link from {props.linkFrom} to {props.linkedTo}.</p>
     }, [props.linkFrom, props.linkedTo]);
 
+    const linkTypeSelector = props.linkTypes.length <= 2
+        ? undefined
+        : <SelectorSingle
+            prefixText="Link type:"
+            radioGroup="linkType"
+            options={props.linkTypes}
+            selectedValue={props.selectedLinkType}
+            selectValue={props.selectLinkType}
+        />
+
     const undoButton = useMemo(() => {
         if (linkedTo === null || linkFrom === null) {
             return undefined;
@@ -43,20 +53,14 @@ export const SingleLinkSetup: React.FunctionComponent<Props> = props => {
             <div className="boardEditor__listTitle">Create a link</div>
 
             <p>
-                Select a link type, then click a cell to link <em>from</em>, then a cell to link <em>to</em>.
+                {props.linkTypes.length <= 1 ? 'Click' : 'Select a link type, then click'} a cell to link <em>from</em>, then a cell to link <em>to</em>.
             </p>
 
             <p>
                 You can click the <em>from</em> cell again to cancel, and you can easily undo the last link added.
             </p>
 
-            <SelectorSingle
-                prefixText="Link type:"
-                radioGroup="linkType"
-                options={props.linkTypes}
-                selectedValue={props.selectedLinkType}
-                selectValue={props.selectLinkType}
-            />
+            {linkTypeSelector}
 
             {stateDescription}
 

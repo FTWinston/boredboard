@@ -13,15 +13,6 @@ interface Props {
     links: ILink[];
 }
 
-interface ICreationInfo {
-    previousLinks: ILink[];
-    numAdded: number;
-    numNoCell: number;
-    numSelf: number;
-    numDuplicate: number;
-    linkType: string;
-}
-
 export const BulkLinker: React.FunctionComponent<Props> = props => {
     const root = useRef<HTMLDivElement>(null);
 
@@ -43,6 +34,8 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
         },
         [selectedCells, distance, direction]
     );
+
+    const showLinkTypes = props.linkTypes.length > 1;
 
     return (
         <div className="boardEditor bulkLinker" ref={root}>
@@ -69,10 +62,10 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
             <div className="boardEditor__content">
                 <p>
                     Click cells to select them, or select all with the button below.<br/>
-                    Choose a link type, a direction (relative to the screen) and a distance.
+                    Choose {showLinkTypes ? 'a link type, ' : ''}a direction (relative to the screen) and a distance.
                 </p>
 
-                <p>Click <em>create links</em> to trace from each selected cell in the specified direction, and create links of the selected type to the cells that are reached.</p>
+                <p>Click <em>create links</em> to trace from each selected cell in the specified direction, and create links {showLinkTypes ? 'of the selected type ' : ''}to the cells that are reached.</p>
                 
                 <p>If you want to manually add/remove individual links, this is easier in the next step.</p>
 

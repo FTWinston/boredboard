@@ -230,7 +230,7 @@ export function reducer(state: IState, action: BoardAction): IState {
                     type: l.type === action.oldName ? action.newName : l.type,
                 }))
             };
-
+        
         case 'set regions':
             return {
                 ...state,

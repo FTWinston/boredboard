@@ -52,7 +52,7 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
             setCreationInfo(undefined);
         };
 
-        const messages = [`Created ${numAdded} ${linkType} link${numAdded === 1 ? '' :'s'}.`];
+        const messages = [`Created ${numAdded} ${props.linkTypes.length <= 1 ? '' : linkType} link${numAdded === 1 ? '' :'s'}.`];
         
         if (numNoCell > 0) {
             messages.push(`Failed to create ${numNoCell} link${numNoCell === 1 ? ' as it' :'s as they'} didn't end in a cell.`);
@@ -76,7 +76,7 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
             </ul>,
             undoButton
         ]
-    }, [creationInfo, context]);
+    }, [creationInfo, context, props.linkTypes.length]);
 
     const createLinks = (newLinks: ILink[], numNoCell: number, numSelf: number) => {
         const linksToAdd = newLinks.filter(l => !isDuplicateLink(l, props.links));
@@ -98,6 +98,16 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
         }
     }
 
+    const linkTypeSelector = props.linkTypes.length <= 1
+        ? undefined
+        : <SelectorSingle
+            prefixText="Link type:"
+            radioGroup="linkType"
+            options={props.linkTypes}
+            selectedValue={selectedLinkType}
+            selectValue={setSelectedLinkType}
+        />
+
     return (
         <div className={props.className}>
             <div className="boardEditor__listTitle">Create links</div>
@@ -115,13 +125,7 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
                 }
             />
             
-            <SelectorSingle
-                prefixText="Link type:"
-                radioGroup="linkType"
-                options={props.linkTypes}
-                selectedValue={selectedLinkType}
-                selectValue={setSelectedLinkType}
-            />
+            {linkTypeSelector}
 
             <SelectorSingle
                 prefixText="Screen direction:"

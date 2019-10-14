@@ -15,36 +15,34 @@ interface Props {
 export const LinkTypes: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
-    const continueLink = props.linkTypes.length === 0
-        ? <div title="Cannot continue until at least one link type is defined">Continue</div>
-        : <Link to="/bulklinks">Continue</Link>
+    const existingTypes = props.linkTypes.length === 1 && props.linkTypes[0] === ''
+        ? undefined
+        : props.linkTypes.map((type, i) => {
+            const editType = (val: string) => {
+                if (val === '') {
+                    context({
+                        type: 'remove link type',
+                        linkType: type,
+                    });
+                }
 
-    const existingTypes = props.linkTypes.map((type, i) => {
-        const editType = (val: string) => {
-            if (val === '') {
                 context({
-                    type: 'remove link type',
-                    linkType: type,
+                    type: 'rename link type',
+                    oldName: type,
+                    newName: val,
                 });
-            }
+            };
 
-            context({
-                type: 'rename link type',
-                oldName: type,
-                newName: val,
-            });
-        };
-
-        return (
-            <UniqueTextBox
-                key={type}
-                disallowedValues={props.linkTypes}
-                allowIndex={i}
-                initialValue={type}
-                finishedEditing={editType}
-            />
-        );
-    });
+            return (
+                <UniqueTextBox
+                    key={type}
+                    disallowedValues={props.linkTypes}
+                    allowIndex={i}
+                    initialValue={type}
+                    finishedEditing={editType}
+                />
+            );
+        });
 
     const addType = (val: string) => {
         if (val.length > 0) {
@@ -66,23 +64,17 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
             
             <div className="boardEditor__content">
                 <p>
-                    Please specify all of the link types that can exist between cells.
+                    Do different pieces move in different directions? (e.g. chess)<br/>
+                    Can pieces move on different paths? (e.g. snakes &amp; ladders)<br/>
+                    Might pieces move in different directions at different times? (e.g. usually forward but occasionally backward)
                 </p>
                 <p>
-                    In some games, there might be only one link type, convering movement in all directions,
-                    whereas other games will have a different link type for each direction.
+                    If any of these apply, you need to use different link types for each direction or path.<br/>
+                    Please specify them here.
                 </p>
                 <p>
-                    If pieces in your game care about what directions they move in (e.g. chess pawns move forward, not backwards or sideways),
-                    then you'll need a different link type for each direction.
-                    <br/>These should be absolute directions (e.g. north, south, east, west).
-                    <br/>If different players have different concepts of "forward" (such as in chess), this will be handled at a later step.
-                </p>
-                <p>
-                    If pieces in your game follow different paths (e.g. up ladders and down snakes), then you'll need a different link type for each type of path.
-                </p>
-                <p>
-                    If directions don't matter to piece movement, or if they only have a single path they can move on, you might only need one link type.
+                    If none of these apply, leave the list blank.<br/>
+                    If different players have different concepts of "forward" (such as in chess), this will be handled at a later step.<br/>
                 </p>
 
                 <div className="boardEditor__listTitle">Link types</div>
@@ -107,7 +99,12 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
 
             <div className="boardEditor__navigation">
                 <Link to="/cells">Back</Link>
-                {continueLink}
+                <Link
+                    to="/bulklinks"
+                    onClick={() => { if (props.linkTypes.length === 0) { context({ type: 'set link types', linkTypes: [''] }); } }}
+                >
+                    Continue
+                </Link>
             </div>
         </div>
     );

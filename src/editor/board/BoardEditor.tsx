@@ -60,12 +60,11 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
+                        nextPage={state.linkTypes.length <= 1 ? '/regions' : '/directions'}
                     />
                 </Route>
                 <Route path="/directions">
                     <DirectionSetup
-                        boardUrl={state.imageUrl}
-                        cells={state.cells}
                         linkTypes={state.linkTypes}
                     />
                 </Route>
@@ -97,6 +96,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         <BoardSummary
                             boardUrl={state.imageUrl}
                             cells={state.cells}
+                            linkTypes={state.linkTypes}
                             links={state.links}
                             regions={state.regions}
                             saveData={() => props.saveData(saveBoardData(state))}

@@ -13,6 +13,7 @@ interface Props {
     cells: string[];
     linkTypes: string[];
     links: ILink[];
+    nextPage: string;
 }
 
 export const ManualLinker: React.FunctionComponent<Props> = props => {
@@ -99,13 +100,17 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                         }}
                         undoAdd={undoAdd}
                     />
-                    <BoardLinkList links={props.links} className="manualLinker__existingLinks" />
+                    <BoardLinkList
+                        links={props.links}
+                        linkTypes={props.linkTypes}
+                        className="manualLinker__existingLinks"
+                    />
                 </div>
             </div>
 
             <div className="boardEditor__navigation">
                 <Link to="/bulklinks">Back</Link>
-                <Link to="/directions">Continue</Link>
+                <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>
     );

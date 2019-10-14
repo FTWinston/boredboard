@@ -5,6 +5,7 @@ import { ILink } from '../boardReducer';
 interface Props {
     className?: string;
     links: ILink[];
+    linkTypes: string[];
 }
 
 export const BoardLinkList: React.FunctionComponent<Props> = props => {
@@ -27,9 +28,9 @@ export const BoardLinkList: React.FunctionComponent<Props> = props => {
                 });
             }}
         >
-            {link.type} from {link.fromCell} to {link.toCell}
+            {props.linkTypes.length <= 1 ? 'Link' : link.type} from {link.fromCell} to {link.toCell}
         </div>
-    )), [props.links, context]);
+    )), [props.links, props.linkTypes, context]);
 
     const undoButton = useMemo(() => {
         if (lastRemoved === null) {

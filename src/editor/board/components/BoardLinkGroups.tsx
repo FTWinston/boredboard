@@ -31,7 +31,7 @@ export const BoardLinkGroups: React.FunctionComponent<Props> = props => {
                         });
                     }}
                 >
-                    {count}x {linkType}
+                    {count}{linkType.length > 0 ? `x ${linkType}` : ' links'}
                 </div>
             )
         }

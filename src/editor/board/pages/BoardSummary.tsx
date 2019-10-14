@@ -8,6 +8,7 @@ import { ILink, IRegion } from '../boardReducer';
 interface Props {
     boardUrl: string;
     cells: string[];
+    linkTypes: string[];
     links: ILink[];
     regions: IRegion[];
     saveData: () => void;
@@ -45,6 +46,14 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
         [selectedCell, props.links, props.regions]
     );
 
+    const directionLinks = props.linkTypes.length > 1
+        ? <>
+            <li><Link to="/directions">Relative directions</Link></li>
+            <li><Link to="/directiongroups">Direction groups</Link></li>
+            <li><Link to="/playerdirections">Player directions</Link></li>
+        </>
+        : undefined;
+
     return (
         <div className="boardEditor boardSummary">
             <BoardDisplay
@@ -77,9 +86,7 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
                     <li><Link to="/linktypes">Link types</Link></li>
                     <li><Link to="/bulklinks">Bulk links</Link></li>
                     <li><Link to="/manuallinks">Manual links</Link></li>
-                    <li><Link to="/directions">Relative directions</Link></li>
-                    <li><Link to="/directiongroups">Direction groups</Link></li>
-                    <li><Link to="/playerdirections">Player directions</Link></li>
+                    {directionLinks}
                     <li><Link to="/regions">Modify regions</Link></li>
                 </ol>
             </div>

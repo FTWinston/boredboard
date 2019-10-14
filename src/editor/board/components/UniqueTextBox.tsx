@@ -7,6 +7,7 @@ interface Props {
     finishedEditing: (value: string) => void;
     disallowedValues: string[];
     allowIndex?: number;
+    hidden?: boolean;
 }
 
 export const UniqueTextBox: React.FunctionComponent<Props> = props => {
@@ -22,18 +23,23 @@ export const UniqueTextBox: React.FunctionComponent<Props> = props => {
 
     const classes = useMemo(
         () => {
-            if (isValid) {
-                return props.className
-                    ? `${props.className} uniqueTextBox`
-                    : `uniqueTextBox`;
+            let classes = 'uniqueTextBox';
+
+            if (props.hidden) {
+                classes += ' uniqueTextBox--hidden';
             }
-            else {
-                return props.className
-                    ? `${props.className} uniqueTextBox uniqueTextBox--invalid`
-                    : `uniqueTextBox uniqueTextBox--invalid`;
+
+            if (!isValid) {
+                classes += ' uniqueTextBox--invalid';
             }
+
+            if (props.className) {
+                classes = `${classes} ${props.className}`
+            }
+
+            return classes;
         },
-        [props.className, isValid]
+        [props.className, isValid, props.hidden]
     );
 
     return (

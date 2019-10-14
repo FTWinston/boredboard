@@ -13,7 +13,13 @@ export const DirectionSetup: React.FunctionComponent<Props> = props => {
     return (
         <div className="boardEditor directionSetup">
             <div className="boardEditor__board">
-                Manage a list of relative directions here (e.g. tangential &amp; opposite or left &amp; right)
+                <p>
+                    If your link types represent directions then you can optionally specify how those directions
+                    relate to each other. For example, in chess a knight moves two squares in one direction then
+                    one square in an <em>orthogonal</em> direction (i.e. at 90 degrees to the original direction).
+                    The concept of directions relating to each other lets us describe this without listing
+                    several different options.
+                </p>
             </div>
 
             <div className="boardEditor__content">

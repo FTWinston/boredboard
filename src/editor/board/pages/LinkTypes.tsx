@@ -4,7 +4,7 @@ import './LinkTypes.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
-import { UniqueTextBox } from '../components/UniqueTextBox';
+import { UniqueList } from '../components/UniqueList';
 
 interface Props {
     boardUrl: string;
@@ -15,34 +15,21 @@ interface Props {
 export const LinkTypes: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
-    const existingTypes = props.linkTypes.length === 1 && props.linkTypes[0] === ''
-        ? undefined
-        : props.linkTypes.map((type, i) => {
-            const editType = (val: string) => {
-                if (val === '') {
-                    context({
-                        type: 'remove link type',
-                        linkType: type,
-                    });
-                }
-
-                context({
-                    type: 'rename link type',
-                    oldName: type,
-                    newName: val,
-                });
-            };
-
-            return (
-                <UniqueTextBox
-                    key={type}
-                    disallowedValues={props.linkTypes}
-                    allowIndex={i}
-                    initialValue={type}
-                    finishedEditing={editType}
-                />
-            );
-        });
+    const changeType = (oldName: string, newName: string) => {
+        if (newName === '') {
+            context({
+                type: 'remove link type',
+                linkType: oldName,
+            });
+        }
+        else {
+            context({
+                type: 'rename link type',
+                oldName,
+                newName,
+            });
+        }
+    }
 
     const addType = (val: string) => {
         if (val.length > 0) {
@@ -79,20 +66,10 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
 
                 <div className="boardEditor__listTitle">Link types</div>
                 <div className="linkTypes__links">
-
-                    {existingTypes}
-                    <UniqueTextBox
-                        key={props.linkTypes.length}
-                        disallowedValues={props.linkTypes}
-                        initialValue=""
-                        finishedEditing={addType}
-                    />
-                    <UniqueTextBox
-                        className="linkTypes__nextLink"
-                        key={props.linkTypes.length+1}
-                        disallowedValues={props.linkTypes}
-                        initialValue=""
-                        finishedEditing={() => {}}
+                    <UniqueList
+                        addValue={addType}
+                        changeValue={changeType}
+                        values={props.linkTypes.length === 1 && props.linkTypes[0] === '' ? [] : props.linkTypes}
                     />
                 </div>
             </div>

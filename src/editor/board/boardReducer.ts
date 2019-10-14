@@ -6,6 +6,12 @@ export interface ILink {
     type: string;
 }
 
+export interface IRelation {
+    fromType: string;
+    toType: string;
+    relation: string;
+}
+
 export interface IRegion {
     name: string;
     player: number; // 0 for none, 1, 2 etc otherwise
@@ -17,6 +23,8 @@ interface IState {
     cells: string[];
     linkTypes: string[];
     links: ILink[];
+    relationTypes: string[];
+    relations: IRelation[];
     regions: IRegion[];
 }
 
@@ -62,6 +70,32 @@ export type BoardAction = {
     toCell: string;
     linkType: string;
 } | {
+    type: 'set relation types';
+    relationTypes: string[];
+} | {
+    type: 'add relation type';
+    relationType: string;
+} | {
+    type: 'remove relation type';
+    relationType: string;
+} | {
+    type: 'rename relation type';
+    oldName: string;
+    newName: string;
+} | {
+    type: 'set relations';
+    relations: IRelation[];
+} | {
+    type: 'add relation';
+    fromType: string;
+    toType: string;
+    relationType: string;
+} | {
+    type: 'remove relation';
+    fromType: string;
+    toType: string;
+    relationType: string;
+} | {
     type: 'set regions';
     regions: IRegion[];
 }
@@ -71,11 +105,16 @@ export function getInitialState(board?: IBoard): IState {
         const linkTypes = new Set<string>();
         const links = readBoardLinks(board, linkTypes);
 
+        const relationTypes = new Set<string>();
+        const relations = readBoardRelations(board, relationTypes);
+
         return {
             imageUrl: board.imageUrl,
             cells: Object.keys(board.links),
             linkTypes: [...linkTypes],
             links,
+            relationTypes: [...relationTypes],
+            relations,
             regions: readBoardRegions(board),
         };
     }
@@ -85,6 +124,8 @@ export function getInitialState(board?: IBoard): IState {
         cells: [],
         linkTypes: [],
         links: [],
+        relationTypes: [],
+        relations: [],
         regions: [],
     };
 }
@@ -110,6 +151,29 @@ function readBoardLinks(board: IBoard, linkTypes: Set<string>) {
     }
 
     return links;
+}
+
+function readBoardRelations(board: IBoard, relationTypes: Set<string>) {
+    const relations: IRelation[] = [];
+
+    for (const fromLinkType in board.relations) {
+        const typeRelations = board.relations[fromLinkType];
+
+        for (const relationType in typeRelations) {
+            relationTypes.add(relationType);
+            const toLinkTypes = typeRelations[relationType];
+
+            for (const toLinkType of toLinkTypes) {
+                relations.push({
+                    fromType: fromLinkType,
+                    toType: toLinkType,
+                    relation: relationType,
+                });
+            }
+        }
+    }
+
+    return relations;
 }
 
 function readBoardRegions(board: IBoard) {
@@ -162,6 +226,31 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ),
             };
 
+        case 'add link type':
+            return {
+                ...state,
+                linkTypes: [
+                    ...state.linkTypes,
+                    action.linkType,
+                ],
+            };
+
+        case 'remove link type':
+            return {
+                ...state,
+                linkTypes: state.linkTypes.filter(t => t !== action.linkType),
+            };
+
+        case 'rename link type':
+            return {
+                ...state,
+                linkTypes: state.linkTypes.map(t => t === action.oldName ? action.newName : t),
+                links: state.links.map(l => ({
+                    ...l,
+                    type: l.type === action.oldName ? action.newName : l.type,
+                }))
+            };
+
         case 'set links':
             return {
                 ...state,
@@ -206,29 +295,73 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ),
             };
 
-        case 'add link type':
+        case 'set relation types':
             return {
                 ...state,
-                linkTypes: [
-                    ...state.linkTypes,
-                    action.linkType,
+                relationTypes: action.relationTypes,
+                relations: state.relations.filter( // remove invalid relations
+                    l => action.relationTypes.indexOf(l.relation) !== -1
+                ),
+            };
+
+        case 'add relation type':
+            return {
+                ...state,
+                relationTypes: [
+                    ...state.relationTypes,
+                    action.relationType,
                 ],
             };
 
-        case 'remove link type':
+        case 'remove relation type':
             return {
                 ...state,
-                linkTypes: state.linkTypes.filter(t => t !== action.linkType),
+                linkTypes: state.linkTypes.filter(t => t !== action.relationType),
             };
 
-        case 'rename link type':
+        case 'rename relation type':
             return {
                 ...state,
-                linkTypes: state.linkTypes.map(t => t === action.oldName ? action.newName : t),
-                links: state.links.map(l => ({
+                relationTypes: state.relationTypes.map(t => t === action.oldName ? action.newName : t),
+                relations: state.relations.map(l => ({
                     ...l,
-                    type: l.type === action.oldName ? action.newName : l.type,
+                    relation: l.relation === action.oldName ? action.newName : l.relation,
                 }))
+            };
+
+        case 'set relations':
+            return {
+                ...state,
+                relations: action.relations.filter(r => isValidRelation(r, state)),
+            };
+
+        case 'add relation':
+            const newRelation = {
+                fromType: action.fromType,
+                toType: action.toType,
+                relation: action.relationType,
+            };
+
+            if (!isValidRelation(newRelation, state) || isDuplicateRelation(newRelation, state.relations)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                relations: [
+                    ...state.relations,
+                    newRelation,
+                ],
+            };
+
+        case 'remove relation':
+            return {
+                ...state,
+                relations: state.relations.filter(
+                    link => link.fromType !== action.fromType
+                        || link.toType !== action.toType
+                        || link.relation !== action.relationType
+                ),
             };
         
         case 'set regions':
@@ -292,5 +425,19 @@ export function isDuplicateLink(link: ILink, existingLinks: ILink[]) {
         l => l.fromCell === link.fromCell
         && l.toCell === link.toCell
         && l.type === link.type
+    ) !== undefined;
+}
+
+function isValidRelation(relation: IRelation, state: IState) {
+    return state.linkTypes.indexOf(relation.fromType) !== -1
+        && state.linkTypes.indexOf(relation.toType) !== -1
+        && state.relationTypes.indexOf(relation.relation) !== -1;
+}
+
+export function isDuplicateRelation(relation: IRelation, existingRelations: IRelation[]) {
+    return existingRelations.find(
+        r => r.fromType === relation.fromType
+        && r.toType === relation.toType
+        && r.relation === relation.relation
     ) !== undefined;
 }

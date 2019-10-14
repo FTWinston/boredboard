@@ -66,6 +66,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/directions">
                     <DirectionSetup
                         linkTypes={state.linkTypes}
+                        relationTypes={state.relationTypes}
+                        relations={state.relations}
                     />
                 </Route>
                 <Route path="/directiongroups">

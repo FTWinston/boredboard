@@ -1,61 +1,67 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './DirectionSetup.css';
 import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
-import { IRelation } from '../boardReducer';
+import { IRelativeLink } from '../boardReducer';
 import { SelectorMulti } from '../components/SelectorMulti';
 
 interface Props {
     linkTypes: string[];
-    relationTypes: string[];
-    relations: IRelation[];
+    relativeLinkTypes: string[];
+    relativeLinks: IRelativeLink[];
+    playerLinkTypes: string[];
 }
 
 export const DirectionSetup: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
-    const addRelationType = (val: string) => {
+    const addRelativeLinkType = (val: string) => {
         if (val.length > 0) {
             context({
-                type: 'add relation type',
-                relationType: val,
+                type: 'add relative link type',
+                relativeLinkType: val,
             });
         }
     };
     
-    const editRelationType = (oldName: string, newName: string) => {
+    const editRelativeLinkType = (oldName: string, newName: string) => {
         if (newName === '') {
             context({
-                type: 'remove relation type',
-                relationType: oldName,
+                type: 'remove relative link type',
+                relativeLinkType: oldName,
             });
         }
         else {
             context({
-                type: 'rename relation type',
+                type: 'rename relative link type',
                 oldName,
                 newName,
             });
         }
     }
 
-    const relationDisplays = props.linkTypes.map(fromType => {
-        const perRelationType = props.relationTypes.map(relationType => {
-            const toTypes = props.relations
-                .filter(rel => rel.fromType === fromType && rel.relation === relationType)
+    const disallowedTypes = useMemo(() => [
+        ...props.linkTypes,
+        ...props.playerLinkTypes,
+    ], [props.linkTypes, props.playerLinkTypes]);
+
+    const relativeLinkDisplays = props.linkTypes.map(fromType => {
+        const perRelativeLinkType = props.relativeLinkTypes.map(relativeLinkType => {
+            const toTypes = props.relativeLinks
+                .filter(rel => rel.fromType === fromType && rel.relativeLinkType === relativeLinkType)
                 .map(rel => rel.toType);
 
             const changeValue = (toType: string, selected: boolean) => context({
-                type: selected ? 'add relation' : 'remove relation',
+                type: selected ? 'add relative link' : 'remove relative link',
                 fromType,
                 toType,
-                relationType,
+                relativeLinkType,
             });
 
             return (
                 <SelectorMulti
-                    prefixText={`These are ${relationType}:`}
+                    prefixText={`These are ${relativeLinkType}:`}
                     options={props.linkTypes.filter(t => t !== fromType)}
                     selectedValues={toTypes}
                     changeValue={changeValue}
@@ -66,7 +72,7 @@ export const DirectionSetup: React.FunctionComponent<Props> = props => {
         return (
             <div key={fromType}>
                 <div className="boardEditor__listTitle">From <em>{fromType}</em>:</div>
-                {perRelationType}
+                {perRelativeLinkType}
             </div>
         );
     });
@@ -88,19 +94,20 @@ export const DirectionSetup: React.FunctionComponent<Props> = props => {
                 <div className="boardEditor__listTitle">Relative direction types</div>
                 
                 <UniqueList
-                    addValue={addRelationType}
-                    changeValue={editRelationType}
-                    values={props.relationTypes.length === 1 && props.relationTypes[0] === '' ? [] : props.relationTypes}
+                    addValue={addRelativeLinkType}
+                    changeValue={editRelativeLinkType}
+                    values={props.relativeLinkTypes.length === 1 && props.relativeLinkTypes[0] === '' ? [] : props.relativeLinkTypes}
+                    disallowedValues={disallowedTypes}
                 />
             </div>
 
             <div className="boardEditor__content">
-                {relationDisplays}
+                {relativeLinkDisplays}
             </div>
 
             <div className="boardEditor__navigation">
                 <Link to="/manuallinks">Back</Link>
-                <Link to="/directiongroups">Continue</Link>
+                <Link to="/playerdirections">Continue</Link>
             </div>
         </div>
     );

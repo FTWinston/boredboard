@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { UniqueTextBox } from './UniqueTextBox';
 
 interface Props {
     values: string[];
+    disallowedValues?: string[];
     changeValue: (oldValue: string, newValue: string) => void;
     addValue: (value: string) => void;
 }
 
 export const UniqueList: React.FunctionComponent<Props> = props => {
+    const allDisallowed = useMemo(
+        () => [
+            ...props.values,
+            ...props.disallowedValues === undefined
+                ? []
+                : props.disallowedValues,
+        ],
+        [props.values, props.disallowedValues]
+    );
+
     const existingValues = props.values.map((value, i) => (
         <UniqueTextBox
             key={value}
-            disallowedValues={props.values}
+            disallowedValues={allDisallowed}
             allowIndex={i}
             initialValue={value}
             finishedEditing={(val: string) => props.changeValue(value, val)}
@@ -24,7 +35,7 @@ export const UniqueList: React.FunctionComponent<Props> = props => {
         {existingValues}
         <UniqueTextBox
             key={props.values.length}
-            disallowedValues={props.values}
+            disallowedValues={allDisallowed}
             initialValue=""
             placeholder="add new..."
             finishedEditing={addValue}
@@ -32,7 +43,7 @@ export const UniqueList: React.FunctionComponent<Props> = props => {
         <UniqueTextBox
             hidden={true}
             key={props.values.length+1}
-            disallowedValues={props.values}
+            disallowedValues={allDisallowed}
             initialValue=""
             finishedEditing={() => {}}
         />

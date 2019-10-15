@@ -7,7 +7,11 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="App">
-        <BoardEditor name="sample" saveData={board => {}} />
+        <BoardEditor
+            name="sample"
+            numPlayers={2}
+            saveData={board => {}}
+        />
       </div>
     </Router>
   );

@@ -6,10 +6,16 @@ export interface ILink {
     type: string;
 }
 
-export interface IRelation {
+export interface IRelativeLink {
+    relativeLinkType: string;
     fromType: string;
     toType: string;
-    relation: string;
+}
+
+export interface IPlayerLink {
+    playerLinkType: string;
+    player: number;
+    linkType: string;
 }
 
 export interface IRegion {
@@ -23,8 +29,10 @@ interface IState {
     cells: string[];
     linkTypes: string[];
     links: ILink[];
-    relationTypes: string[];
-    relations: IRelation[];
+    relativeLinkTypes: string[];
+    relativeLinks: IRelativeLink[];
+    playerLinkTypes: string[];
+    playerLinks: IPlayerLink[];
     regions: IRegion[];
 }
 
@@ -70,31 +78,56 @@ export type BoardAction = {
     toCell: string;
     linkType: string;
 } | {
-    type: 'set relation types';
-    relationTypes: string[];
+    type: 'set relative link types';
+    relativeLinkTypes: string[];
 } | {
-    type: 'add relation type';
-    relationType: string;
+    type: 'add relative link type';
+    relativeLinkType: string;
 } | {
-    type: 'remove relation type';
-    relationType: string;
+    type: 'remove relative link type';
+    relativeLinkType: string;
 } | {
-    type: 'rename relation type';
+    type: 'rename relative link type';
     oldName: string;
     newName: string;
 } | {
-    type: 'set relations';
-    relations: IRelation[];
+    type: 'set relative links';
+    relativeLinks: IRelativeLink[];
 } | {
-    type: 'add relation';
+    type: 'add relative link';
     fromType: string;
     toType: string;
-    relationType: string;
+    relativeLinkType: string;
 } | {
-    type: 'remove relation';
+    type: 'remove relative link';
     fromType: string;
     toType: string;
-    relationType: string;
+    relativeLinkType: string;
+} | {
+    type: 'set player link types';
+    playerLinkTypes: string[];
+} | {
+    type: 'add player link type';
+    playerLinkType: string;
+} | {
+    type: 'remove player link type';
+    playerLinkType: string;
+} | {
+    type: 'rename player link type';
+    oldName: string;
+    newName: string;
+} | {
+    type: 'set player links';
+    playerLinks: IPlayerLink[];
+} | {
+    type: 'remove player link';
+    player: number;
+    playerLinkType: string;
+} | {
+    type: 'set player link';
+    player: number;
+    playerLinkType: string;
+    linkType: string;
 } | {
     type: 'set regions';
     regions: IRegion[];
@@ -105,16 +138,21 @@ export function getInitialState(board?: IBoard): IState {
         const linkTypes = new Set<string>();
         const links = readBoardLinks(board, linkTypes);
 
-        const relationTypes = new Set<string>();
-        const relations = readBoardRelations(board, relationTypes);
+        const relativeLinkTypes = new Set<string>();
+        const relativeLinks = readBoardRelativeLinks(board, relativeLinkTypes);
+
+        const playerLinkTypes = new Set<string>();
+        const playerLinks = readBoardPlayerLinks(board, playerLinkTypes);
 
         return {
             imageUrl: board.imageUrl,
             cells: Object.keys(board.links),
             linkTypes: [...linkTypes],
             links,
-            relationTypes: [...relationTypes],
-            relations,
+            relativeLinkTypes: [...relativeLinkTypes],
+            relativeLinks: relativeLinks,
+            playerLinkTypes: [...playerLinkTypes],
+            playerLinks: playerLinks,
             regions: readBoardRegions(board),
         };
     }
@@ -124,9 +162,11 @@ export function getInitialState(board?: IBoard): IState {
         cells: [],
         linkTypes: [],
         links: [],
-        relationTypes: [],
-        relations: [],
+        relativeLinkTypes: [],
+        relativeLinks: [],
         regions: [],
+        playerLinkTypes: [],
+        playerLinks: [],
     };
 }
 
@@ -153,27 +193,50 @@ function readBoardLinks(board: IBoard, linkTypes: Set<string>) {
     return links;
 }
 
-function readBoardRelations(board: IBoard, relationTypes: Set<string>) {
-    const relations: IRelation[] = [];
+function readBoardRelativeLinks(board: IBoard, relativeLinkTypes: Set<string>) {
+    const relativeLinks: IRelativeLink[] = [];
 
-    for (const fromLinkType in board.relations) {
-        const typeRelations = board.relations[fromLinkType];
+    for (const fromLinkType in board.relativeLinks) {
+        const typeRelativeLinks = board.relativeLinks[fromLinkType];
 
-        for (const relationType in typeRelations) {
-            relationTypes.add(relationType);
-            const toLinkTypes = typeRelations[relationType];
+        for (const relativeLinkType in typeRelativeLinks) {
+            relativeLinkTypes.add(relativeLinkType);
+            const toLinkTypes = typeRelativeLinks[relativeLinkType];
 
             for (const toLinkType of toLinkTypes) {
-                relations.push({
+                relativeLinks.push({
                     fromType: fromLinkType,
                     toType: toLinkType,
-                    relation: relationType,
+                    relativeLinkType: relativeLinkType,
                 });
             }
         }
     }
 
-    return relations;
+    return relativeLinks;
+}
+
+function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
+    const links: IPlayerLink[] = [];
+
+    for (const player in board.playerLinks) {
+        const playerID = parseInt(player);
+
+        const playerLinks = board.playerLinks[playerID];
+
+        for (const playerLinkType in playerLinks) {
+            playerLinkTypes.add(playerLinkType);
+            const toLinkType = playerLinks[playerLinkType];
+
+            links.push({
+                player: playerID,
+                playerLinkType,
+                linkType: toLinkType,
+            });
+        }
+    }
+
+    return links;
 }
 
 function readBoardRegions(board: IBoard) {
@@ -295,75 +358,137 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ),
             };
 
-        case 'set relation types':
+        case 'set relative link types':
             return {
                 ...state,
-                relationTypes: action.relationTypes,
-                relations: state.relations.filter( // remove invalid relations
-                    l => action.relationTypes.indexOf(l.relation) !== -1
+                relativeLinkTypes: action.relativeLinkTypes,
+                relativeLinks: state.relativeLinks.filter( // remove invalid relative links
+                    l => action.relativeLinkTypes.indexOf(l.relativeLinkType) !== -1
                 ),
             };
 
-        case 'add relation type':
+        case 'add relative link type':
             return {
                 ...state,
-                relationTypes: [
-                    ...state.relationTypes,
-                    action.relationType,
+                relativeLinkTypes: [
+                    ...state.relativeLinkTypes,
+                    action.relativeLinkType,
                 ],
             };
 
-        case 'remove relation type':
+        case 'remove relative link type':
             return {
                 ...state,
-                linkTypes: state.linkTypes.filter(t => t !== action.relationType),
+                linkTypes: state.linkTypes.filter(t => t !== action.relativeLinkType),
             };
 
-        case 'rename relation type':
+        case 'rename relative link type':
             return {
                 ...state,
-                relationTypes: state.relationTypes.map(t => t === action.oldName ? action.newName : t),
-                relations: state.relations.map(l => ({
+                relativeLinkTypes: state.relativeLinkTypes.map(t => t === action.oldName ? action.newName : t),
+                relativeLinks: state.relativeLinks.map(l => ({
                     ...l,
-                    relation: l.relation === action.oldName ? action.newName : l.relation,
+                    relativeLinkType: l.relativeLinkType === action.oldName ? action.newName : l.relativeLinkType,
                 }))
             };
 
-        case 'set relations':
+        case 'set relative links':
             return {
                 ...state,
-                relations: action.relations.filter(r => isValidRelation(r, state)),
+                relativeLinks: action.relativeLinks.filter(r => isValidRelativeLink(r, state)),
             };
 
-        case 'add relation':
-            const newRelation = {
+        case 'add relative link':
+            const newRelativeLink = {
                 fromType: action.fromType,
                 toType: action.toType,
-                relation: action.relationType,
+                relativeLinkType: action.relativeLinkType,
             };
 
-            if (!isValidRelation(newRelation, state) || isDuplicateRelation(newRelation, state.relations)) {
+            if (!isValidRelativeLink(newRelativeLink, state) || isDuplicateRelativeLink(newRelativeLink, state.relativeLinks)) {
                 return state;
             }
 
             return {
                 ...state,
-                relations: [
-                    ...state.relations,
-                    newRelation,
+                relativeLinks: [
+                    ...state.relativeLinks,
+                    newRelativeLink,
                 ],
             };
 
-        case 'remove relation':
+        case 'remove relative link':
             return {
                 ...state,
-                relations: state.relations.filter(
+                relativeLinks: state.relativeLinks.filter(
                     link => link.fromType !== action.fromType
                         || link.toType !== action.toType
-                        || link.relation !== action.relationType
+                        || link.relativeLinkType !== action.relativeLinkType
                 ),
             };
         
+        case 'set player link types':
+            return {
+                ...state,
+                playerLinkTypes: action.playerLinkTypes,
+                playerLinks: state.playerLinks.filter(link => action.playerLinkTypes.indexOf(link.playerLinkType) !== -1),
+            }
+        
+        case 'add player link type':
+            return {
+                ...state,
+                playerLinkTypes: [
+                    ...state.playerLinkTypes,
+                    action.playerLinkType,
+                ],
+            }
+
+        case 'remove player link type':
+            return {
+                ...state,
+                playerLinkTypes: state.playerLinkTypes.filter(t => t !== action.playerLinkType),
+            };
+            
+        case 'rename player link type':
+            return {
+                ...state,
+                playerLinkTypes: state.playerLinkTypes.map(t => t === action.oldName ? action.newName : t),
+                playerLinks: state.playerLinks.map(l => ({
+                    ...l,
+                    playerLinkType: l.playerLinkType === action.oldName ? action.newName : l.playerLinkType,
+                }))
+            };
+            
+        case 'set player links':
+            return {
+                ...state,
+                playerLinks: action.playerLinks.filter(l => isValidPlayerLink(l, state)),
+            };
+
+        case 'remove player link':
+            return {
+                ...state,
+                playerLinks: state.playerLinks.filter(
+                    link => link.player !== action.player
+                        || link.playerLinkType !== action.playerLinkType
+                ),
+            };
+            
+        case 'set player link':
+                return {
+                    ...state,
+                    playerLinks: state.playerLinks.map(
+                        link => link.player !== action.player
+                            || link.playerLinkType !== action.playerLinkType
+                            ? link
+                            : {
+                                player: action.player,
+                                playerLinkType: action.playerLinkType,
+                                linkType: action.linkType,
+                            }
+                    ),
+                };
+
         case 'set regions':
             return {
                 ...state,
@@ -428,16 +553,20 @@ export function isDuplicateLink(link: ILink, existingLinks: ILink[]) {
     ) !== undefined;
 }
 
-function isValidRelation(relation: IRelation, state: IState) {
-    return state.linkTypes.indexOf(relation.fromType) !== -1
-        && state.linkTypes.indexOf(relation.toType) !== -1
-        && state.relationTypes.indexOf(relation.relation) !== -1;
+function isValidRelativeLink(relativeLink: IRelativeLink, state: IState) {
+    return state.linkTypes.indexOf(relativeLink.fromType) !== -1
+        && state.linkTypes.indexOf(relativeLink.toType) !== -1
+        && state.relativeLinkTypes.indexOf(relativeLink.relativeLinkType) !== -1;
 }
 
-export function isDuplicateRelation(relation: IRelation, existingRelations: IRelation[]) {
-    return existingRelations.find(
-        r => r.fromType === relation.fromType
-        && r.toType === relation.toType
-        && r.relation === relation.relation
+export function isDuplicateRelativeLink(relativeLink: IRelativeLink, existingRelativeLinks: IRelativeLink[]) {
+    return existingRelativeLinks.find(
+        r => r.fromType === relativeLink.fromType
+        && r.toType === relativeLink.toType
+        && r.relativeLinkType === relativeLink.relativeLinkType
     ) !== undefined;
+}
+
+function isValidPlayerLink(playerLink: IPlayerLink, state: IState) {
+    return state.playerLinkTypes.indexOf(playerLink.playerLinkType) !== -1
 }

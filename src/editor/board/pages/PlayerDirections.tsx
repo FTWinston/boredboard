@@ -8,6 +8,7 @@ interface Props {
     boardUrl: string;
     cells: string[];
     linkTypes: string[];
+    numPlayers: number;
 }
 
 export const PlayerDirections: React.FunctionComponent<Props> = props => {
@@ -26,8 +27,8 @@ export const PlayerDirections: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/directiongroups">Back</Link>
-                <Link to="/regions">Continue</Link>
+                <Link to="/directions">Back</Link>
+                <Link to="/directiongroups">Continue</Link>
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ interface Props {
     boardUrl: string;
     cells: string[];
     linkTypes: string[];
-    relationTypes: string[];
+    relativeLinkTypes: string[];
 }
 
 export const DirectionGroups: React.FunctionComponent<Props> = props => {
@@ -27,8 +27,8 @@ export const DirectionGroups: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/directions">Back</Link>
-                <Link to="/playerdirections">Continue</Link>
+                <Link to="/playerdirections">Back</Link>
+                <Link to="/regions">Continue</Link>
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import { BoardDispatch } from '../BoardEditor';
 interface Props {
     boardUrl: string;
     cells: string[];
+    numPlayers: number;
 }
 
 export const RegionCreator: React.FunctionComponent<Props> = props => {

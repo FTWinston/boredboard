@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './LinkTypes.css';
 import { BoardDisplay } from '../../../components/board';
@@ -8,8 +8,10 @@ import { UniqueList } from '../components/UniqueList';
 
 interface Props {
     boardUrl: string;
-    linkTypes: string[];
     cells: string[];
+    linkTypes: string[];
+    relativeLinkTypes: string[];
+    playerLinkTypes: string[];
 }
 
 export const LinkTypes: React.FunctionComponent<Props> = props => {
@@ -39,6 +41,11 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
             });
         }
     };
+
+    const disallowedTypes = useMemo(() => [
+        ...props.relativeLinkTypes,
+        ...props.playerLinkTypes,
+    ], [props.relativeLinkTypes, props.playerLinkTypes]);
 
     return (
         <div className="boardEditor linkTypes">
@@ -70,6 +77,7 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
                         addValue={addType}
                         changeValue={changeType}
                         values={props.linkTypes.length === 1 && props.linkTypes[0] === '' ? [] : props.linkTypes}
+                        disallowedValues={disallowedTypes}
                     />
                 </div>
             </div>

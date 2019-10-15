@@ -16,6 +16,7 @@ import { PlayerDirections } from './pages/PlayerDirections';
 
 interface Props {
     name: string;
+    numPlayers: number;
     initialData?: IBoard;
     saveData: (board: IBoard) => void;
 }
@@ -44,6 +45,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
+                        relativeLinkTypes={state.relativeLinkTypes}
+                        playerLinkTypes={state.playerLinkTypes}
                     />
                 </Route>
                 <Route path="/bulklinks">
@@ -66,16 +69,9 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/directions">
                     <DirectionSetup
                         linkTypes={state.linkTypes}
-                        relationTypes={state.relationTypes}
-                        relations={state.relations}
-                    />
-                </Route>
-                <Route path="/directiongroups">
-                    <DirectionGroups
-                        boardUrl={state.imageUrl}
-                        cells={state.cells}
-                        linkTypes={state.linkTypes}
-                        relationTypes={state.relationTypes}
+                        relativeLinkTypes={state.relativeLinkTypes}
+                        relativeLinks={state.relativeLinks}
+                        playerLinkTypes={state.playerLinkTypes}
                     />
                 </Route>
                 <Route path="/playerdirections">
@@ -83,12 +79,22 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
+                        numPlayers={props.numPlayers}
+                    />
+                </Route>
+                <Route path="/directiongroups">
+                    <DirectionGroups
+                        boardUrl={state.imageUrl}
+                        cells={state.cells}
+                        linkTypes={state.linkTypes}
+                        relativeLinkTypes={state.relativeLinkTypes}
                     />
                 </Route>
                 <Route path="/regions">
                     <RegionCreator
                         boardUrl={state.imageUrl}
                         cells={state.cells}
+                        numPlayers={props.numPlayers}
                     />
                 </Route>
                 <Route render={() => {

@@ -48,40 +48,42 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
         ...props.playerLinkTypes,
     ], [props.linkTypes, props.playerLinkTypes]);
 
-    const relativeLinkDisplays = props.linkTypes.map(fromType => {
-        const perRelativeLinkType = props.relativeLinkTypes.map(relativeLinkType => {
-            const toTypes = props.relativeLinks
-                .filter(rel => rel.fromType === fromType && rel.relativeLinkType === relativeLinkType)
-                .map(rel => rel.toType);
+    const relativeLinkDisplays = props.relativeLinkTypes.length === 0
+        ? 'You currently have no relative direction types'
+        : props.linkTypes.map(fromType => {
+            const perRelativeLinkType = props.relativeLinkTypes.map(relativeLinkType => {
+                const toTypes = props.relativeLinks
+                    .filter(rel => rel.fromType === fromType && rel.relativeLinkType === relativeLinkType)
+                    .map(rel => rel.toType);
 
-            const changeValue = (toType: string, selected: boolean) => context({
-                type: selected ? 'add relative link' : 'remove relative link',
-                fromType,
-                toType,
-                relativeLinkType,
+                const changeValue = (toType: string, selected: boolean) => context({
+                    type: selected ? 'add relative link' : 'remove relative link',
+                    fromType,
+                    toType,
+                    relativeLinkType,
+                });
+
+                return (
+                    <SelectorMulti
+                        prefixText={`These are ${relativeLinkType}:`}
+                        options={props.linkTypes.filter(t => t !== fromType)}
+                        selectedValues={toTypes}
+                        changeValue={changeValue}
+                    />
+                );
             });
 
             return (
-                <SelectorMulti
-                    prefixText={`These are ${relativeLinkType}:`}
-                    options={props.linkTypes.filter(t => t !== fromType)}
-                    selectedValues={toTypes}
-                    changeValue={changeValue}
-                />
+                <div key={fromType}>
+                    <div className="boardEditor__listTitle">From <em>{fromType}</em>:</div>
+                    {perRelativeLinkType}
+                </div>
             );
         });
 
-        return (
-            <div key={fromType}>
-                <div className="boardEditor__listTitle">From <em>{fromType}</em>:</div>
-                {perRelativeLinkType}
-            </div>
-        );
-    });
-
     return (
         <div className="boardEditor relativeLinks">
-            <div className="boardEditor__board relativeLinks__directions">
+            <div className="boardEditor__board relativeLinks__lookup">
                 <p>
                     If your link types represent directions, then you can optionally specify how those directions
                     relate to each other.

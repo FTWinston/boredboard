@@ -13,7 +13,7 @@ export const SelectorMulti: React.FunctionComponent<Props> = props => {
     const { options, selectedValues, changeValue } = props;
 
     const linkTypeSelectors = useMemo(
-        () => options.map((option, index) => {
+        () => options.map(option => {
             const selected = selectedValues.indexOf(option) !== -1;
 
             const classes = selected

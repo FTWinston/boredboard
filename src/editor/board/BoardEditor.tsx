@@ -89,6 +89,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
+                        playerLinks={state.playerLinks}
                         numPlayers={props.numPlayers}
                         prevPage="/directions"
                         nextPage="/directiongroups"

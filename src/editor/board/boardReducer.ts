@@ -474,20 +474,29 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ),
             };
             
-        case 'set player link':
-                return {
-                    ...state,
-                    playerLinks: state.playerLinks.map(
-                        link => link.player !== action.player
-                            || link.playerLinkType !== action.playerLinkType
-                            ? link
-                            : {
-                                player: action.player,
-                                playerLinkType: action.playerLinkType,
-                                linkType: action.linkType,
-                            }
-                    ),
-                };
+        case 'set player link': {
+            const newLink = {
+                player: action.player,
+                playerLinkType: action.playerLinkType,
+                linkType: action.linkType,
+            };
+            
+            const playerLinks = state.playerLinks.map(
+                link => link.player !== action.player
+                    || link.playerLinkType !== action.playerLinkType
+                    ? link
+                    : newLink
+            );
+
+            if (playerLinks.length === state.playerLinks.length) {
+                playerLinks.push(newLink);
+            }
+
+            return {
+                ...state,
+                playerLinks,
+            };
+        }
 
         case 'set regions':
             return {

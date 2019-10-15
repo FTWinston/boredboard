@@ -65,7 +65,8 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
 
                 return (
                     <SelectorMulti
-                        prefixText={`These are ${relativeLinkType}:`}
+                        key={relativeLinkType}
+                        prefixText={`${relativeLinkType} is:`}
                         options={props.linkTypes.filter(t => t !== fromType)}
                         selectedValues={toTypes}
                         changeValue={changeValue}

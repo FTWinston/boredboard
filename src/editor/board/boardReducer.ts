@@ -18,6 +18,12 @@ export interface IPlayerLink {
     linkType: string;
 }
 
+export interface ILinkGroup {
+    name: string;
+    player: number;
+    linkTypes: string[];
+}
+
 export interface IRegion {
     name: string;
     player: number; // 0 for none, 1, 2 etc otherwise
@@ -33,6 +39,7 @@ interface IState {
     relativeLinks: IRelativeLink[];
     playerLinkTypes: string[];
     playerLinks: IPlayerLink[];
+    linkGroups: ILinkGroup[];
     regions: IRegion[];
 }
 
@@ -129,6 +136,18 @@ export type BoardAction = {
     playerLinkType: string;
     linkType: string;
 } | {
+    type: 'set link groups';
+    groups: ILinkGroup[];
+} | {
+    type: 'remove link group';
+    name: string;
+    player: number;
+} | {
+    type: 'set link group';
+    name: string;
+    player: number;
+    linkTypes: string[];
+} | {
     type: 'set regions';
     regions: IRegion[];
 }
@@ -153,6 +172,7 @@ export function getInitialState(board?: IBoard): IState {
             relativeLinks: relativeLinks,
             playerLinkTypes: [...playerLinkTypes],
             playerLinks: playerLinks,
+            linkGroups: readBoardLinkGroups(board),
             regions: readBoardRegions(board),
         };
     }
@@ -167,6 +187,7 @@ export function getInitialState(board?: IBoard): IState {
         regions: [],
         playerLinkTypes: [],
         playerLinks: [],
+        linkGroups: [],
     };
 }
 
@@ -237,6 +258,26 @@ function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
     }
 
     return links;
+}
+
+function readBoardLinkGroups(board: IBoard) {
+    const linkGroups: ILinkGroup[] = [];
+
+    for (const name in board.linkGroups) {
+        const groupPlayers = board.linkGroups[name];
+
+        for (const player in groupPlayers) {
+            const linkTypes = groupPlayers[player];
+
+            linkGroups.push({
+                name,
+                player: parseInt(player),
+                linkTypes,
+            });
+        }
+    }
+
+    return linkGroups;
 }
 
 function readBoardRegions(board: IBoard) {
@@ -330,13 +371,13 @@ export function reducer(state: IState, action: BoardAction): IState {
             };
     
         case 'add link':
-            const newLink = {
+            const newGroup = {
                 fromCell: action.fromCell,
                 toCell: action.toCell,
                 type: action.linkType,
             };
 
-            if (!isValidLink(newLink, state) || isDuplicateLink(newLink, state.links)) {
+            if (!isValidLink(newGroup, state) || isDuplicateLink(newGroup, state.links)) {
                 return state;
             }
 
@@ -344,7 +385,7 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ...state,
                 links: [
                     ...state.links,
-                    newLink,
+                    newGroup,
                 ],
             };
 
@@ -495,6 +536,45 @@ export function reducer(state: IState, action: BoardAction): IState {
             return {
                 ...state,
                 playerLinks,
+            };
+        }
+
+        case 'set link groups':
+            return {
+                ...state,
+                linkGroups: action.groups,
+            };
+            
+        case 'remove link group':
+            return {
+                ...state,
+                linkGroups: state.linkGroups.filter(
+                    group => group.player !== action.player
+                        || group.name !== action.name
+                ),
+            };
+            
+        case 'set link group': {
+            const newGroup = {
+                name: action.name,
+                player: action.player,
+                linkTypes: action.linkTypes,
+            };
+            
+            const linkGroups = state.linkGroups.map(
+                group => group.player !== action.player
+                    || group.name !== action.name
+                    ? group
+                    : newGroup
+            );
+
+            if (linkGroups.length === state.linkGroups.length) {
+                linkGroups.push(newGroup);
+            }
+
+            return {
+                ...state,
+                linkGroups,
             };
         }
 

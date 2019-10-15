@@ -20,7 +20,6 @@ export interface IPlayerLink {
 
 export interface ILinkGroup {
     name: string;
-    player: number;
     linkTypes: string[];
 }
 
@@ -141,11 +140,9 @@ export type BoardAction = {
 } | {
     type: 'remove link group';
     name: string;
-    player: number;
 } | {
     type: 'set link group';
     name: string;
-    player: number;
     linkTypes: string[];
 } | {
     type: 'set regions';
@@ -217,12 +214,13 @@ function readBoardLinks(board: IBoard, linkTypes: Set<string>) {
 function readBoardRelativeLinks(board: IBoard, relativeLinkTypes: Set<string>) {
     const relativeLinks: IRelativeLink[] = [];
 
-    for (const fromLinkType in board.relativeLinks) {
-        const typeRelativeLinks = board.relativeLinks[fromLinkType];
+    for (const relativeLinkType in board.relativeLinks) {
+        relativeLinkTypes.add(relativeLinkType);
 
-        for (const relativeLinkType in typeRelativeLinks) {
-            relativeLinkTypes.add(relativeLinkType);
-            const toLinkTypes = typeRelativeLinks[relativeLinkType];
+        const relativeTypeData = board.relativeLinks[relativeLinkType];
+
+        for (const fromLinkType in relativeTypeData) {
+            const toLinkTypes = relativeTypeData[fromLinkType];
 
             for (const toLinkType of toLinkTypes) {
                 relativeLinks.push({
@@ -240,17 +238,15 @@ function readBoardRelativeLinks(board: IBoard, relativeLinkTypes: Set<string>) {
 function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
     const links: IPlayerLink[] = [];
 
-    for (const player in board.playerLinks) {
-        const playerID = parseInt(player);
+    for (const playerLinkType in board.playerLinks) {
+        const typePlayers = board.playerLinks[playerLinkType];
 
-        const playerLinks = board.playerLinks[playerID];
-
-        for (const playerLinkType in playerLinks) {
+        for (const player in typePlayers) {
             playerLinkTypes.add(playerLinkType);
-            const toLinkType = playerLinks[playerLinkType];
+            const toLinkType = typePlayers[player];
 
             links.push({
-                player: playerID,
+                player: parseInt(player),
                 playerLinkType,
                 linkType: toLinkType,
             });
@@ -264,17 +260,12 @@ function readBoardLinkGroups(board: IBoard) {
     const linkGroups: ILinkGroup[] = [];
 
     for (const name in board.linkGroups) {
-        const groupPlayers = board.linkGroups[name];
-
-        for (const player in groupPlayers) {
-            const linkTypes = groupPlayers[player];
-
-            linkGroups.push({
-                name,
-                player: parseInt(player),
-                linkTypes,
-            });
-        }
+        const linkTypes = board.linkGroups[name];
+            
+        linkGroups.push({
+            name,
+            linkTypes,
+        });
     }
 
     return linkGroups;
@@ -548,22 +539,17 @@ export function reducer(state: IState, action: BoardAction): IState {
         case 'remove link group':
             return {
                 ...state,
-                linkGroups: state.linkGroups.filter(
-                    group => group.player !== action.player
-                        || group.name !== action.name
-                ),
+                linkGroups: state.linkGroups.filter(group => group.name !== action.name),
             };
             
         case 'set link group': {
             const newGroup = {
                 name: action.name,
-                player: action.player,
                 linkTypes: action.linkTypes,
             };
             
             const linkGroups = state.linkGroups.map(
-                group => group.player !== action.player
-                    || group.name !== action.name
+                group => group.name !== action.name
                     ? group
                     : newGroup
             );

@@ -11,6 +11,8 @@ interface Props {
     relativeLinkTypes: string[];
     relativeLinks: IRelativeLink[];
     playerLinkTypes: string[];
+    prevPage: string;
+    nextPage: string;
 }
 
 export const RelativeLinks: React.FunctionComponent<Props> = props => {
@@ -106,8 +108,8 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/manuallinks">Back</Link>
-                <Link to="/playerdirections">Continue</Link>
+                <Link to={props.prevPage}>Back</Link>
+                <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>
     );

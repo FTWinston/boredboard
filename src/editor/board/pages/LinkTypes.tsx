@@ -12,6 +12,8 @@ interface Props {
     linkTypes: string[];
     relativeLinkTypes: string[];
     playerLinkTypes: string[];
+    nextPage: string;
+    prevPage: string;
 }
 
 export const LinkTypes: React.FunctionComponent<Props> = props => {
@@ -83,9 +85,9 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/cells">Back</Link>
+                <Link to={props.prevPage}>Back</Link>
                 <Link
-                    to="/bulklinks"
+                    to={props.nextPage}
                     onClick={() => { if (props.linkTypes.length === 0) { context({ type: 'set link types', linkTypes: [''] }); } }}
                 >
                     Continue

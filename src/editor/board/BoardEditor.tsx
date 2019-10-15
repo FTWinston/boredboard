@@ -32,12 +32,15 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 <Route path="/image">
                     <ImageSelector
                         initialUrl={state.imageUrl === '' ? undefined : state.imageUrl}
+                        nextPage="/cells"
                     />
                 </Route>
                 <Route path="/cells">
                     <CellSelector
                         boardUrl={state.imageUrl}
                         cells={state.cells}
+                        prevPage="/image"
+                        nextPage="/linktypes"
                     />
                 </Route>
                 <Route path="/linktypes">
@@ -47,6 +50,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
+                        prevPage="/cells"
+                        nextPage="/bulklinks"
                     />
                 </Route>
                 <Route path="/bulklinks">
@@ -55,6 +60,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
+                        prevPage="/linktypes"
+                        nextPage="/manuallinks"
                     />
                 </Route>
                 <Route path="/manuallinks">
@@ -63,6 +70,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
+                        prevPage="/bulklinks"
                         nextPage={state.linkTypes.length <= 1 ? '/regions' : '/directions'}
                     />
                 </Route>
@@ -72,6 +80,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         relativeLinkTypes={state.relativeLinkTypes}
                         relativeLinks={state.relativeLinks}
                         playerLinkTypes={state.playerLinkTypes}
+                        prevPage="/manuallinks"
+                        nextPage="/playerdirections"
                     />
                 </Route>
                 <Route path="/playerdirections">
@@ -80,6 +90,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         numPlayers={props.numPlayers}
+                        prevPage="/directions"
+                        nextPage="/directiongroups"
                     />
                 </Route>
                 <Route path="/directiongroups">
@@ -88,6 +100,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
+                        prevPage="/playerdirections"
+                        nextPage="/regions"
                     />
                 </Route>
                 <Route path="/regions">
@@ -95,6 +109,8 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         numPlayers={props.numPlayers}
+                        prevPage="/directiongroups"
+                        nextPage="/"
                     />
                 </Route>
                 <Route render={() => {

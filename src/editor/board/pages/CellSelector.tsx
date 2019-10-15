@@ -10,6 +10,8 @@ import { SelectorMulti } from '../components/SelectorMulti';
 interface Props {
     boardUrl: string;
     cells: string[];
+    nextPage: string;
+    prevPage: string;
 }
 
 export const CellSelector: React.FunctionComponent<Props> = props => {
@@ -35,7 +37,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
 
     const continueLink = props.cells.length === 0
         ? <div title="Cannot continue until cells are selected">Continue</div>
-        : <Link to="/linktypes">Continue</Link>
+        : <Link to={props.nextPage}>Continue</Link>
 
     return (
         <div className="boardEditor cellSelector">
@@ -91,7 +93,7 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/image">Back</Link>
+                <Link to={props.prevPage}>Back</Link>
                 {continueLink}
             </div>
         </div>

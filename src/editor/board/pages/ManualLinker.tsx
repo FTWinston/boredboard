@@ -13,6 +13,7 @@ interface Props {
     cells: string[];
     linkTypes: string[];
     links: ILink[];
+    prevPage: string;
     nextPage: string;
 }
 
@@ -109,7 +110,7 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/bulklinks">Back</Link>
+                <Link to={props.prevPage}>Back</Link>
                 <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>

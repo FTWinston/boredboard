@@ -11,6 +11,8 @@ interface Props {
     cells: string[];
     linkTypes: string[];
     links: ILink[];
+    nextPage: string;
+    prevPage: string;
 }
 
 export const BulkLinker: React.FunctionComponent<Props> = props => {
@@ -92,8 +94,8 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/linktypes">Back</Link>
-                <Link to="/manuallinks">Continue</Link>
+                <Link to={props.prevPage}>Back</Link>
+                <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>
     );

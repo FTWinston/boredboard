@@ -9,6 +9,8 @@ interface Props {
     cells: string[];
     linkTypes: string[];
     relativeLinkTypes: string[];
+    prevPage: string;
+    nextPage: string;
 }
 
 export const LinkGroups: React.FunctionComponent<Props> = props => {
@@ -27,8 +29,8 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/playerdirections">Back</Link>
-                <Link to="/regions">Continue</Link>
+                <Link to={props.prevPage}>Back</Link>
+                <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>
     );

@@ -8,6 +8,8 @@ interface Props {
     boardUrl: string;
     cells: string[];
     numPlayers: number;
+    prevPage: string;
+    nextPage: string;
 }
 
 export const RegionCreator: React.FunctionComponent<Props> = props => {
@@ -26,8 +28,8 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/playerdirections">Back</Link>
-                <Link to="/">Continue</Link>
+                <Link to={props.prevPage}>Back</Link>
+                <Link to={props.nextPage}>Continue</Link>
             </div>
         </div>
     );

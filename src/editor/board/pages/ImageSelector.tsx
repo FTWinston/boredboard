@@ -6,6 +6,7 @@ import svg from '../../../chessboard.svg';
 
 interface Props {
     initialUrl?: string;
+    nextPage: string;
 }
 
 export const ImageSelector: React.FunctionComponent<Props> = props => {
@@ -25,7 +26,7 @@ export const ImageSelector: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <Link to="/cells" onClick={() => context({ type: 'set image', url })}>Continue</Link>
+                <Link to={props.nextPage} onClick={() => context({ type: 'set image', url })}>Continue</Link>
             </div>
         </div>
     );

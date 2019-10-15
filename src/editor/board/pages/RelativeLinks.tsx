@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import './DirectionSetup.css';
+import './RelativeLinks.css';
 import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
 import { IRelativeLink } from '../boardReducer';
@@ -13,7 +13,7 @@ interface Props {
     playerLinkTypes: string[];
 }
 
-export const DirectionSetup: React.FunctionComponent<Props> = props => {
+export const RelativeLinks: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
     const addRelativeLinkType = (val: string) => {
@@ -78,8 +78,8 @@ export const DirectionSetup: React.FunctionComponent<Props> = props => {
     });
 
     return (
-        <div className="boardEditor directionSetup">
-            <div className="boardEditor__board directionSetup__directions">
+        <div className="boardEditor relativeLinks">
+            <div className="boardEditor__board relativeLinks__directions">
                 <p>
                     If your link types represent directions, then you can optionally specify how those directions
                     relate to each other.

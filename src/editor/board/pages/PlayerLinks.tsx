@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './PlayerDirections.css';
+import './PlayerLinks.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 
@@ -11,11 +11,11 @@ interface Props {
     numPlayers: number;
 }
 
-export const PlayerDirections: React.FunctionComponent<Props> = props => {
+export const PlayerLinks: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
     return (
-        <div className="boardEditor playerDirections">
+        <div className="boardEditor playerLinks">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}

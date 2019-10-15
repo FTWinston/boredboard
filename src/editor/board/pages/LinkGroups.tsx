@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './DirectionGroups.css';
+import './LinkGroups.css';
 import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 
@@ -11,11 +11,11 @@ interface Props {
     relativeLinkTypes: string[];
 }
 
-export const DirectionGroups: React.FunctionComponent<Props> = props => {
+export const LinkGroups: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
     
     return (
-        <div className="boardEditor directionGroups">
+        <div className="boardEditor linkGroups">
             <BoardDisplay
                 className="boardEditor__board"
                 filePath={props.boardUrl}

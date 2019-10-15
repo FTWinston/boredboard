@@ -10,9 +10,9 @@ import { RegionCreator } from './pages/RegionCreator';
 import { BoardSummary } from './pages/BoardSummary';
 import { LinkTypes } from './pages/LinkTypes';
 import { ManualLinker } from './pages/ManualLinker';
-import { DirectionSetup } from './pages/DirectionSetup';
-import { DirectionGroups } from './pages/DirectionGroups';
-import { PlayerDirections } from './pages/PlayerDirections';
+import { RelativeLinks } from './pages/RelativeLinks';
+import { LinkGroups } from './pages/LinkGroups';
+import { PlayerLinks } from './pages/PlayerLinks';
 
 interface Props {
     name: string;
@@ -67,7 +67,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                     />
                 </Route>
                 <Route path="/directions">
-                    <DirectionSetup
+                    <RelativeLinks
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         relativeLinks={state.relativeLinks}
@@ -75,7 +75,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                     />
                 </Route>
                 <Route path="/playerdirections">
-                    <PlayerDirections
+                    <PlayerLinks
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
@@ -83,7 +83,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                     />
                 </Route>
                 <Route path="/directiongroups">
-                    <DirectionGroups
+                    <LinkGroups
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}

@@ -75,6 +75,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
+                        relationTypes={state.relationTypes}
                     />
                 </Route>
                 <Route path="/playerdirections">

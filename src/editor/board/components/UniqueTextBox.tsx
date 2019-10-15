@@ -3,6 +3,7 @@ import './UniqueTextBox.css';
 
 interface Props {
     initialValue: string;
+    placeholder?: string;
     className?: string;
     finishedEditing: (value: string) => void;
     disallowedValues: string[];
@@ -47,6 +48,7 @@ export const UniqueTextBox: React.FunctionComponent<Props> = props => {
             className={classes}
             type="text"
             value={text}
+            placeholder={props.placeholder}
             onChange={e => setText(e.currentTarget.value)}
             onBlur={() => { if (isValid) { props.finishedEditing(text); } }}
         />

@@ -8,6 +8,7 @@ interface Props {
     boardUrl: string;
     cells: string[];
     linkTypes: string[];
+    relationTypes: string[];
 }
 
 export const DirectionGroups: React.FunctionComponent<Props> = props => {

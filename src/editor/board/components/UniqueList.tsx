@@ -26,6 +26,7 @@ export const UniqueList: React.FunctionComponent<Props> = props => {
             key={props.values.length}
             disallowedValues={props.values}
             initialValue=""
+            placeholder="add new..."
             finishedEditing={addValue}
         />
         <UniqueTextBox

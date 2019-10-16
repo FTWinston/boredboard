@@ -71,20 +71,20 @@ function populateRelativeLinks(data: IBoard) {
 }
 
 function populatePlayerLinkTypes(data: IBoard) {
-    const results = new Map<string, Map<number, string>>(); // player link name, player, link type
+    const results = new Map<string, Map<number, string[]>>(); // player link name, player, link types
 
     for (const playerLinkType in data.playerLinks) {
         const typePlayers = data.playerLinks[playerLinkType];
 
         let playerTypeInfo = results.get(playerLinkType);
         if (playerTypeInfo === undefined) {
-            playerTypeInfo = new Map<number, string>();
+            playerTypeInfo = new Map<number, string[]>();
             results.set(playerLinkType, playerTypeInfo);
         }
 
         for (const player in typePlayers) {
-            const linkType = typePlayers[player];
-            playerTypeInfo.set(parseInt(player), linkType);
+            const linkTypes = typePlayers[player];
+            playerTypeInfo.set(parseInt(player), linkTypes);
         }
     }
 
@@ -108,7 +108,7 @@ function createLinkCache(
     baseLinkType: string | null,
     linkTypes: Set<string>,
     relativeLinkTypes: Map<string, Map<string, string[]>>, // relative name, from link type, to link types
-    playerLinkTypes: Map<string, Map<number, string>>, // player link name, player, link type
+    playerLinkTypes: Map<string, Map<number, string[]>>, // player link name, player, link types
     linkGroups: Map<string, string[]> // group name, link types
 ) {
     // Ensure the relevant by-player lookup exists
@@ -139,9 +139,9 @@ function createLinkCache(
 
     // Next, resolve player link types
     for (const [playerLinkType, linkTypeMapping] of playerLinkTypes) {
-        const linkTypeForPlayer = linkTypeMapping.get(player);
-        if (linkTypeForPlayer !== undefined) {
-            linkCache.set(playerLinkType, [linkTypeForPlayer]);
+        const linkTypesForPlayer = linkTypeMapping.get(player);
+        if (linkTypesForPlayer !== undefined) {
+            linkCache.set(playerLinkType, linkTypesForPlayer);
         }
     }
 

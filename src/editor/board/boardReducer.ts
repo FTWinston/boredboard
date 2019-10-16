@@ -126,11 +126,12 @@ export type BoardAction = {
     type: 'set player links';
     playerLinks: IPlayerLink[];
 } | {
-    type: 'remove player link';
+    type: 'add player link';
     player: number;
     playerLinkType: string;
+    linkType: string;
 } | {
-    type: 'set player link';
+    type: 'remove player link';
     player: number;
     playerLinkType: string;
     linkType: string;
@@ -243,13 +244,16 @@ function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
 
         for (const player in typePlayers) {
             playerLinkTypes.add(playerLinkType);
-            const toLinkType = typePlayers[player];
+            const toLinkTypes = typePlayers[player];
+            const playerID = parseInt(player);
 
-            links.push({
-                player: parseInt(player),
-                playerLinkType,
-                linkType: toLinkType,
-            });
+            for (const toLinkType of toLinkTypes) {
+                links.push({
+                    player: playerID,
+                    playerLinkType,
+                    linkType: toLinkType,
+                });
+            }
         }
     }
 
@@ -496,6 +500,25 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ...state,
                 playerLinks: action.playerLinks.filter(l => isValidPlayerLink(l, state)),
             };
+        
+        case 'add player link':
+            const newPlayerLink = {
+                player: action.player,
+                playerLinkType: action.playerLinkType,
+                linkType: action.linkType,
+            };
+
+            if (!isValidPlayerLink(newPlayerLink, state) || isDuplicatePlayerLink(newPlayerLink, state.playerLinks)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                playerLinks: [
+                    ...state.playerLinks,
+                    newPlayerLink
+                ],
+            };
 
         case 'remove player link':
             return {
@@ -503,32 +526,9 @@ export function reducer(state: IState, action: BoardAction): IState {
                 playerLinks: state.playerLinks.filter(
                     link => link.player !== action.player
                         || link.playerLinkType !== action.playerLinkType
+                        || link.linkType !== action.linkType
                 ),
             };
-            
-        case 'set player link': {
-            const newLink = {
-                player: action.player,
-                playerLinkType: action.playerLinkType,
-                linkType: action.linkType,
-            };
-            
-            const playerLinks = state.playerLinks.map(
-                link => link.player !== action.player
-                    || link.playerLinkType !== action.playerLinkType
-                    ? link
-                    : newLink
-            );
-
-            if (playerLinks.length === state.playerLinks.length) {
-                playerLinks.push(newLink);
-            }
-
-            return {
-                ...state,
-                playerLinks,
-            };
-        }
 
         case 'set link groups':
             return {
@@ -644,4 +644,12 @@ export function isDuplicateRelativeLink(relativeLink: IRelativeLink, existingRel
 
 function isValidPlayerLink(playerLink: IPlayerLink, state: IState) {
     return state.playerLinkTypes.indexOf(playerLink.playerLinkType) !== -1
+}
+
+export function isDuplicatePlayerLink(playerLink: IPlayerLink, existingPlayerLinks: IPlayerLink[]) {
+    return existingPlayerLinks.find(
+        r => r.playerLinkType === playerLink.playerLinkType
+        && r.player === playerLink.player
+        && r.linkType === playerLink.linkType
+    ) !== undefined;
 }

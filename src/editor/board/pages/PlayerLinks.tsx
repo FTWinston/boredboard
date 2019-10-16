@@ -4,7 +4,7 @@ import './PlayerLinks.css';
 import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
 import { IPlayerLink } from '../boardReducer';
-import { SelectorSingle } from '../components/SelectorSingle';
+import { SelectorMulti } from '../components/SelectorMulti';
 
 interface Props {
     linkTypes: string[];
@@ -15,8 +15,6 @@ interface Props {
     prevPage: string;
     nextPage: string;
 }
-
-const notAvailable = 'not used';
 
 export const PlayerLinks: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
@@ -51,11 +49,6 @@ export const PlayerLinks: React.FunctionComponent<Props> = props => {
         ...props.relativeLinkTypes,
     ], [props.linkTypes, props.relativeLinkTypes]);
 
-    const playerDirectionOptions = useMemo(() => [
-        notAvailable,
-        ...props.linkTypes,
-    ], [props.linkTypes])
-
     const playerIDs = useMemo(
         () => {
             const IDs: number[] = [];
@@ -72,30 +65,24 @@ export const PlayerLinks: React.FunctionComponent<Props> = props => {
         ? 'You currently have no player direction types'
         : playerIDs.map(player => {
             const perPlayer = props.playerLinkTypes.map(playerLinkType => {
-                const existingLink = props.playerLinks
-                    .find(l => l.player === player && l.playerLinkType === playerLinkType);
+                const existingLinks = props.playerLinks
+                    .filter(l => l.player === player && l.playerLinkType === playerLinkType)
+                    .map(l => l.linkType);
 
-                const selectValue = (linkType: string) => linkType === notAvailable
-                    ? context({
-                        type: 'remove player link',
-                        player,
-                        playerLinkType,
-                    })
-                    : context({
-                        type: 'set player link',
-                        player,
-                        playerLinkType,
-                        linkType,
-                    });
+                const changeValue = (linkType: string, selected: boolean) => context({
+                    type: selected ? 'add player link' : 'remove player link',
+                    player,
+                    playerLinkType,
+                    linkType,
+                });
 
                 return (
-                    <SelectorSingle
+                    <SelectorMulti
                         key={playerLinkType}
                         prefixText={`${playerLinkType} is:`}
-                        radioGroup={`playerLink-${playerLinkType}-${player}`}
-                        options={playerDirectionOptions}
-                        selectedValue={existingLink === undefined ? notAvailable : existingLink.linkType}
-                        selectValue={selectValue}
+                        options={props.linkTypes}
+                        selectedValues={existingLinks}
+                        changeValue={changeValue}
                     />
                 );
             });
@@ -115,7 +102,7 @@ export const PlayerLinks: React.FunctionComponent<Props> = props => {
                     If each player "faces" a different direction, and their pieces move according to that, you can define these player-specific directions here.
                 </p>
                 <p>
-                    For example chess pawns move <em>forward</em>, which is different for each player.
+                    For example, chess pawns move <em>forward</em> and attack <em>diagonally forward</em>. These are different for each player.
                 </p>
 
                 <div className="boardEditor__listTitle">Player direction types</div>

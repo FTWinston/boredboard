@@ -25,7 +25,7 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
             />
 
             <div className="boardEditor__content">
-                Ability to group directions into e.g. “orthogonal”, “sideways” etc. These can include link types and directions. (i.e. global and local directions.)
+                Ability to group directions into e.g. "orthogonal", "sideways" etc. These can include link types, relative link types and player link types.
             </div>
 
             <div className="boardEditor__navigation">

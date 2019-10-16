@@ -97,10 +97,11 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                 </Route>
                 <Route path="/directiongroups">
                     <LinkGroups
-                        boardUrl={state.imageUrl}
-                        cells={state.cells}
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
+                        playerLinkTypes={state.playerLinkTypes}
+                        linkGroupTypes={state.linkGroupTypes}
+                        linkGroupItems={state.linkGroupItems}
                         prevPage="/playerdirections"
                         nextPage="/regions"
                     />

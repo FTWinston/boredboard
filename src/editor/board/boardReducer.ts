@@ -18,9 +18,9 @@ export interface IPlayerLink {
     linkType: string;
 }
 
-export interface ILinkGroup {
-    name: string;
-    linkTypes: string[];
+export interface IGroupItem {
+    groupType: string;
+    itemName: string;
 }
 
 export interface IRegion {
@@ -38,7 +38,8 @@ interface IState {
     relativeLinks: IRelativeLink[];
     playerLinkTypes: string[];
     playerLinks: IPlayerLink[];
-    linkGroups: ILinkGroup[];
+    linkGroupTypes: string[];
+    linkGroupItems: IGroupItem[];
     regions: IRegion[];
 }
 
@@ -137,14 +138,28 @@ export type BoardAction = {
     linkType: string;
 } | {
     type: 'set link groups';
-    groups: ILinkGroup[];
+    groupTypes: string[];
+} | {
+    type: 'add link group';
+    groupType: string;
 } | {
     type: 'remove link group';
-    name: string;
+    groupType: string;
 } | {
-    type: 'set link group';
-    name: string;
-    linkTypes: string[];
+    type: 'rename link group';
+    oldName: string;
+    newName: string;
+} | {
+    type: 'set link group items';
+    linkGroupItems: IGroupItem[];
+} | {
+    type: 'add link group item';
+    groupType: string;
+    itemName: string;
+} | {
+    type: 'remove link group item';
+    groupType: string;
+    itemName: string;
 } | {
     type: 'set regions';
     regions: IRegion[];
@@ -161,6 +176,9 @@ export function getInitialState(board?: IBoard): IState {
         const playerLinkTypes = new Set<string>();
         const playerLinks = readBoardPlayerLinks(board, playerLinkTypes);
 
+        const linkGroupTypes = new Set<string>();
+        const linkGroupItems = readBoardLinkGroups(board, linkGroupTypes);
+
         return {
             imageUrl: board.imageUrl,
             cells: Object.keys(board.links),
@@ -170,7 +188,8 @@ export function getInitialState(board?: IBoard): IState {
             relativeLinks: relativeLinks,
             playerLinkTypes: [...playerLinkTypes],
             playerLinks: playerLinks,
-            linkGroups: readBoardLinkGroups(board),
+            linkGroupTypes: [...linkGroupTypes],
+            linkGroupItems,
             regions: readBoardRegions(board),
         };
     }
@@ -185,7 +204,8 @@ export function getInitialState(board?: IBoard): IState {
         regions: [],
         playerLinkTypes: [],
         playerLinks: [],
-        linkGroups: [],
+        linkGroupTypes: [],
+        linkGroupItems: [],
     };
 }
 
@@ -260,19 +280,23 @@ function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
     return links;
 }
 
-function readBoardLinkGroups(board: IBoard) {
-    const linkGroups: ILinkGroup[] = [];
+function readBoardLinkGroups(board: IBoard, linkGroupTypes: Set<string>) {
+    const linkGroupItems: IGroupItem[] = [];
 
-    for (const name in board.linkGroups) {
-        const linkTypes = board.linkGroups[name];
-            
-        linkGroups.push({
-            name,
-            linkTypes,
-        });
+    for (const groupType in board.linkGroups) {
+        linkGroupTypes.add(groupType);
+
+        const itemNames = board.linkGroups[groupType];
+
+        for (const itemName of itemNames) {
+            linkGroupItems.push({
+                groupType,
+                itemName,
+            });
+        }
     }
 
-    return linkGroups;
+    return linkGroupItems;
 }
 
 function readBoardRegions(board: IBoard) {
@@ -533,36 +557,68 @@ export function reducer(state: IState, action: BoardAction): IState {
         case 'set link groups':
             return {
                 ...state,
-                linkGroups: action.groups,
+                linkGroupTypes: action.groupTypes,
             };
             
+        case 'add link group':
+            return {
+                ...state,
+                linkGroupTypes: [
+                    ...state.linkGroupTypes,
+                    action.groupType
+                ],
+            };
+
         case 'remove link group':
             return {
                 ...state,
-                linkGroups: state.linkGroups.filter(group => group.name !== action.name),
+                linkGroupTypes: state.linkGroupTypes.filter(group => group !== action.groupType),
+                linkGroupItems: state.linkGroupItems.filter(item => item.groupType !== action.groupType),
             };
-            
-        case 'set link group': {
-            const newGroup = {
-                name: action.name,
-                linkTypes: action.linkTypes,
-            };
-            
-            const linkGroups = state.linkGroups.map(
-                group => group.name !== action.name
-                    ? group
-                    : newGroup
-            );
 
-            if (linkGroups.length === state.linkGroups.length) {
-                linkGroups.push(newGroup);
+        case 'rename link group':
+            return {
+                ...state,
+                linkGroupTypes: state.linkGroupTypes.map(t => t === action.oldName ? action.newName : t),
+                linkGroupItems: state.linkGroupItems.map(l => ({
+                    ...l,
+                    type: l.groupType === action.oldName ? action.newName : l.groupType,
+                }))
+            };
+                
+        case 'set link group items':
+            return {
+                ...state,
+                linkGroupItems: action.linkGroupItems.filter(item => state.linkGroupTypes.indexOf(item.groupType) !== -1),
+            };
+        
+        case 'add link group item': {
+            const newGroupItem = {
+                groupType: action.groupType,
+                itemName: action.itemName,
+            };
+            
+            if (!isValidGroupItem(newGroupItem, state) || isDuplicateGroupItem(newGroupItem, state.linkGroupItems)) {
+                return state;
             }
 
             return {
                 ...state,
-                linkGroups,
+                linkGroupItems: [
+                    ...state.linkGroupItems,
+                    newGroupItem,
+                ],
             };
         }
+
+        case 'remove link group item':
+            return {
+                ...state,
+                linkGroupItems: state.linkGroupItems.filter(
+                    item => item.groupType !== action.groupType
+                    || item.itemName !== action.itemName
+                ),
+            }
 
         case 'set regions':
             return {
@@ -651,5 +707,16 @@ export function isDuplicatePlayerLink(playerLink: IPlayerLink, existingPlayerLin
         r => r.playerLinkType === playerLink.playerLinkType
         && r.player === playerLink.player
         && r.linkType === playerLink.linkType
+    ) !== undefined;
+}
+
+function isValidGroupItem(groupItem: IGroupItem, state: IState) {
+    return state.linkGroupTypes.indexOf(groupItem.groupType) !== -1
+}
+
+export function isDuplicateGroupItem(groupItem: IGroupItem, existingGroupItems: IGroupItem[]) {
+    return existingGroupItems.find(
+        r => r.groupType === groupItem.groupType
+        && r.itemName === groupItem.itemName
     ) !== undefined;
 }

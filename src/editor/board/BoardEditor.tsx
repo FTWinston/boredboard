@@ -2,7 +2,7 @@ import React, { useReducer, createContext, Dispatch } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { IBoard } from '../../data/IBoard';
 import './BoardEditor.css';
-import { reducer, getInitialState, BoardAction, saveBoardData } from './boardReducer';
+import { reducer, getInitialState, BoardAction } from './boardReducer';
 import { ImageSelector } from './pages/ImageSelector';
 import { CellSelector } from './pages/CellSelector';
 import { BulkLinker } from './pages/BulkLinker';
@@ -13,6 +13,7 @@ import { ManualLinker } from './pages/ManualLinker';
 import { RelativeLinks } from './pages/RelativeLinks';
 import { LinkGroups } from './pages/LinkGroups';
 import { PlayerLinks } from './pages/PlayerLinks';
+import { writeBoardFromState } from './writeBoardFromState';
 
 interface Props {
     name: string;
@@ -126,7 +127,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regions={state.regions}
-                            saveData={() => props.saveData(saveBoardData(state))}
+                            saveData={() => props.saveData(writeBoardFromState(state))}
                         />
                     );
                 }} />

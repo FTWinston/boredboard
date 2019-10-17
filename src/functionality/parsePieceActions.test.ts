@@ -1,29 +1,34 @@
 import { parsePieceActions } from './parsePieceActions';
 import { MoveType } from './MoveType';
 
-type SimpleExample = [string, MoveType, string, number, number | undefined];
+type SimpleExample = [string, MoveType, string[], number, number | undefined];
 
 it('parses simple example actions', () => {
     const examples: SimpleExample[] = [
-        ['It can slide 1 cell forward.', MoveType.Slide, 'forward', 1, 1],
-        ['It can slide any distance diagonally.', MoveType.Slide, 'diagonally', 1, undefined],
-        ['It can hop up to 3 cells orthogonally.', MoveType.Hop, 'orthogonally', 1, 3],
-        ['It can leap 2 to 4 cells orthogonally.', MoveType.Leap, 'orthogonally', 2, 4],
-        ['It can leap 2 cells diagonally.', MoveType.Leap, 'diagonally', 2, 2],
-        ['It can slide at least 2 cells orthogonally.', MoveType.Slide, 'orthogonally', 2, undefined],
+        ['It can slide 1 cell forward.', MoveType.Slide, ['forward'], 1, 1],
+        ['It can slide any distance diagonally.', MoveType.Slide, ['diagonally'], 1, undefined],
+        ['It can slide any distance orthogonally or diagonally.', MoveType.Slide, ['orthogonally', 'diagonally'], 1, undefined],
+        ['It can hop up to 3 cells orthogonally.', MoveType.Hop, ['orthogonally'], 1, 3],
+        ['It can leap 2 to 4 cells horizontally or vertically.', MoveType.Leap, ['horizontally', 'vertically'], 2, 4],
+        ['It can leap 2 cells diagonally.', MoveType.Leap, ['diagonally'], 2, 2],
+        ['It can slide at least 2 cells orthogonally.', MoveType.Slide, ['orthogonally'], 2, undefined],
     ];
 
     for (const example of examples) {
         const result = parsePieceActions(example[0]);
         
         if (result.success) {
-            expect(result.definition).toHaveLength(1);
+            const directions = example[2];
 
-            const definition = result.definition[0];
-            expect(definition.moveType).toBe(example[1]);
-            expect(definition.direction).toBe(example[2]);
-            expect(definition.minDistance).toBe(example[3]);
-            expect(definition.maxDistance).toBe(example[4]);
+            expect(result.definition).toHaveLength(directions.length);
+
+            for (let i = 0; i < directions.length; i++) {
+                const definition = result.definition[i];
+                expect(definition.moveType).toBe(example[1]);
+                expect(definition.direction).toBe(directions[i]);
+                expect(definition.minDistance).toBe(example[3]);
+                expect(definition.maxDistance).toBe(example[4]);
+            }
         }
         else {
             expect(result.errors).toHaveLength(0);

@@ -1,12 +1,11 @@
 import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
-import { CellSelector } from '../editor/board/pages/CellSelector';
 
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+ cells?) (?<direction>.+)',
+        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+))?',
         parseMatch: (match, action, error) => {
             let success = true;
             const groups = match.groups!;
@@ -25,11 +24,18 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
             }
 
             const direction = groups['direction'];
+            const direction2 = groups['direction2'];
             
-            // console.log('match', match);
+            //console.log('match', match);
 
             if (success) {
-                action(modify => modify.push(new PieceActionDefinition(moveType!, direction, minDistance!, maxDistance)));
+                action(modify => {
+                    modify.push(new PieceActionDefinition(moveType!, direction, minDistance!, maxDistance));
+
+                    if (direction2 !== undefined) {
+                        modify.push(new PieceActionDefinition(moveType!, direction2, minDistance!, maxDistance));
+                    }
+                });
             }
         },
         examples: [
@@ -39,6 +45,8 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
             'It can leap 2 to 4 cells orthogonally',
             'It can leap 2 cells diagonally',
             'It can slide at least 2 cells orthogonally',
+            'It can leap 2 to 4 cells horizontally or vertically.',
+            'It can slide any distance orthogonally or diagonally.',
         ]
     },
 ]);

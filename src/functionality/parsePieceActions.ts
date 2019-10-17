@@ -5,7 +5,7 @@ import { MoveType } from './MoveType';
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+))?',
+        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+?))?(?: then (?<thenDistance>any distance|.+? cells?) (?<thenDirection>.+?))?',
         parseMatch: (match, action, error) => {
             let success = true;
             const groups = match.groups!;

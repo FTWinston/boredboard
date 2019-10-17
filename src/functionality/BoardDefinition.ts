@@ -3,8 +3,8 @@ import { readLinkTypes } from './readLinkTypes';
 import { readCellLinks } from './readCellLinks';
 
 export class BoardDefinition {
-    private readonly cellLinks: Map<string, Map<string, string[]>>; // from cell, link type, to cells
-    private readonly directionCache: Map<number, Map<string | null, Map<string, string[]>>>; // player, base link type, direction name, link types
+    private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
+    private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
 
     constructor(data: IBoardDefinition) {
         this.cellLinks = readCellLinks(data);

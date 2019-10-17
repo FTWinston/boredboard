@@ -1,6 +1,6 @@
 import React, { useReducer, createContext, Dispatch } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { IBoard } from '../../data/IBoard';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 import './BoardEditor.css';
 import { reducer, getInitialState, BoardAction } from './boardReducer';
 import { ImageSelector } from './pages/ImageSelector';
@@ -18,8 +18,8 @@ import { writeBoardFromState } from './writeBoardFromState';
 interface Props {
     name: string;
     numPlayers: number;
-    initialData?: IBoard;
-    saveData: (board: IBoard) => void;
+    initialData?: IBoardDefinition;
+    saveData: (board: IBoardDefinition) => void;
 }
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});

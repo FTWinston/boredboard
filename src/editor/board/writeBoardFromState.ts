@@ -1,7 +1,7 @@
-import { IBoard } from '../../data/IBoard';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { IState } from './boardReducer';
 
-export function writeBoardFromState(state: IState): IBoard {
+export function writeBoardFromState(state: IState): IBoardDefinition {
     // TODO: saving logic
     
     return {

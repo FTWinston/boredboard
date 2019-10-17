@@ -1,7 +1,7 @@
-import { IBoard } from '../../data/IBoard';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { ILink, IRelativeLink, IPlayerLink, IGroupItem, IRegion } from './boardReducer';
 
-export function readStateFromBoard(board: IBoard) {
+export function readStateFromBoard(board: IBoardDefinition) {
     const linkTypes = new Set<string>();
     const links = readBoardLinks(board, linkTypes);
 
@@ -29,7 +29,7 @@ export function readStateFromBoard(board: IBoard) {
     };
 }
 
-function readBoardLinks(board: IBoard, linkTypes: Set<string>) {
+function readBoardLinks(board: IBoardDefinition, linkTypes: Set<string>) {
     const links: ILink[] = [];
 
     for (const fromCell in board.links) {
@@ -52,7 +52,7 @@ function readBoardLinks(board: IBoard, linkTypes: Set<string>) {
     return links;
 }
 
-function readBoardRelativeLinks(board: IBoard, relativeLinkTypes: Set<string>) {
+function readBoardRelativeLinks(board: IBoardDefinition, relativeLinkTypes: Set<string>) {
     const relativeLinks: IRelativeLink[] = [];
 
     for (const relativeLinkType in board.relativeLinks) {
@@ -76,7 +76,7 @@ function readBoardRelativeLinks(board: IBoard, relativeLinkTypes: Set<string>) {
     return relativeLinks;
 }
 
-function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
+function readBoardPlayerLinks(board: IBoardDefinition, playerLinkTypes: Set<string>) {
     const links: IPlayerLink[] = [];
 
     for (const playerLinkType in board.playerLinks) {
@@ -100,7 +100,7 @@ function readBoardPlayerLinks(board: IBoard, playerLinkTypes: Set<string>) {
     return links;
 }
 
-function readBoardLinkGroups(board: IBoard, linkGroupTypes: Set<string>) {
+function readBoardLinkGroups(board: IBoardDefinition, linkGroupTypes: Set<string>) {
     const linkGroupItems: IGroupItem[] = [];
 
     for (const groupType in board.linkGroups) {
@@ -119,7 +119,7 @@ function readBoardLinkGroups(board: IBoard, linkGroupTypes: Set<string>) {
     return linkGroupItems;
 }
 
-function readBoardRegions(board: IBoard) {
+function readBoardRegions(board: IBoardDefinition) {
     const regions: IRegion[] = [];
 
     for (const name in board.regions) {

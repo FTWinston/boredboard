@@ -1,6 +1,6 @@
-import { IBoard } from '../data/IBoard';
+import { IBoardDefinition } from '../data/IBoardDefinition';
 
-export function readLinkTypes(data: IBoard) {
+export function readLinkTypes(data: IBoardDefinition) {
     const results = new Map<number, Map<string | null, Map<string, string[]>>>(); // player, base link type, link types
 
     const linkTypes = populateLinkTypes(data);
@@ -35,7 +35,7 @@ export function readLinkTypes(data: IBoard) {
 }
 
 
-function populateLinkTypes(data: IBoard) {
+function populateLinkTypes(data: IBoardDefinition) {
     const results = new Set<string>();
 
     for (const fromCell in data.links) {
@@ -49,7 +49,7 @@ function populateLinkTypes(data: IBoard) {
     return results;
 }
 
-function populateRelativeLinks(data: IBoard) {
+function populateRelativeLinks(data: IBoardDefinition) {
     const results = new Map<string, Map<string, string[]>>(); // relative name, from link type, to link types
 
     for (const relativeLinkType in data.relativeLinks) {
@@ -70,7 +70,7 @@ function populateRelativeLinks(data: IBoard) {
     return results;
 }
 
-function populatePlayerLinkTypes(data: IBoard) {
+function populatePlayerLinkTypes(data: IBoardDefinition) {
     const results = new Map<string, Map<number, string[]>>(); // player link name, player, link types
 
     for (const playerLinkType in data.playerLinks) {
@@ -91,7 +91,7 @@ function populatePlayerLinkTypes(data: IBoard) {
     return results;
 }
 
-function populateLinkGroups(data: IBoard) {
+function populateLinkGroups(data: IBoardDefinition) {
     const results = new Map<string, string[]>(); // group name, link types
 
     for (const groupName in data.linkGroups) {

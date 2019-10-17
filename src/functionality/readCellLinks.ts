@@ -1,6 +1,6 @@
-import { IBoard } from '../data/IBoard';
+import { IBoardDefinition } from '../data/IBoardDefinition';
 
-export function readCellLinks(data: IBoard) {
+export function readCellLinks(data: IBoardDefinition) {
     const results = new Map<string, Map<string, string[]>>(); // from cell, link type, to cells
 
     for (const fromCell in data.links) {

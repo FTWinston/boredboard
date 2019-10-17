@@ -1,7 +1,7 @@
-import { IBoard } from './IBoard';
-import { IPieceType } from './IPieceType';
+import { IBoardDefinition } from './IBoardDefinition';
+import { IPieceDefinition } from './IPieceDefinition';
 
 export interface IGameDefinition {
-    boards: Record<string, IBoard>;
-    pieceTypes: Record<string, IPieceType>;
+    boards: Record<string, IBoardDefinition>;
+    pieces: Record<string, IPieceDefinition>;
 }

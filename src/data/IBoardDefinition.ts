@@ -1,4 +1,4 @@
-export interface IBoard {
+export interface IBoardDefinition {
     imageUrl: string;
     links: Record<string, Record<string, string[]>>; // from cell, link type, to cells
     relativeLinks: Record<string, Record<string, string[]>>; // relative link type, from link type, to link types

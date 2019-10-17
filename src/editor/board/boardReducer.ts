@@ -1,4 +1,4 @@
-import { IBoard } from '../../data/IBoard';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readStateFromBoard } from './readStateFromBoard';
 
 export interface ILink {
@@ -166,7 +166,7 @@ export type BoardAction = {
     regions: IRegion[];
 }
 
-export function getInitialState(board?: IBoard): IState {
+export function getInitialState(board?: IBoardDefinition): IState {
     if (board !== undefined) {
         return readStateFromBoard(board);
     }

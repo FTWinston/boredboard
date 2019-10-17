@@ -1,12 +1,12 @@
-import { IBoard } from '../data/IBoard';
+import { IBoardDefinition } from '../data/IBoardDefinition';
 import { readLinkTypes } from './readLinkTypes';
 import { readCellLinks } from './readCellLinks';
 
-export class Board {
+export class BoardDefinition {
     private readonly cellLinks: Map<string, Map<string, string[]>>; // from cell, link type, to cells
     private readonly directionCache: Map<number, Map<string | null, Map<string, string[]>>>; // player, base link type, direction name, link types
 
-    constructor(data: IBoard) {
+    constructor(data: IBoardDefinition) {
         this.cellLinks = readCellLinks(data);
         this.directionCache = readLinkTypes(data);
         // TODO: data.regions;

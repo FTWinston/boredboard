@@ -39,7 +39,12 @@ export class BoardDefinition {
                 }
             }
 
+            if (nextCells.size === 0) {
+                break;
+            }
+
             currentCells = nextCells;
+            distance++;
         }
 
         return resultCells;

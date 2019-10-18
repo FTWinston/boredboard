@@ -12,7 +12,7 @@ interface IActionElement {
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: (or) (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?))*',
+        expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: or (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?)(?: or (.+?))?)*',
         parseMatch: (match, action, error) => {
             const moveSequence: IActionElement[] = [];
             let success = true;
@@ -29,18 +29,18 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
 
             [iNextMatch, groupStartPos, success] = parseMoveElement(match, iNextMatch, groupStartPos, error, success, false, moveSequence);
 
-            // console.log('match', match);
-
             // now into repeating "then" sections
             while (iNextMatch < match.length) {
-                if (match[iNextMatch] === 'then') {
-                    iNextMatch++;
+                const nextMatch = match[iNextMatch++];
+                if (nextMatch === undefined){
+                    break;
+                }
+                else if (nextMatch === 'then') {
                     groupStartPos += 6;
 
-                    const optional = match[iNextMatch] === 'optionally ';
+                    const optional = match[iNextMatch++] === 'optionally ';
                     
                     if (optional) {
-                        iNextMatch ++;
                         groupStartPos += 12;
                     }
 
@@ -55,13 +55,6 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
                     return
                 }
             }
-
-
-            /*
-            const thenDistance = groups['thenDistance'];
-            const thenDirection = groups['thenDirection'];
-            const thenOptional = groups['optional'] !== undefined;
-            */
 
             if (success) {
                 action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence)));
@@ -95,7 +88,13 @@ function parseMoveElement(
     groupStartPos += strDistance.length + 1;
 
     const directions: string[] = [];
-    [iNextMatch, groupStartPos] = parseDirections(match, iNextMatch, groupStartPos, directions, error);
+    groupStartPos = parseDirections(
+        match[iNextMatch++],
+        match[iNextMatch++],
+        groupStartPos,
+        directions,
+        error
+    );
 
     if (minDistance === undefined || directions.length === 0) {
         success = false;
@@ -109,7 +108,7 @@ function parseMoveElement(
         });
     }
 
-    return [ iNextMatch, groupStartPos, success ];
+    return [iNextMatch, groupStartPos, success];
 }
 
 function parseMoveType(moveType: string, startIndex: number, error: (error: IParserError) => void) {
@@ -210,29 +209,24 @@ type ParseResult = {
 }
 
 function parseDirections(
-    match: RegExpExecArray,
-    iNextMatch: number,
+    direction: string,
+    direction2: string | undefined,
     groupStartPos: number,
     directions: string[],
     error: (error: IParserError) => void
-): [number, number] {
-    const direction = match[iNextMatch++];
-    
+) {
     // TODO: ensure direction is valid
     directions.push(direction);
     groupStartPos += direction.length;
 
-    if (match[iNextMatch] === 'or') {
-        iNextMatch ++;
-
-        const direction2 = match[iNextMatch++];
+    if (direction2 !== undefined) {
         groupStartPos += direction2.length + 4;
 
         // TODO: ensure direction2 is valid
         directions.push(direction2);
     }
 
-    return [iNextMatch, groupStartPos];
+    return groupStartPos;
 }
 
 export function parsePieceActions(behaviour: string): ParseResult {

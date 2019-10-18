@@ -2,42 +2,69 @@ import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
 
+interface IActionElement {
+    directions: Array<string>;
+    minDistance: number;
+    maxDistance?: number;
+    optional: boolean;
+}
+
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+?))?(?: then (?<optional>optionally )?(?<thenDistance>any distance|.+? cells?) (?<thenDirection>.+?))?',
+        expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: (or) (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?))*',
         parseMatch: (match, action, error) => {
+            const moveSequence: IActionElement[] = [];
             let success = true;
-            const groups = match.groups!;
-            
+            let iNextMatch = 1;
             let groupStartPos = 7;
-            const strMoveType = groups['moveType'];
+
+            const strMoveType = match[iNextMatch++];
             const moveType = parseMoveType(strMoveType, groupStartPos, error);
+            groupStartPos += strMoveType.length + 1;
+
             if (moveType === undefined) {
                 success = false;
             }
 
-            groupStartPos += strMoveType.length + 1;
-            const [minDistance, maxDistance] = parseDistance(groups['distance'], groupStartPos, error);
-            if (minDistance === undefined) {
-                success = false;
+            [iNextMatch, groupStartPos, success] = parseMoveElement(match, iNextMatch, groupStartPos, error, success, false, moveSequence);
+
+            // console.log('match', match);
+
+            // now into repeating "then" sections
+            while (iNextMatch < match.length) {
+                if (match[iNextMatch] === 'then') {
+                    iNextMatch++;
+                    groupStartPos += 6;
+
+                    const optional = match[iNextMatch] === 'optionally ';
+                    
+                    if (optional) {
+                        iNextMatch ++;
+                        groupStartPos += 12;
+                    }
+
+                    [iNextMatch, groupStartPos, success] = parseMoveElement(match, iNextMatch, groupStartPos, error, success, optional, moveSequence);
+                }
+                else {        
+                    error({
+                        startIndex: groupStartPos,
+                        length: match.length - groupStartPos,
+                        message: `Don't understand the end of this rule.`,
+                    });
+                    return
+                }
             }
 
-            const direction = groups['direction'];
-            const direction2 = groups['direction2'];
-            
-            const directions = direction2 === undefined 
-                ? [direction]
-                : [direction, direction2];
 
+            /*
             const thenDistance = groups['thenDistance'];
             const thenDirection = groups['thenDirection'];
             const thenOptional = groups['optional'] !== undefined;
-
-            //console.log('match', match);
+            */
 
             if (success) {
-                action(modify => modify.push(new PieceActionDefinition(moveType!, [{ directions, minDistance: minDistance!, maxDistance, optional: false }])));
+                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence)));
             }
         },
         examples: [
@@ -52,6 +79,38 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
         ]
     },
 ]);
+
+function parseMoveElement(
+    match: RegExpExecArray,
+    iNextMatch: number,
+    groupStartPos: number,
+    error: (error: IParserError) => void,
+    success: boolean,
+    optional: boolean,
+    moveSequence: IActionElement[]
+): [number, number, boolean] {
+    const strDistance = match[iNextMatch++];
+    
+    const [minDistance, maxDistance] = parseDistance(strDistance, groupStartPos, error);
+    groupStartPos += strDistance.length + 1;
+
+    const directions: string[] = [];
+    [iNextMatch, groupStartPos] = parseDirections(match, iNextMatch, groupStartPos, directions, error);
+
+    if (minDistance === undefined || directions.length === 0) {
+        success = false;
+    }
+    else {
+        moveSequence.push({
+            directions,
+            minDistance,
+            maxDistance,
+            optional,
+        });
+    }
+
+    return [ iNextMatch, groupStartPos, success ];
+}
 
 function parseMoveType(moveType: string, startIndex: number, error: (error: IParserError) => void) {
     switch (moveType.toLowerCase()) {
@@ -73,7 +132,9 @@ function parseMoveType(moveType: string, startIndex: number, error: (error: IPar
 const distanceExpression = new RegExp("(?:(?<distType>at least|at most|up to|(?<firstDist>\\d+) to) )?(?<mainDist>\\d+) cells?");
 
 function parseDistance(
-    distance: string, startIndex: number, error: (error: IParserError) => void
+    distance: string,
+    startIndex: number,
+    error: (error: IParserError) => void
 ): [number | undefined, number | undefined] {
     if (distance === 'any distance') {
         return [1, undefined];
@@ -101,7 +162,7 @@ function parseDistance(
 
         return [undefined, undefined];
     }
-
+    
     switch (match.groups!['distType']) {
         case undefined:
             return [mainDist, mainDist];
@@ -120,6 +181,7 @@ function parseDistance(
             length: 1,
             message: `Distance value must be greater than zero.`,
         });
+
         return [undefined, undefined];
     }
 
@@ -132,6 +194,7 @@ function parseDistance(
             length: numberEnd - numberStart,
             message: `Second distance value must be greater than the first value.`,
         });
+
         return [undefined, undefined];
     }
 
@@ -144,6 +207,32 @@ type ParseResult = {
 } | {
     success: false;
     errors: IParserError[];
+}
+
+function parseDirections(
+    match: RegExpExecArray,
+    iNextMatch: number,
+    groupStartPos: number,
+    directions: string[],
+    error: (error: IParserError) => void
+): [number, number] {
+    const direction = match[iNextMatch++];
+    
+    // TODO: ensure direction is valid
+    directions.push(direction);
+    groupStartPos += direction.length;
+
+    if (match[iNextMatch] === 'or') {
+        iNextMatch ++;
+
+        const direction2 = match[iNextMatch++];
+        groupStartPos += direction2.length + 4;
+
+        // TODO: ensure direction2 is valid
+        directions.push(direction2);
+    }
+
+    return [iNextMatch, groupStartPos];
 }
 
 export function parsePieceActions(behaviour: string): ParseResult {

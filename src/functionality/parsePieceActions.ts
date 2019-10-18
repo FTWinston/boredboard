@@ -5,7 +5,7 @@ import { MoveType } from './MoveType';
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+?))?(?: then (?<thenDistance>any distance|.+? cells?) (?<thenDirection>.+?))?',
+        expressionText: 'It can (?<moveType>\\w+) (?<distance>any distance|.+? cells?) (?<direction>.+?)(?: or (?<direction2>.+?))?(?: then (?<optional>optionally )?(?<thenDistance>any distance|.+? cells?) (?<thenDirection>.+?))?',
         parseMatch: (match, action, error) => {
             let success = true;
             const groups = match.groups!;
@@ -26,16 +26,18 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
             const direction = groups['direction'];
             const direction2 = groups['direction2'];
             
+            const directions = direction2 === undefined 
+                ? [direction]
+                : [direction, direction2];
+
+            const thenDistance = groups['thenDistance'];
+            const thenDirection = groups['thenDirection'];
+            const thenOptional = groups['optional'] !== undefined;
+
             //console.log('match', match);
 
             if (success) {
-                action(modify => {
-                    modify.push(new PieceActionDefinition(moveType!, direction, minDistance!, maxDistance));
-
-                    if (direction2 !== undefined) {
-                        modify.push(new PieceActionDefinition(moveType!, direction2, minDistance!, maxDistance));
-                    }
-                });
+                action(modify => modify.push(new PieceActionDefinition(moveType!, [{ directions, minDistance: minDistance!, maxDistance, optional: false }])));
             }
         },
         examples: [

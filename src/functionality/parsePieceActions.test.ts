@@ -59,7 +59,7 @@ it('Correctly marks errors in erroneous simple examples', () => {
         ['It can slide 0 cells forward.', 'Distance value must be greater than zero.', 13, 1],
         ['It can leap 4 to 2 cells orthogonally.', 'Second distance value must be greater than the first value.', 17, 1],
         ['It can leap 50 to 17 cells orthogonally.', 'Second distance value must be greater than the first value.', 18, 2],
-        ['It can hop any quantity of cells orthogonally.', 'Unrecognised distance: any quantity of cells.', 11, 21],
+        ['It can hop any quantity of cells orthogonally.', 'Unrecognised distance: any quantity of.', 11, 15],
     ];
 
     for (const example of examples) {

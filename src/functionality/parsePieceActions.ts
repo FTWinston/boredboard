@@ -1,6 +1,7 @@
 import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
+import { string, number } from 'prop-types';
 
 interface IActionElement {
     directions: Array<string>;
@@ -12,14 +13,12 @@ interface IActionElement {
 const parser = new ConfigurationParser<PieceActionDefinition[]>([
     {
         type: 'standard',
-        expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: or (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?)(?: or (.+?))?)*',
+        //expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: or (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?)(?: or (.+?))?)*',
+        expressionText: 'It can (\\w+) (.+?)( then (optionally )?(.+?))*',
         parseMatch: (match, action, error) => {
-            const moveSequence: IActionElement[] = [];
             let success = true;
-            let iNextMatch = 1;
             let groupStartPos = 7;
-
-            const strMoveType = match[iNextMatch++];
+            const strMoveType = match[1];
             const moveType = parseMoveType(strMoveType, groupStartPos, error);
             groupStartPos += strMoveType.length + 1;
 
@@ -27,33 +26,27 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
                 success = false;
             }
 
-            [iNextMatch, groupStartPos, success] = parseMoveElement(match, iNextMatch, groupStartPos, error, success, false, moveSequence);
+            const moveSequence: IActionElement[] = [];
 
-            // now into repeating "then" sections
-            while (iNextMatch < match.length) {
-                const nextMatch = match[iNextMatch++];
-                if (nextMatch === undefined){
-                    break;
-                }
-                else if (nextMatch === 'then') {
-                    groupStartPos += 6;
+            const firstMove = match[2];
+            success = success && parseMoveElement(firstMove, groupStartPos, error, false, moveSequence);
+            groupStartPos += firstMove.length;
 
-                    const optional = match[iNextMatch++] === 'optionally ';
-                    
-                    if (optional) {
-                        groupStartPos += 12;
-                    }
+            const subsequentMoves = match[0].split(' then ');
+            subsequentMoves.splice(0, 1);
 
-                    [iNextMatch, groupStartPos, success] = parseMoveElement(match, iNextMatch, groupStartPos, error, success, optional, moveSequence);
+            for (let move of subsequentMoves) {
+                let optional;
+                if (move.startsWith('optionally ')) {
+                    optional = true;
+                    move = move.substr(11);
+                    groupStartPos += 11;
                 }
-                else {        
-                    error({
-                        startIndex: groupStartPos,
-                        length: match.length - groupStartPos,
-                        message: `Don't understand the end of this rule.`,
-                    });
-                    return
+                else {
+                    optional = false;
                 }
+
+                success = success && parseMoveElement(move, groupStartPos, error, optional, moveSequence);
             }
 
             if (success) {
@@ -74,41 +67,63 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
 ]);
 
 function parseMoveElement(
-    match: RegExpExecArray,
-    iNextMatch: number,
-    groupStartPos: number,
+    elementText: string,
+    startIndex: number,
     error: (error: IParserError) => void,
-    success: boolean,
     optional: boolean,
     moveSequence: IActionElement[]
-): [number, number, boolean] {
-    const strDistance = match[iNextMatch++];
-    
-    const [minDistance, maxDistance] = parseDistance(strDistance, groupStartPos, error);
-    groupStartPos += strDistance.length + 1;
+): boolean {
+    let minDistance: number | undefined;
+    let maxDistance: number | undefined;
 
-    const directions: string[] = [];
-    groupStartPos = parseDirections(
-        match[iNextMatch++],
-        match[iNextMatch++],
-        groupStartPos,
-        directions,
-        error
-    );
-
-    if (minDistance === undefined || directions.length === 0) {
-        success = false;
+    if (elementText.startsWith('any distance ')) {
+        minDistance = 1;
+        elementText = elementText.substr(13);
+        startIndex += 13;
     }
     else {
-        moveSequence.push({
-            directions,
-            minDistance,
-            maxDistance,
-            optional,
-        });
+        let distanceEndsAt = elementText.indexOf(' cells ');
+        let skipLength: number;
+        if (distanceEndsAt === -1) {
+            distanceEndsAt = elementText.indexOf(' cell ');
+            skipLength = 6;
+        }
+        else {
+            skipLength = 7;
+        }
+
+        if (distanceEndsAt === -1) {
+            if (distanceEndsAt === -1) {
+                error({
+                    startIndex,
+                    length: elementText.length,
+                    message: `Cannot interpret this movement element. Expected e.g. "2 to 4 cells diagonally".`,
+                });
+
+                return false;
+            }
+        }
+    
+        [minDistance, maxDistance] = parseDistance(elementText.substr(0, distanceEndsAt), startIndex, error);
+
+        startIndex += distanceEndsAt + skipLength;
+        elementText = elementText.substr(distanceEndsAt + skipLength);
     }
 
-    return [iNextMatch, groupStartPos, success];
+    const directions = parseDirections(elementText, startIndex, error);
+
+    if (minDistance === undefined || directions.length === 0) {
+        return false;
+    }
+    
+    moveSequence.push({
+        directions,
+        minDistance,
+        maxDistance,
+        optional,
+    });
+
+    return true;
 }
 
 function parseMoveType(moveType: string, startIndex: number, error: (error: IParserError) => void) {
@@ -128,19 +143,15 @@ function parseMoveType(moveType: string, startIndex: number, error: (error: IPar
     });
 }
 
-const distanceExpression = new RegExp("(?:(?<distType>at least|at most|up to|(?<firstDist>\\d+) to) )?(?<mainDist>\\d+) cells?");
+const distanceExpression = new RegExp("^(at least |at most |up to |(\\d+)(?: to |-| - |))?(\\d+)$");
 
 function parseDistance(
     distance: string,
     startIndex: number,
     error: (error: IParserError) => void
 ): [number | undefined, number | undefined] {
-    if (distance === 'any distance') {
-        return [1, undefined];
-    }
-
     const match = distance.match(distanceExpression);
-    
+
     if (match === null) {
         error({
             startIndex,
@@ -151,10 +162,12 @@ function parseDistance(
         return [undefined, undefined];
     }
 
-    const mainDist = parseInt(match.groups!['mainDist']);
+    const mainDist = parseInt(match[3]);
     if (mainDist === 0) {
         error({
-            startIndex: startIndex + distance.lastIndexOf(' ') - 1,
+            startIndex: match[1] === undefined
+                ? startIndex
+                : startIndex + match[1].length,
             length: 1,
             message: `Distance value must be greater than zero.`,
         });
@@ -162,17 +175,17 @@ function parseDistance(
         return [undefined, undefined];
     }
     
-    switch (match.groups!['distType']) {
+    switch (match[1]) {
         case undefined:
             return [mainDist, mainDist];
-        case 'at least':
+        case 'at least ':
             return [mainDist, undefined];
-        case 'at most':
-        case 'up to':
+        case 'at most ':
+        case 'up to ':
             return [1, mainDist];
     }
     
-    const firstDist = parseInt(match.groups!['firstDist']);
+    const firstDist = parseInt(match[2]);
     
     if (firstDist === 0) {
         error({
@@ -189,8 +202,8 @@ function parseDistance(
         const numberStart = distance.lastIndexOf(' ', numberEnd - 1) + 1;
 
         error({
-            startIndex: startIndex + numberStart,
-            length: numberEnd - numberStart,
+            startIndex: startIndex + match[1].length,
+            length: distance.length - match[1].length,
             message: `Second distance value must be greater than the first value.`,
         });
 
@@ -200,33 +213,30 @@ function parseDistance(
     return [firstDist, mainDist];
 }
 
+function parseDirections(
+    directionsText: string,
+    startIndex: number,
+    error: (error: IParserError) => void
+): string[] {
+    const directions = directionsText.split(' or ');
+
+    for (let i = 0; i < directions.length; i++) {
+        const direction = directions[i];
+
+        // TODO: ensure direction is valid
+
+        startIndex += direction.length + 4;
+    }
+    
+    return directions;
+}
+
 type ParseResult = {
     success: true;
     definition: PieceActionDefinition[];
 } | {
     success: false;
     errors: IParserError[];
-}
-
-function parseDirections(
-    direction: string,
-    direction2: string | undefined,
-    groupStartPos: number,
-    directions: string[],
-    error: (error: IParserError) => void
-) {
-    // TODO: ensure direction is valid
-    directions.push(direction);
-    groupStartPos += direction.length;
-
-    if (direction2 !== undefined) {
-        groupStartPos += direction2.length + 4;
-
-        // TODO: ensure direction2 is valid
-        directions.push(direction2);
-    }
-
-    return groupStartPos;
 }
 
 export function parsePieceActions(behaviour: string): ParseResult {

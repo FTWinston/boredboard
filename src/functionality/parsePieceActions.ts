@@ -1,7 +1,10 @@
 import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
-import { string, number } from 'prop-types';
+
+interface IPieceBehaviourOptions {
+    allowedDirections: Set<string>;
+}
 
 interface IActionElement {
     directions: Array<string>;
@@ -10,12 +13,11 @@ interface IActionElement {
     optional: boolean;
 }
 
-const parser = new ConfigurationParser<PieceActionDefinition[]>([
+const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourOptions>([
     {
         type: 'standard',
-        //expressionText: 'It can (\\w+) (any distance|.+? cells?) (.+?)(?: or (.+?))?(?: (then) (optionally )?(any distance|.+? cells?) (.+?)(?: or (.+?))?)*',
         expressionText: 'It can (\\w+) (.+?)( then (optionally )?(.+?))*',
-        parseMatch: (match, action, error) => {
+        parseMatch: (match, action, error, options) => {
             let success = true;
             let groupStartPos = 7;
             const strMoveType = match[1];
@@ -29,7 +31,7 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
             const moveSequence: IActionElement[] = [];
 
             const firstMove = match[2];
-            success = success && parseMoveElement(firstMove, groupStartPos, error, false, moveSequence);
+            success = success && parseMoveElement(firstMove, groupStartPos, error, false, moveSequence, options);
             groupStartPos += firstMove.length;
 
             const subsequentMoves = match[0].split(' then ');
@@ -46,7 +48,7 @@ const parser = new ConfigurationParser<PieceActionDefinition[]>([
                     optional = false;
                 }
 
-                success = success && parseMoveElement(move, groupStartPos, error, optional, moveSequence);
+                success = success && parseMoveElement(move, groupStartPos, error, optional, moveSequence, options);
             }
 
             if (success) {
@@ -71,7 +73,8 @@ function parseMoveElement(
     startIndex: number,
     error: (error: IParserError) => void,
     optional: boolean,
-    moveSequence: IActionElement[]
+    moveSequence: IActionElement[],
+    options?: IPieceBehaviourOptions,
 ): boolean {
     let minDistance: number | undefined;
     let maxDistance: number | undefined;
@@ -110,7 +113,7 @@ function parseMoveElement(
         elementText = elementText.substr(distanceEndsAt + skipLength);
     }
 
-    const directions = parseDirections(elementText, startIndex, error);
+    const directions = parseDirections(elementText, startIndex, options === undefined ? undefined : options.allowedDirections, error);
 
     if (minDistance === undefined || directions.length === 0) {
         return false;
@@ -216,19 +219,31 @@ function parseDistance(
 function parseDirections(
     directionsText: string,
     startIndex: number,
+    allowedDirections: Set<string> | undefined,
     error: (error: IParserError) => void
 ): string[] {
     const directions = directionsText.split(' or ');
+    let allValid = true;
 
     for (let i = 0; i < directions.length; i++) {
         const direction = directions[i];
 
-        // TODO: ensure direction is valid
+        if (allowedDirections !== undefined && !allowedDirections.has(direction)) {
+            error({
+                startIndex,
+                length: direction.length,
+                message: `Unrecognised direction. Allowed values are: "${[...allowedDirections].join('", "')}"`,
+            });
+
+            allValid = false;
+        }
 
         startIndex += direction.length + 4;
     }
     
-    return directions;
+    return allValid
+        ? directions
+        : [];
 }
 
 type ParseResult = {
@@ -239,15 +254,19 @@ type ParseResult = {
     errors: IParserError[];
 }
 
-export function parsePieceActions(behaviour: string): ParseResult {
-    const definitions: PieceActionDefinition[] = [];
+export function parsePieceActions(behaviour: string, allowedDirections: Set<string>): ParseResult {
+    const definition: PieceActionDefinition[] = [];
+    
+    const options = {
+        allowedDirections,
+    };
 
-    const errors = parser.configure(behaviour, definitions);
+    const errors = parser.configure(behaviour, definition, options);
 
     return errors.length === 0
         ? {
             success: true,
-            definition: definitions,
+            definition,
         }
         : {
             success: false,

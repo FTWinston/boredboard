@@ -16,8 +16,13 @@ it('parses simple example actions', () => {
         ['It can slide at least 2 cells orthogonally.', MoveType.Slide, [[['orthogonally'], 2, undefined]]],
     ];
 
+    const directions = new Set<string>([
+        'forward', 'orthogonally', 'diagonally', 'horizontally', 'vertically',
+        'perpendicularly' // TODO: should relative directions be passed separately?
+    ]);
+
     for (const example of examples) {
-        const result = parsePieceActions(example[0]);
+        const result = parsePieceActions(example[0], directions);
         
         if (result.success) {
             expect(result.definition).toHaveLength(1);
@@ -52,26 +57,34 @@ it('parses simple example actions', () => {
 });
 
 
-type SimpleErrorExample = [string, string, number, number];
+type SimpleErrorExample = [string, Array<[string, number, number]>];
 
 it('Correctly marks errors in erroneous simple examples', () => {
     const examples: SimpleErrorExample[] = [
-        ['It can slide 0 cells forward.', 'Distance value must be greater than zero.', 13, 1],
-        ['It can leap 4 to 2 cells orthogonally.', 'Second distance value must be greater than the first value.', 17, 1],
-        ['It can leap 50 to 17 cells orthogonally.', 'Second distance value must be greater than the first value.', 18, 2],
-        ['It can hop any quantity of cells orthogonally.', 'Unrecognised distance: any quantity of.', 11, 15],
+        ['It can slide 0 cells forward.', [['Distance value must be greater than zero.', 13, 1]]],
+        ['It can slide 3 cells sideways.', [['Unrecognised direction.', 21, 8]]],
+        ['It can slide 0 cells sideways.', [['Distance value must be greater than zero.', 13, 1], ['Unrecognised direction.', 21, 8]]],
+        ['It can leap 4 to 2 cells orthogonally.', [['Second distance value must be greater than the first value.', 17, 1]]],
+        ['It can leap 50 to 17 cells orthogonally.', [['Second distance value must be greater than the first value.', 18, 2]]],
+        ['It can hop any quantity of cells orthogonally.', [['Unrecognised distance: any quantity of.', 11, 15]]],
     ];
 
+    const directions = new Set<string>(['forward', 'orthogonally', 'diagonally']);
+
     for (const example of examples) {
-        const result = parsePieceActions(example[0]);
+        const result = parsePieceActions(example[0], directions);
         
         if (!result.success) {
-            expect(result.errors).toHaveLength(1);
+            const expectedErrors = example[1];
+            expect(result.errors).toHaveLength(expectedErrors.length);
 
-            const error = result.errors[0];
-            expect(error.message).toContain(example[1]);
-            expect(error.startIndex).toBe(example[2]);
-            expect(error.length).toBe(example[3]);
+            for (let i = 0; i < expectedErrors.length; i++) {
+                const error = result.errors[i];
+                const expected = expectedErrors[i];
+                expect(error.message).toContain(expected[0]);
+                expect(error.startIndex).toBe(expected[1]);
+                expect(error.length).toBe(expected[2]);
+            }
         }
 
         expect(result.success).toBe(false);

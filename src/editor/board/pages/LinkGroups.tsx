@@ -46,11 +46,11 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
 
     const options = useMemo(() => [
         ...props.linkTypes,
-        ...props.relativeLinkTypes,
+        ...props.relativeLinkTypes, // TODO: should we be including these?
         ...props.playerLinkTypes,
     ], [props.linkTypes, props.relativeLinkTypes, props.playerLinkTypes]);
 
-    const groupItemDisplays = props.relativeLinkTypes.length === 0
+    const groupItemDisplays = props.linkGroupTypes.length === 0
         ? 'You currently have no link groups'
         : props.linkGroupTypes.map(groupType => {
             const groupItems = props.linkGroupItems

@@ -5,6 +5,7 @@ import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
 import { IRelativeLink } from '../boardReducer';
 import { SelectorMulti } from '../components/SelectorMulti';
+import { disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     linkTypes: string[];
@@ -46,6 +47,7 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
     const disallowedTypes = useMemo(() => [
         ...props.linkTypes,
         ...props.playerLinkTypes,
+        ...disallowedNames,
     ], [props.linkTypes, props.playerLinkTypes]);
 
     const relativeLinkDisplays = props.relativeLinkTypes.length === 0

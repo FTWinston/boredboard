@@ -5,6 +5,7 @@ import { BoardDispatch } from '../BoardEditor';
 import { IGroupItem } from '../boardReducer';
 import { UniqueList } from '../components/UniqueList';
 import { SelectorMulti } from '../components/SelectorMulti';
+import { disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     linkTypes: string[];
@@ -44,10 +45,18 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
         }
     }
 
-    const options = useMemo(() => [
-        ...props.linkTypes,
-        ...props.relativeLinkTypes, // TODO: should we be including these?
-        ...props.playerLinkTypes,
+    const [options, disallowedValues] = useMemo(() => [
+        [
+            ...props.linkTypes,
+            ...props.relativeLinkTypes, // TODO: should we be including these?
+            ...props.playerLinkTypes,
+        ],
+        [
+            ...props.linkTypes,
+            ...props.relativeLinkTypes,
+            ...props.playerLinkTypes,
+            ...disallowedNames,
+        ]
     ], [props.linkTypes, props.relativeLinkTypes, props.playerLinkTypes]);
 
     const groupItemDisplays = props.linkGroupTypes.length === 0
@@ -92,7 +101,7 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
                     addValue={addGroupType}
                     changeValue={editGroupType}
                     values={props.linkGroupTypes}
-                    disallowedValues={options}
+                    disallowedValues={disallowedValues}
                 />
             </div>
 

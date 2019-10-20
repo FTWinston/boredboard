@@ -5,6 +5,7 @@ import { BoardDisplay } from '../../../components/board';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
 import { UniqueList } from '../components/UniqueList';
+import { disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     boardUrl: string;
@@ -47,6 +48,7 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
     const disallowedTypes = useMemo(() => [
         ...props.relativeLinkTypes,
         ...props.playerLinkTypes,
+        ...disallowedNames,
     ], [props.relativeLinkTypes, props.playerLinkTypes]);
 
     return (

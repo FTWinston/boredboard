@@ -5,6 +5,7 @@ import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
 import { IPlayerLink } from '../boardReducer';
 import { SelectorMulti } from '../components/SelectorMulti';
+import { disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     linkTypes: string[];
@@ -47,6 +48,7 @@ export const PlayerLinks: React.FunctionComponent<Props> = props => {
     const disallowedTypes = useMemo(() => [
         ...props.linkTypes,
         ...props.relativeLinkTypes,
+        ...disallowedNames,
     ], [props.linkTypes, props.relativeLinkTypes]);
 
     const playerIDs = useMemo(

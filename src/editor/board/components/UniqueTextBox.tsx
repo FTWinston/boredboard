@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import './UniqueTextBox.css';
+import { disallowedInNames, disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     initialValue: string;
@@ -16,6 +17,12 @@ export const UniqueTextBox: React.FunctionComponent<Props> = props => {
 
     const isValid = useMemo(
         () => {
+            for (const disallow in disallowedInNames) {
+                if (text.indexOf(disallow) !== -1) {
+                    return false;
+                }
+            }
+
             const matchIndex = props.disallowedValues.indexOf(text);
             return matchIndex === -1 || matchIndex === props.allowIndex;
         },

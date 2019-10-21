@@ -17,11 +17,29 @@ interface IActionElement {
 const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourOptions>([
     {
         type: 'standard',
-        expressionText: 'It can (\\w+) (.+?)( then (optionally )?(.+?))*',
+        expressionText: '(?:If (.+?), it|It) can ((\\w+) (.+?)( then (optionally )?(.+?))*)',
         parseMatch: (match, action, error, options) => {
             let success = true;
-            let groupStartPos = 7;
-            const strMoveType = match[1];
+            let groupStartPos: number;
+
+            const strConditions = match[1];
+            const conditions: PieceActionCondition[] = [];
+            
+            if (strConditions !== undefined) {
+                groupStartPos = 3;
+                for (const strCondition of strConditions.split(' and ')) {
+                    success = success && parseMoveCondition(strCondition, error, groupStartPos, conditions, options);
+                    groupStartPos += strCondition.length + 5;
+                }
+
+                groupStartPos += 4;
+            }
+            else {
+                groupStartPos = 7;
+            }
+
+
+            const strMoveType = match[3];
             const moveType = parseMoveType(strMoveType, groupStartPos, error);
             groupStartPos += strMoveType.length + 1;
 
@@ -31,11 +49,11 @@ const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourO
 
             const moveSequence: IActionElement[] = [];
 
-            const firstMove = match[2];
+            const firstMove = match[4];
             success = success && parseMoveElement(firstMove, groupStartPos, error, false, moveSequence, options);
             groupStartPos += firstMove.length;
 
-            const subsequentMoves = match[0].split(' then ');
+            const subsequentMoves = match[2].split(' then ');
             subsequentMoves.splice(0, 1);
 
             for (let move of subsequentMoves) {
@@ -51,8 +69,6 @@ const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourO
 
                 success = success && parseMoveElement(move, groupStartPos, error, optional, moveSequence, options);
             }
-
-            const conditions: PieceActionCondition[] = [];
 
             if (success) {
                 action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence, conditions)));
@@ -247,6 +263,24 @@ function parseDirections(
     return allValid
         ? directions
         : [];
+}
+
+function parseMoveCondition(
+    conditionText: string,
+    error: (error: IParserError) => void,
+    startIndex: number,
+    conditionSequence: PieceActionCondition[],
+    options?: IPieceBehaviourOptions,
+): boolean {
+    // TODO: actually parse these
+
+    error({
+        startIndex,
+        length: conditionText.length,
+        message: `Unrecognised condition.`,
+    });
+
+    return false;
 }
 
 type ParseResult = {

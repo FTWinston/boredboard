@@ -1,4 +1,4 @@
-import { IBoardDefinition } from '../data/IBoardDefinition';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readLinkTypes } from './readLinkTypes';
 import { readCellLinks } from './readCellLinks';
 

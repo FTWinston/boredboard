@@ -1,6 +1,6 @@
 import { BoardDefinition } from './BoardDefinition';
 import { PieceDefinition } from './PieceDefinition';
-import { IGameDefinition } from '../data/IGameDefinition';
+import { IGameDefinition } from '../../data/IGameDefinition';
 import { parsePieceActions } from './parsePieceActions';
 
 export class GameDefinition {
@@ -26,10 +26,12 @@ export class GameDefinition {
     private static loadPieces(data: IGameDefinition) {
         const pieces = new Map<string, PieceDefinition>();
 
+        const allAllowedDirections = new Set<string>(); // TODO: calculate these
+
         for (const pieceName in data.pieces) {
             const piece = data.pieces[pieceName];
 
-            const actionParseResult = parsePieceActions(piece.behaviour);
+            const actionParseResult = parsePieceActions(piece.behaviour, allAllowedDirections);
             if (!actionParseResult.success) {
                 console.log(`failed to parse ${pieceName} behaviour`, actionParseResult.errors);
                 continue; // TODO: need a better approach than just logging to console

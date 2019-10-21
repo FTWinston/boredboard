@@ -1,6 +1,7 @@
 import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
+import { PieceActionCondition } from './PieceActionCondition';
 
 interface IPieceBehaviourOptions {
     allowedDirections: Set<string>;
@@ -51,8 +52,10 @@ const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourO
                 success = success && parseMoveElement(move, groupStartPos, error, optional, moveSequence, options);
             }
 
+            const conditions: PieceActionCondition[] = [];
+
             if (success) {
-                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence)));
+                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence, conditions)));
             }
         },
         examples: [

@@ -1,4 +1,4 @@
-import { IBoardDefinition } from '../data/IBoardDefinition';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 
 export function readCellLinks(data: IBoardDefinition) {
     const results = new Map<string, Map<string, string[]>>(); // from cell, link type, to cells

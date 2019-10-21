@@ -1,4 +1,4 @@
-import { IBoardDefinition } from '../data/IBoardDefinition';
+import { IBoardDefinition } from '../../data/IBoardDefinition';
 
 export function readLinkTypes(data: IBoardDefinition) {
     const results = new Map<number, Map<string | null, Map<string, string[]>>>(); // player, base link type, link types

@@ -1,4 +1,5 @@
 import { MoveType } from './MoveType';
+import { PieceActionCondition } from './PieceActionCondition';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -8,7 +9,7 @@ interface IPieceActionElement {
 }
 
 export class PieceActionDefinition {
-    constructor(readonly moveType: MoveType, readonly moveSequence: ReadonlyArray<IPieceActionElement>) {
+    constructor(readonly moveType: MoveType, readonly moveSequence: ReadonlyArray<IPieceActionElement>, readonly conditions: PieceActionCondition[]) {
         
     }
 }

@@ -1,5 +1,5 @@
 import { MoveType } from './MoveType';
-import { PieceActionCondition } from './PieceActionCondition';
+import { IPieceActionCondition } from './IPieceActionCondition';
 import { GameDefinition } from './GameDefinition';
 import { IPlayerAction } from '../instances/IPlayerAction';
 import { IGameState } from '../instances/IGameState';
@@ -12,7 +12,7 @@ interface IPieceActionElement {
 }
 
 export class PieceActionDefinition {
-    constructor(readonly moveType: MoveType, readonly moveSequence: ReadonlyArray<IPieceActionElement>, readonly conditions: PieceActionCondition[]) {
+    constructor(readonly moveType: MoveType, readonly moveSequence: ReadonlyArray<IPieceActionElement>, readonly conditions: ReadonlyArray<IPieceActionCondition>) {
         
     }
 
@@ -38,15 +38,50 @@ export class PieceActionDefinition {
             return [];
         }
 
+        for (const condition of this.conditions) {
+            if (!condition.isStateValid(game, state, boardState, cell, pieceData)) {
+                return [];
+            }
+        }
+
         const actions: IPlayerAction[] = [];
 
         let previousDirection: string | null = null;
 
-        for (const actionElement of this.moveSequence) {
-            for (const direction of actionElement.directions) {
-                const actualDirections = boardDef.resolveDirection(direction, pieceData.owner, previousDirection);
+        for (const element of this.moveSequence) {
+            for (const direction of element.directions) {
+                const linkTypes = boardDef.resolveDirection(direction, pieceData.owner, previousDirection);
 
-                // TODO: trace in these directions for the approriate distances
+                for (const linkType of linkTypes) {
+                    const destCells = boardDef.traceLink(cell, linkType, element.minDistance, element.maxDistance);
+
+                    for (const destCell of destCells) {
+                        // TODO: this only works for single step sequences. Extend it to work with multi-step...
+                        // Need to save off all intermediate states after each step (including prev dir for each)
+                        // ... then apply subsequent steps to each.
+
+                        const action: IPlayerAction = {
+                            pieceMovement: [{
+                                piece: piece,
+                                fromBoard: board,
+                                toBoard: board,
+                                fromCell: cell,
+                                toCell: destCell,
+                            }]
+                        }
+
+                        let allValid = true;
+                        for (const condition of this.conditions) {
+                            if (!condition.isActionValid(action, game, state, boardState, cell, pieceData)) {
+                                allValid = false;
+                            }
+                        }
+
+                        if (allValid) {
+                            actions.push(action);
+                        }
+                    }
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 import { ConfigurationParser, IParserError } from 'natural-configuration';
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { MoveType } from './MoveType';
-import { PieceActionCondition } from './PieceActionCondition';
+import { IPieceActionCondition } from './IPieceActionCondition';
 
 interface IPieceBehaviourOptions {
     allowedDirections: Set<string>;
@@ -23,7 +23,7 @@ const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourO
             let groupStartPos: number;
 
             const strConditions = match[1];
-            const conditions: PieceActionCondition[] = [];
+            const conditions: IPieceActionCondition[] = [];
             
             if (strConditions !== undefined) {
                 groupStartPos = 3;
@@ -269,7 +269,7 @@ function parseMoveCondition(
     conditionText: string,
     error: (error: IParserError) => void,
     startIndex: number,
-    conditionSequence: PieceActionCondition[],
+    conditionSequence: IPieceActionCondition[],
     options?: IPieceBehaviourOptions,
 ): boolean {
     // TODO: actually parse these

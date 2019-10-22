@@ -31,7 +31,7 @@ export class Game {
         }
 
         const toBoardInstance = state.boards[toBoard];
-        if (fromBoardInstance === undefined) {
+        if (toBoardInstance === undefined) {
             return false;
         }
 
@@ -40,14 +40,14 @@ export class Game {
             return false;
         }
 
-        const pieceIndex = fromCellContent.findIndex(p => p.id === piece);
-        if (pieceIndex === undefined) {
+        const pieceData = fromCellContent[piece]
+        if (pieceData === undefined) {
             return false;
         }
 
-        const [pieceInstance] = fromCellContent.splice(pieceIndex, 1);
+        delete fromCellContent[piece];
 
-        toCellContent.push(pieceInstance);
+        toCellContent[piece] = pieceData;
 
         return true;
     }

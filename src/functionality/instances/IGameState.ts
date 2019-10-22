@@ -1,5 +1,5 @@
 import { IBoard } from './IBoard';
 
 export interface IGameState {
-    boards: Record<string, IBoard>;
+    boards: Record<string, IBoard | undefined>;
 }

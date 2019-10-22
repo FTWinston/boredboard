@@ -32,8 +32,7 @@ export class PieceActionDefinition {
             return [];
         }
 
-        const pieceData = fromCellContent.find(p => p.id === piece);
-
+        const pieceData = fromCellContent[piece];
         if (pieceData === undefined) {
             return [];
         }

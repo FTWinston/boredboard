@@ -19,12 +19,8 @@ export class GameDefinition {
 
         for (const boardName in data.boards) {
             const board = data.boards[boardName];
-            const boardDef = new BoardDefinition(board)
+            const boardDef = new BoardDefinition(board, allAllowedDirections);
             boards.set(boardName, boardDef);
-
-            for (const dir of boardDef.allNamedDirections) {
-                allAllowedDirections.add(dir);
-            }
         }
 
         return [boards, allAllowedDirections];

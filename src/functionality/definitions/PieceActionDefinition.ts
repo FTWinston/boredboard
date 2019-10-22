@@ -111,7 +111,7 @@ export class PieceActionDefinition {
                 // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
                 const stepMovement = {
                     ...cumulativeMovement,
-                    destCell,
+                    toCell: destCell,
                 };
 
                 if (isLastStep) {

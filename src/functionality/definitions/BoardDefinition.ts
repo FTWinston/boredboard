@@ -5,29 +5,24 @@ import { readCellLinks } from './readCellLinks';
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
     private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
-    public readonly allNamedDirections: ReadonlySet<string>;
 
-    constructor(data: IBoardDefinition) {
+    constructor(data: IBoardDefinition, addDirectionsTo?: Set<string>) {
         this.cellLinks = readCellLinks(data);
-        [this.directionCache, this.allNamedDirections] = readLinkTypes(data);
+        this.directionCache = readLinkTypes(data, addDirectionsTo);
         // TODO: data.regions;
     }
 
     public traceLink(fromCell: string, linkType: string, minDistance: number, maxDistance?: number) {
         const resultCells = new Set<string>();
 
-        let currentCells = new Set<string>(fromCell);
+        let currentCells = new Set<string>([fromCell]);
 
         let distance = 0;
 
-        while (!(distance > maxDistance!)) { // if max distance is undefined, or if we haven't reached it yet
+        while (!(distance++ >= maxDistance!)) { // if max distance is undefined, or if we haven't reached it yet
             const nextCells = new Set<string>();
 
             for (const currentCell of currentCells) {
-                if (distance >= minDistance) {
-                    resultCells.add(currentCell);
-                }
-
                 const cellLinks = this.cellLinks.get(currentCell);
                 if (cellLinks !== undefined) {
                     const linkedCells = cellLinks.get(linkType);
@@ -35,6 +30,10 @@ export class BoardDefinition {
                     if (linkedCells !== undefined) {
                         for (const nextCell of linkedCells) {
                             nextCells.add(nextCell);
+                            
+                            if (distance >= minDistance) {
+                                resultCells.add(nextCell);
+                            }
                         }
                     }
                 }
@@ -45,7 +44,6 @@ export class BoardDefinition {
             }
 
             currentCells = nextCells;
-            distance++;
         }
 
         return resultCells;

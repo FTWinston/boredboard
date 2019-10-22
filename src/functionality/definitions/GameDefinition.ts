@@ -8,25 +8,30 @@ export class GameDefinition {
     public readonly pieces: ReadonlyMap<string, PieceDefinition>;
 
     constructor(data: IGameDefinition) {
-        this.boards = GameDefinition.loadBoards(data);
-        this.pieces = GameDefinition.loadPieces(data);
+        let allAllowedDirections: ReadonlySet<string>;
+        [this.boards, allAllowedDirections] = GameDefinition.loadBoards(data);
+        this.pieces = GameDefinition.loadPieces(data, allAllowedDirections);
     }
 
-    private static loadBoards(data: IGameDefinition) {
+    private static loadBoards(data: IGameDefinition): [Map<string, BoardDefinition>, ReadonlySet<string>] {
         const boards = new Map<string, BoardDefinition>();
+        const allAllowedDirections = new Set<string>();
 
         for (const boardName in data.boards) {
             const board = data.boards[boardName];
-            boards.set(boardName, new BoardDefinition(board));
+            const boardDef = new BoardDefinition(board)
+            boards.set(boardName, boardDef);
+
+            for (const dir of boardDef.allNamedDirections) {
+                allAllowedDirections.add(dir);
+            }
         }
 
-        return boards;
+        return [boards, allAllowedDirections];
     }
 
-    private static loadPieces(data: IGameDefinition) {
+    private static loadPieces(data: IGameDefinition, allAllowedDirections: ReadonlySet<string>) {
         const pieces = new Map<string, PieceDefinition>();
-
-        const allAllowedDirections = new Set<string>(); // TODO: calculate these
 
         for (const pieceName in data.pieces) {
             const piece = data.pieces[pieceName];

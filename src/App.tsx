@@ -10,7 +10,7 @@ const App: React.FC = () => {
         <BoardEditor
             name="sample"
             numPlayers={2}
-            saveData={board => console.log('saved board data', board)}
+            saveData={board => console.log('saved board data', JSON.stringify(board))}
         />
       </div>
     </Router>

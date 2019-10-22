@@ -1,8 +1,9 @@
 import { MoveType } from './MoveType';
 import { IPieceActionCondition } from './IPieceActionCondition';
 import { GameDefinition } from './GameDefinition';
-import { IPlayerAction } from '../instances/IPlayerAction';
+import { IPlayerAction, IPieceMovement } from '../instances/IPlayerAction';
 import { IGameState } from '../instances/IGameState';
+import { BoardDefinition } from './BoardDefinition';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -43,47 +44,83 @@ export class PieceActionDefinition {
             }
         }
 
-        const actions: IPlayerAction[] = [];
+        const initialPreviousLinkType: string | null = null;
 
-        let previousDirection: string | null = null;
+        const emptyMove = {
+            piece: piece,
+            fromBoard: board,
+            toBoard: board,
+            fromCell: cell,
+            toCell: cell,
+        }
 
-        for (const element of this.moveSequence) {
-            for (const direction of element.directions) {
-                const linkTypes = boardDef.resolveDirection(direction, pieceData.owner, previousDirection);
+        const movements: IPieceMovement[] = [];
 
-                for (const linkType of linkTypes) {
-                    const destCells = boardDef.traceLink(cell, linkType, element.minDistance, element.maxDistance);
+        this.recursiveApplyMovement(0, emptyMove, movements, boardDef, pieceData.owner, initialPreviousLinkType);
 
-                    for (const destCell of destCells) {
-                        // TODO: this only works for single step sequences. Extend it to work with multi-step...
-                        // Need to save off all intermediate states after each step (including prev dir for each)
-                        // ... then apply subsequent steps to each.
+        const actions: IPlayerAction[] = movements.map(m => ({
+            pieceMovement: [m],
+        }));
 
-                        const action: IPlayerAction = {
-                            pieceMovement: [{
-                                piece: piece,
-                                fromBoard: board,
-                                toBoard: board,
-                                fromCell: cell,
-                                toCell: destCell,
-                            }]
-                        }
-
-                        let allValid = true;
-                        for (const condition of this.conditions) {
-                            if (!condition.isActionValid(action, game, state, boardState, cell, pieceData)) {
-                                allValid = false;
-                            }
-                        }
-
-                        if (allValid) {
-                            actions.push(action);
-                        }
-                    }
+        // only use generated actions if they satisfy all of their conditions
+        return actions.filter(action => {
+            for (const condition of this.conditions) {
+                if (!condition.isActionValid(action, game, state, boardState, cell, pieceData)) {
+                    return false;
                 }
+            }
+            return true;
+        });
+    }
+
+    private recursiveApplyMovement(
+        sequencePos: number,
+        cumulativeMovement: IPieceMovement,
+        movementResults: IPieceMovement[],
+        board: BoardDefinition,
+        player: number,
+        previousLinkType: string | null
+    ) {
+        const moveElement = this.moveSequence[sequencePos];
+        const isLastStep = sequencePos >= this.moveSequence.length - 1;
+
+        if (moveElement.optional) {
+            // Run straight onto the next 
+            if (isLastStep) {
+                movementResults.push(cumulativeMovement);
+            }
+            else {
+                this.recursiveApplyMovement(sequencePos + 1 , cumulativeMovement, movementResults, board, player, previousLinkType);
             }
         }
 
-        return actions;
+        // get all the link types to test for this element of the sequence
+        const testLinkTypes = new Set<string>();
+        for (const direction of moveElement.directions) {
+            const linkTypes = board.resolveDirection(direction, player, previousLinkType);
+            for (const linkType of linkTypes) {
+                testLinkTypes.add(linkType);
+            }
+        }
+
+        // Trace for every link type, and then loop over each destination cell that is reached
+        for (const linkType of testLinkTypes) {
+            const destCells = board.traceLink(cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
+
+            for (const destCell of destCells) {
+                // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
+                const stepMovement = {
+                    ...cumulativeMovement,
+                    destCell,
+                };
+
+                if (isLastStep) {
+                    movementResults.push(stepMovement);
+                }
+                else {
+                    this.recursiveApplyMovement(sequencePos + 1 , stepMovement, movementResults, board, player, linkType);
+                }
+            }
+        }
     }
 }

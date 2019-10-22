@@ -5,10 +5,11 @@ import { readCellLinks } from './readCellLinks';
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
     private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
+    public readonly allNamedDirections: ReadonlySet<string>;
 
     constructor(data: IBoardDefinition) {
         this.cellLinks = readCellLinks(data);
-        this.directionCache = readLinkTypes(data);
+        [this.directionCache, this.allNamedDirections] = readLinkTypes(data);
         // TODO: data.regions;
     }
 

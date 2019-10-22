@@ -4,7 +4,7 @@ import { MoveType } from './MoveType';
 import { IPieceActionCondition } from './IPieceActionCondition';
 
 interface IPieceBehaviourOptions {
-    allowedDirections: Set<string>;
+    allowedDirections: ReadonlySet<string>;
 }
 
 interface IActionElement {
@@ -238,7 +238,7 @@ function parseDistance(
 function parseDirections(
     directionsText: string,
     startIndex: number,
-    allowedDirections: Set<string> | undefined,
+    allowedDirections: ReadonlySet<string> | undefined,
     error: (error: IParserError) => void
 ): string[] {
     const directions = directionsText.split(' or ');
@@ -291,7 +291,7 @@ type ParseResult = {
     errors: IParserError[];
 }
 
-export function parsePieceActions(behaviour: string, allowedDirections: Set<string>): ParseResult {
+export function parsePieceActions(behaviour: string, allowedDirections: ReadonlySet<string>): ParseResult {
     const definition: PieceActionDefinition[] = [];
     
     const options = {

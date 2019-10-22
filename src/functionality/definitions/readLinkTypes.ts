@@ -1,12 +1,19 @@
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 
-export function readLinkTypes(data: IBoardDefinition) {
+export function readLinkTypes(data: IBoardDefinition): [Map<number, Map<string | null, Map<string, string[]>>>, Set<string>] {
     const results = new Map<number, Map<string | null, Map<string, string[]>>>(); // player, base link type, link types
 
     const linkTypes = populateLinkTypes(data);
     const relativeLinkTypes = populateRelativeLinks(data);
     const playerLinkTypes = populatePlayerLinkTypes(data);
     const linkGroups = populateLinkGroups(data);
+
+    const allNamedLinkTypes = new Set<string>([
+        ...linkTypes,
+        ...relativeLinkTypes.keys(),
+        ...playerLinkTypes.keys(),
+        ...linkGroups.keys(),
+    ]);
 
     const players = new Set<number>();
     for (const [, linksByPlayer] of playerLinkTypes) {
@@ -31,7 +38,7 @@ export function readLinkTypes(data: IBoardDefinition) {
         }
     }
 
-    return results;
+    return [results, allNamedLinkTypes];
 }
 
 

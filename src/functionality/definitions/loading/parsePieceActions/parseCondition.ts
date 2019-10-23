@@ -1,12 +1,14 @@
 import { IParserError } from 'natural-configuration';
-import { IPieceActionCondition } from '../../IPieceActionCondition';
+import { IStateCondition } from '../../conditions/IStateCondition';
 import { IPieceBehaviourOptions } from './parser';
+import { IMoveCondition } from '../../conditions/IMoveCondition';
 
-export function parsePieceActionCondition(
+export function parseCondition(
     conditionText: string,
     error: (error: IParserError) => void,
     startIndex: number,
-    conditionSequence: IPieceActionCondition[],
+    stateConditions: IStateCondition[],
+    moveConditions: IMoveCondition[],
     options?: IPieceBehaviourOptions,
 ): boolean {
     // TODO: actually parse these

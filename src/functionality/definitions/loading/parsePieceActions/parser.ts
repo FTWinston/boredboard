@@ -1,9 +1,10 @@
 import { ConfigurationParser } from 'natural-configuration';
 import { PieceActionDefinition } from '../../PieceActionDefinition';
-import { IPieceActionCondition } from '../../IPieceActionCondition';
+import { IStateCondition } from '../../conditions/IStateCondition';
 import { parseMoveType } from './parseMoveType';
-import { parsePieceActionCondition } from './parsePieceActionCondition';
+import { parseCondition } from './parseCondition';
 import { parseMoveElement } from './parseMoveElement';
+import { IMoveCondition } from '../../conditions/IMoveCondition';
 
 export interface IPieceBehaviourOptions {
     allowedDirections: ReadonlySet<string>;
@@ -25,12 +26,13 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             let groupStartPos: number;
 
             const strConditions = match[1];
-            const conditions: IPieceActionCondition[] = [];
+            const stateConditions: IStateCondition[] = [];
+            const moveConditions: IMoveCondition[] = [];
             
             if (strConditions !== undefined) {
                 groupStartPos = 3;
                 for (const strCondition of strConditions.split(' and ')) {
-                    success = success && parsePieceActionCondition(strCondition, error, groupStartPos, conditions, options);
+                    success = success && parseCondition(strCondition, error, groupStartPos, stateConditions, moveConditions, options);
                     groupStartPos += strCondition.length + 5;
                 }
 
@@ -72,7 +74,7 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             }
 
             if (success) {
-                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence, conditions)));
+                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence, stateConditions, moveConditions)));
             }
         },
         examples: [

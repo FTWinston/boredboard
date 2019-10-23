@@ -1,9 +1,10 @@
 import { MoveType } from './MoveType';
-import { IPieceActionCondition } from './IPieceActionCondition';
+import { IStateCondition } from './conditions/IStateCondition';
 import { GameDefinition } from './GameDefinition';
 import { IPlayerAction, IPieceMovement } from '../instances/IPlayerAction';
 import { IGameState } from '../instances/IGameState';
 import { BoardDefinition } from './BoardDefinition';
+import { IMoveCondition } from './conditions/IMoveCondition';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -13,18 +14,21 @@ interface IPieceActionElement {
 }
 
 export class PieceActionDefinition {
-    constructor(readonly moveType: MoveType, readonly moveSequence: ReadonlyArray<IPieceActionElement>, readonly conditions: ReadonlyArray<IPieceActionCondition>) {
-        
-    }
+    constructor(
+        readonly moveType: MoveType,
+        readonly moveSequence: ReadonlyArray<IPieceActionElement>,
+        readonly stateConditions: ReadonlyArray<IStateCondition>,
+        readonly moveConditions: ReadonlyArray<IMoveCondition>,
+    ) {}
 
     public getPossibleActions(game: GameDefinition, state: IGameState, board: string, cell: string, piece: number) {
-        const boardDef = game.boards.get(board);
-        if (boardDef === undefined) {
-            return [];
-        }
-
         const boardState = state.boards[board];
         if (boardState === undefined) {
+            return [];
+        }
+        
+        const boardDef = game.boards.get(boardState.definition);
+        if (boardDef === undefined) {
             return [];
         }
 
@@ -38,8 +42,8 @@ export class PieceActionDefinition {
             return [];
         }
 
-        for (const condition of this.conditions) {
-            if (!condition.isStateValid(game, state, boardState, cell, pieceData)) {
+        for (const condition of this.stateConditions) {
+            if (!condition.isValid(game, state, boardState, boardDef, cell, pieceData)) {
                 return [];
             }
         }
@@ -54,9 +58,19 @@ export class PieceActionDefinition {
             toCell: cell,
         }
 
-        const movements: IPieceMovement[] = [];
+        let movements: IPieceMovement[] = [];
 
         this.recursiveApplyMovement(0, emptyMove, movements, boardDef, pieceData.owner, initialPreviousLinkType);
+
+        // only use generated movements if they satisfy all of their conditions
+        movements = movements.filter(movement => {
+            for (const condition of this.moveConditions) {
+                if (!condition.isValid(movement, game, state, boardState, boardDef, pieceData)) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
         const actions = movements.map(m => ({
             actingPlayer: pieceData.owner,
@@ -66,15 +80,7 @@ export class PieceActionDefinition {
             pieceMovement: [m],
         } as IPlayerAction));
 
-        // only use generated actions if they satisfy all of their conditions
-        return actions.filter(action => {
-            for (const condition of this.conditions) {
-                if (!condition.isActionValid(action, game, state, boardState, cell, pieceData)) {
-                    return false;
-                }
-            }
-            return true;
-        });
+        return actions;
     }
 
     private recursiveApplyMovement(

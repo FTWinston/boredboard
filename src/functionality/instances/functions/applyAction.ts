@@ -1,5 +1,5 @@
-import { IGameState } from '../instances/IGameState';
-import { IPlayerAction, IPieceMovement } from '../instances/IPlayerAction';
+import { IGameState } from '../IGameState';
+import { IPlayerAction, IPieceMovement } from '../IPlayerAction';
 
 export function applyAction(action: IPlayerAction, state: IGameState) {
     for (const move of action.pieceMovement) {

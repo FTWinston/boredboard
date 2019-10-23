@@ -1,6 +1,6 @@
-import { IGameState } from '../instances/IGameState';
-import { IPiece } from '../instances/IPiece';
-import { IBoard } from '../instances';
+import { IGameState } from '../IGameState';
+import { IPiece } from '../IPiece';
+import { IBoard } from '..';
 
 // The benchmark here (http://jsben.ch/kFXoo) shows that this method is the fastest in Chrome.
 // Use of the spread operator to create objects that are going to be completely overwritten is somehow faster than initialising them as empty,

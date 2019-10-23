@@ -1,6 +1,6 @@
-import { IGameState } from '../instances/IGameState';
-import { IPlayerAction } from '../instances/IPlayerAction';
-import { GameDefinition } from '../definitions';
+import { IGameState } from '../IGameState';
+import { IPlayerAction } from '../IPlayerAction';
+import { GameDefinition } from '../../definitions';
 
 export function getPossibleActions(game: GameDefinition, state: IGameState, player: number) {
     let actions: IPlayerAction[] = [];

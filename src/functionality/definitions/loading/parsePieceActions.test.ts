@@ -1,5 +1,5 @@
 import { parsePieceActions } from './parsePieceActions';
-import { MoveType } from './MoveType';
+import { MoveType } from '../MoveType';
 
 type SimpleExample = [string, MoveType, Array<[string[], number, number | undefined]>];
 

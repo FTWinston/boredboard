@@ -1,6 +1,6 @@
-import chessboard from '../../examples/chess/board.json';
-import { GameDefinition } from '../definitions/GameDefinition';
-import { IGameState } from '../instances/IGameState';
+import chessboard from '../../../examples/chess/board.json';
+import { GameDefinition } from '../../definitions/GameDefinition';
+import { IGameState } from '../IGameState';
 import { getPossibleActions } from './getPossibleActions';
 
 type SimpleExample = [string, string, string[]];

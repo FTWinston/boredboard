@@ -1,6 +1,6 @@
 import { IBoardDefinition } from '../../data/IBoardDefinition';
-import { readLinkTypes } from './readLinkTypes';
-import { readCellLinks } from './readCellLinks';
+import { readLinkTypes } from './loading/readLinkTypes';
+import { readCellLinks } from './loading/readCellLinks';
 
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells

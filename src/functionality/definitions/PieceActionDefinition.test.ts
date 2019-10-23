@@ -1,4 +1,4 @@
-import { parsePieceActions } from './parsePieceActions';
+import { parsePieceActions } from './loading/parsePieceActions';
 import { GameDefinition } from './GameDefinition';
 import { IGameState } from '../instances';
 import chessboard from '../../examples/chess/board.json';

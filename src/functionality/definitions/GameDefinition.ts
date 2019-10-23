@@ -1,7 +1,7 @@
 import { BoardDefinition } from './BoardDefinition';
 import { PieceDefinition } from './PieceDefinition';
 import { IGameDefinition } from '../../data/IGameDefinition';
-import { parsePieceActions } from './parsePieceActions';
+import { parsePieceActions } from './loading/parsePieceActions';
 
 export class GameDefinition {
     public readonly boards: ReadonlyMap<string, BoardDefinition>;

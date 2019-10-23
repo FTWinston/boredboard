@@ -1,4 +1,3 @@
-export { Game } from './Game';
 import { IBoard } from './IBoard';
 import { IGameState } from './IGameState';
 import { IPiece } from './IPiece';

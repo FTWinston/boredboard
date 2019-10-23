@@ -1,0 +1,41 @@
+{
+    "boards": {
+        "board": {
+            "definition": "board",
+            "cellContents": {
+                "A1": { "1": { "definition": "rook", "owner": 1 } },
+                "A2": { "2": { "definition": "knight", "owner": 1 } },
+                "A3": { "3": { "definition": "bishop", "owner": 1 } },
+                "A4": { "4": { "definition": "king", "owner": 1 } },
+                "A5": { "5": { "definition": "queen", "owner": 1 } },
+                "A6": { "6": { "definition": "bishop", "owner": 1 } },
+                "A7": { "7": { "definition": "knight", "owner": 1 } },
+                "A8": { "8": { "definition": "rook", "owner": 1 } },
+                "B1": { "9": { "definition": "pawn", "owner": 1 } },
+                "B2": { "10": { "definition": "pawn", "owner": 1 } },
+                "B3": { "11": { "definition": "pawn", "owner": 1 } },
+                "B4": { "12": { "definition": "pawn", "owner": 1 } },
+                "B5": { "13": { "definition": "pawn", "owner": 1 } },
+                "B6": { "14": { "definition": "pawn", "owner": 1 } },
+                "B7": { "15": { "definition": "pawn", "owner": 1 } },
+                "B8": { "16": { "definition": "pawn", "owner": 1 } },
+                "G1": { "17": { "definition": "pawn", "owner": 2 } },
+                "G2": { "18": { "definition": "pawn", "owner": 2 } },
+                "G3": { "19": { "definition": "pawn", "owner": 2 } },
+                "G4": { "20": { "definition": "pawn", "owner": 2 } },
+                "G5": { "21": { "definition": "pawn", "owner": 2 } },
+                "G6": { "22": { "definition": "pawn", "owner": 2 } },
+                "G7": { "23": { "definition": "pawn", "owner": 2 } },
+                "G8": { "24": { "definition": "pawn", "owner": 2 } },
+                "H1": { "25": { "definition": "rook", "owner": 2 } },
+                "H2": { "26": { "definition": "knight", "owner": 2 } },
+                "H3": { "27": { "definition": "bishop", "owner": 2 } },
+                "H4": { "28": { "definition": "king", "owner": 2 } },
+                "H5": { "29": { "definition": "queen", "owner": 2 } },
+                "H6": { "30": { "definition": "bishop", "owner": 2 } },
+                "H7": { "31": { "definition": "knight", "owner": 2 } },
+                "H8": { "32": { "definition": "rook", "owner": 2 } }
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import chessboard from '../../examples/chessboard.json';
+import chessboard from '../../examples/chess/board.json';
 import { GameDefinition } from '../definitions/GameDefinition';
 import { IGameState } from '../instances/IGameState';
 import { getPossibleActions } from './getPossibleActions';

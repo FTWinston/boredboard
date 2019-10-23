@@ -1,0 +1,5 @@
+{
+    "imageUrls": {},
+    "behaviour": "It can slide one space orthogonally or diagonally. If it has never been threatened and it has never moved, and there is a friendly rook three spaces to its east that has never moved, it can slide two spaces east then the rook will hop two spaces west. If it has never been threatened and it has never moved, and there is a friendly rook four spaces to its west that has never moved, it can slide three spaces west then the rook will hop two spaces east.",
+    "value": 99
+}

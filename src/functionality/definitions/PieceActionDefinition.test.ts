@@ -1,7 +1,7 @@
 import { parsePieceActions } from './parsePieceActions';
 import { GameDefinition } from './GameDefinition';
 import { IGameState } from '../instances';
-import chessboard from '../../examples/chessboard.json';
+import chessboard from '../../examples/chess/board.json';
 
 type SimpleExample = [string, string, string[]];
 

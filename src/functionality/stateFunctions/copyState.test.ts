@@ -1,5 +1,5 @@
 import { copyState } from './copyState';
-import sampleState from '../../examples/chess state.json';
+import sampleState from '../../examples/chess/state.json';
 
 it('Correctly copies game state', () => {
     const str1 = JSON.stringify(sampleState);

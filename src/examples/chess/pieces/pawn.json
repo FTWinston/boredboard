@@ -1,0 +1,5 @@
+{
+    "imageUrls": {},
+    "behaviour": "If not attacking, it can slide one space forward. If not attacking and it has never moved, it can slide two spaces forward. If attacking, it can slide one space diagonally-forward. If it is in the enemy en passant zone and there is an enemy pawn one space to its side that first moved 1 turn ago, it can slide one space in that direction then one space forward.",
+    "value": 1
+}

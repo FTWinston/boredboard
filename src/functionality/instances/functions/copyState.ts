@@ -1,6 +1,7 @@
 import { IGameState } from '../IGameState';
 import { IPiece } from '../IPiece';
 import { IBoard } from '..';
+import { Dictionary } from '../../../data/Dictionary';
 
 // The benchmark here (http://jsben.ch/kFXoo) shows that this method is the fastest in Chrome.
 // Use of the spread operator to create objects that are going to be completely overwritten is somehow faster than initialising them as empty,
@@ -19,7 +20,7 @@ export function copyState(source: IGameState) {
 
         for (const cell in oldBoard.cellContents) {
             const oldContents = oldBoard.cellContents[cell]!;
-            const newContents: Record<number, IPiece | undefined> = { ...oldContents };
+            const newContents: Dictionary<number, IPiece> = { ...oldContents };
 
             for (const pieceID in oldContents) {
                 newContents[pieceID as unknown as number] = { ...oldContents[pieceID as unknown as number]! };

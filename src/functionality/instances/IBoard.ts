@@ -1,6 +1,7 @@
 import { IPiece } from './IPiece';
+import { Dictionary } from '../../data/Dictionary';
 
 export interface IBoard {
     definition: string;
-    cellContents: Record<string, Record<number, IPiece | undefined> | undefined>;
+    cellContents: Dictionary<string, Dictionary<number, IPiece>>;
 }

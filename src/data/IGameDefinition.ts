@@ -1,7 +1,8 @@
 import { IBoardDefinition } from './IBoardDefinition';
 import { IPieceDefinition } from './IPieceDefinition';
+import { Dictionary } from './Dictionary';
 
 export interface IGameDefinition {
-    boards: Record<string, IBoardDefinition>;
-    pieces: Record<string, IPieceDefinition>;
+    boards: Dictionary<string, IBoardDefinition>;
+    pieces: Dictionary<string, IPieceDefinition>;
 }

@@ -1,5 +1,6 @@
 import { IBoard } from './IBoard';
+import { Dictionary } from '../../data/Dictionary';
 
 export interface IGameState {
-    boards: Record<string, IBoard | undefined>;
+    boards: Dictionary<string, IBoard>;
 }

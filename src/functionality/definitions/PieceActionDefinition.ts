@@ -58,9 +58,13 @@ export class PieceActionDefinition {
 
         this.recursiveApplyMovement(0, emptyMove, movements, boardDef, pieceData.owner, initialPreviousLinkType);
 
-        const actions: IPlayerAction[] = movements.map(m => ({
+        const actions = movements.map(m => ({
+            actingPlayer: pieceData.owner,
+            actingPiece: piece,
+            targetBoard: m.toBoard,
+            targetCell: m.toCell,
             pieceMovement: [m],
-        }));
+        } as IPlayerAction));
 
         // only use generated actions if they satisfy all of their conditions
         return actions.filter(action => {

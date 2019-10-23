@@ -7,5 +7,10 @@ export interface IPieceMovement {
 }
 
 export interface IPlayerAction {
+    actingPlayer: number;
+    actingPiece?: number;
+    targetBoard?: string;
+    targetCell?: string;
+    targetPiece?: number;
     pieceMovement: IPieceMovement[];
 }

@@ -4,7 +4,7 @@ import { IGameRulesOptions } from './parser';
 
 export const turnOrder/*: ISentenceParser<GameRules, IGameRulesOptions>*/ = {
     type: 'standard' as 'standard', // if the above type definition worked properly, this assertion wouldn't be needed
-    expressionText: 'Players take (alternate turns(, starting with (a random player|player (\d+))?|turns in the following sequence: (\d+(?:, \d+)*))',
+    expressionText: 'Players take (alternate turns(, starting with (a random player|player (\d+))?|turns in the following sequence: (\d+(?:, \d+)*)))',
     parseMatch: (
         match: RegExpExecArray,
         action: (action: (modify: GameRules) => void) => void,

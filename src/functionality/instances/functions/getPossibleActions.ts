@@ -22,7 +22,7 @@ export function getPossibleActions(game: GameDefinition, state: IGameState, play
                     if (pieceDefinition !== undefined) {
                         actions = [
                             ...actions,
-                            ...pieceDefinition.getPossibleActions(game, state, board, cell, piece as unknown as number),
+                            ...pieceDefinition.getPossibleActions(state, board, cell, piece as unknown as number),
                         ];
                     }
                 }

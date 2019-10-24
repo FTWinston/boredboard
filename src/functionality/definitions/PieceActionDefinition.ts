@@ -5,6 +5,7 @@ import { IPlayerAction, IPieceMovement } from '../instances/IPlayerAction';
 import { IGameState } from '../instances/IGameState';
 import { BoardDefinition } from './BoardDefinition';
 import { IMoveCondition } from './conditions/IMoveCondition';
+import { IBoard } from '../instances/IBoard';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -60,7 +61,7 @@ export class PieceActionDefinition {
 
         let movements: IPieceMovement[] = [];
 
-        this.recursiveApplyMovement(0, emptyMove, movements, boardDef, pieceData.owner, initialPreviousLinkType);
+        this.recursiveApplyMovement(0, emptyMove, movements, boardDef, boardState, pieceData.owner, initialPreviousLinkType);
 
         // only use generated movements if they satisfy all of their conditions
         movements = movements.filter(movement => {
@@ -87,7 +88,8 @@ export class PieceActionDefinition {
         sequencePos: number,
         cumulativeMovement: IPieceMovement,
         movementResults: IPieceMovement[],
-        board: BoardDefinition,
+        boardDef: BoardDefinition,
+        boardState: IBoard,
         player: number,
         previousLinkType: string | null
     ) {
@@ -100,14 +102,14 @@ export class PieceActionDefinition {
                 movementResults.push(cumulativeMovement);
             }
             else {
-                this.recursiveApplyMovement(sequencePos + 1 , cumulativeMovement, movementResults, board, player, previousLinkType);
+                this.recursiveApplyMovement(sequencePos + 1 , cumulativeMovement, movementResults, boardDef, boardState, player, previousLinkType);
             }
         }
 
         // get all the link types to test for this element of the sequence
         const testLinkTypes = new Set<string>();
         for (const direction of moveElement.directions) {
-            const linkTypes = board.resolveDirection(direction, player, previousLinkType);
+            const linkTypes = boardDef.resolveDirection(direction, player, previousLinkType);
             for (const linkType of linkTypes) {
                 testLinkTypes.add(linkType);
             }
@@ -115,7 +117,7 @@ export class PieceActionDefinition {
 
         // Trace for every link type, and then loop over each destination cell that is reached
         for (const linkType of testLinkTypes) {
-            const destCells = board.traceLink(cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
+            const destCells = boardDef.traceLink(boardState, testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
 
             for (const destCell of destCells) {
                 // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
@@ -128,7 +130,7 @@ export class PieceActionDefinition {
                     movementResults.push(stepMovement);
                 }
                 else {
-                    this.recursiveApplyMovement(sequencePos + 1 , stepMovement, movementResults, board, player, linkType);
+                    this.recursiveApplyMovement(sequencePos + 1, stepMovement, movementResults, boardDef, boardState, player, linkType);
                 }
             }
         }

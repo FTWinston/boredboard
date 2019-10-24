@@ -2,6 +2,7 @@ import chessboard from '../../../examples/chess/board.json';
 import { GameDefinition } from '../../definitions/GameDefinition';
 import { IGameState } from '../IGameState';
 import { getPossibleActions } from './getPossibleActions';
+import { rules } from '../../../examples/chess/rules';
 
 type SimpleExample = [string, string, string[]];
 
@@ -10,6 +11,7 @@ const pieceID = 'test';
 
 function createGame(pieceLocation: string, pieceBehaviour: string): [GameDefinition, IGameState] {
     const game = new GameDefinition({
+        rules,
         boards: {
             [boardID]: chessboard,
         },

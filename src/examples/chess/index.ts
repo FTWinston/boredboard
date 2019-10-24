@@ -8,9 +8,10 @@ import knight from './pieces/knight.json';
 import bishop from './pieces/bishop.json';
 import queen from './pieces/queen.json';
 import king from './pieces/king.json';
+import { rules } from './rules';
 
 export default {
-    rules: `Players take alternate turns, starting with player 1. Multiple pieces cannot occupy the same cell. A piece cannot move through a cell that is not empty. If a piece moves into the same cell as an enemy piece, it captures it. Disallow any move that threatens a friendly king. If a player cannot move and their king is threatened, end the game with their loss. If a player cannot move and their king is not threatened, end the game with a draw. If a king is threatened at the start of a turn, say "Check".`,
+    rules,
     boards: {
         'board': board as IBoardDefinition,
     },

@@ -1,12 +1,12 @@
 import { IMoveCondition } from './IMoveCondition';
 import { IGameState } from '../../instances/IGameState';
 import { GameDefinition } from '../GameDefinition';
-import { IPlayerAction, IPieceMovement } from '../../instances/IPlayerAction';
+import { IPieceMovement } from '../../instances/IPlayerAction';
 import { IBoard } from '../../instances/IBoard';
 import { BoardDefinition } from '../BoardDefinition';
 import { IPiece } from '../../instances/IPiece';
 
-export class AttackingCondition implements IMoveCondition {
+export class CapturingCondition implements IMoveCondition {
     constructor(readonly isAttacking: boolean) {}
 
     public isValid(

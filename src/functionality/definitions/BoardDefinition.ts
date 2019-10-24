@@ -1,12 +1,13 @@
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readLinkTypes } from './loading/readLinkTypes';
 import { readCellLinks } from './loading/readCellLinks';
+import { GameDefinition } from './GameDefinition';
 
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
     private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
 
-    constructor(data: IBoardDefinition, addDirectionsTo?: Set<string>) {
+    constructor(private readonly game: GameDefinition, data: IBoardDefinition, addDirectionsTo?: Set<string>) {
         this.cellLinks = readCellLinks(data);
         this.directionCache = readLinkTypes(data, addDirectionsTo);
         // TODO: data.regions;

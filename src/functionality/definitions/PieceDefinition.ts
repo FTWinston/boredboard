@@ -6,17 +6,17 @@ import { IPlayerAction } from '../instances/IPlayerAction';
 export class PieceDefinition {
     public readonly actions: ReadonlyArray<PieceActionDefinition>;
 
-    constructor(readonly value: number, actions: PieceActionDefinition[]) {
+    constructor(private readonly game: GameDefinition, readonly value: number, actions: PieceActionDefinition[]) {
         this.actions = actions;
     }
 
-    public getPossibleActions(game: GameDefinition, state: IGameState, board: string, cell: string, id: number) {
+    public getPossibleActions(state: IGameState, board: string, cell: string, id: number) {
         let actions: IPlayerAction[] = [];
 
         for (const action of this.actions) {
             actions = [
                 ...actions,
-                ...action.getPossibleActions(game, state, board, cell, id),
+                ...action.getPossibleActions(this.game, state, board, cell, id),
             ]
         }
         

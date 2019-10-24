@@ -1,46 +1,33 @@
 import { BoardDefinition } from './BoardDefinition';
 import { PieceDefinition } from './PieceDefinition';
 import { IGameDefinition } from '../../data/IGameDefinition';
-import { parsePieceActions } from './loading/parsePieceActions';
+import { GameRules } from './GameRules';
+import { loadBoards } from './loading/loadBoards';
+import { loadPieces } from './loading/loadPieces';
+import { parseGameRules } from './loading/parseGameRules';
 
 export class GameDefinition {
+    public readonly rules: Readonly<GameRules>;
     public readonly boards: ReadonlyMap<string, BoardDefinition>;
     public readonly pieces: ReadonlyMap<string, PieceDefinition>;
 
     constructor(data: IGameDefinition) {
         let allAllowedDirections: ReadonlySet<string>;
-        [this.boards, allAllowedDirections] = GameDefinition.loadBoards(data);
-        this.pieces = GameDefinition.loadPieces(data, allAllowedDirections);
-    }
 
-    private static loadBoards(data: IGameDefinition): [Map<string, BoardDefinition>, ReadonlySet<string>] {
-        const boards = new Map<string, BoardDefinition>();
-        const allAllowedDirections = new Set<string>();
+        [this.boards, allAllowedDirections] = loadBoards(this, data);
 
-        for (const boardName in data.boards) {
-            const board = data.boards[boardName];
-            const boardDef = new BoardDefinition(board, allAllowedDirections);
-            boards.set(boardName, boardDef);
+        this.pieces = loadPieces(this, data, allAllowedDirections);
+
+        const rulesResult = parseGameRules(data.rules, this.boards, this.pieces, 2 /* TODO: where is this specified, if not in the rules? */);
+
+        if (rulesResult.success) {
+            this.rules = rulesResult.rules;
         }
+        else {
+            // TODO: need a better approach than just logging to console
+            console.log(`failed to parse game rules`, rulesResult.errors);
 
-        return [boards, allAllowedDirections];
-    }
-
-    private static loadPieces(data: IGameDefinition, allAllowedDirections: ReadonlySet<string>) {
-        const pieces = new Map<string, PieceDefinition>();
-
-        for (const pieceName in data.pieces) {
-            const piece = data.pieces[pieceName];
-
-            const actionParseResult = parsePieceActions(piece.behaviour, allAllowedDirections);
-            if (!actionParseResult.success) {
-                console.log(`failed to parse ${pieceName} behaviour`, actionParseResult.errors);
-                continue; // TODO: need a better approach than just logging to console
-            }
-
-            pieces.set(pieceName, new PieceDefinition(piece.value, actionParseResult.definition));
+            this.rules = new GameRules();
         }
-
-        return pieces;
     }
 }

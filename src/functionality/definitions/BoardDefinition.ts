@@ -2,10 +2,7 @@ import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readLinkTypes } from './loading/readLinkTypes';
 import { readCellLinks } from './loading/readCellLinks';
 import { GameDefinition } from './GameDefinition';
-import { IBoard } from '../instances/IBoard';
-import { IPiece } from '../instances/IPiece';
 import { CellMoveability } from './CellCheckResult';
-import { Dictionary } from '../../data/Dictionary';
 
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
@@ -18,8 +15,7 @@ export class BoardDefinition {
     }
 
     public traceLink(
-        boardState: IBoard,
-        testCheck: (contents: Dictionary<number, IPiece>) => CellMoveability,
+        testCheck: (cell: string) => CellMoveability,
         fromCell: string,
         linkType: string,
         minDistance: number,
@@ -36,23 +32,20 @@ export class BoardDefinition {
 
             for (const currentCell of currentCells) {
                 const cellLinks = this.cellLinks.get(currentCell);
+
                 if (cellLinks !== undefined) {
                     const linkedCells = cellLinks.get(linkType);
 
                     if (linkedCells !== undefined) {
                         for (const nextCell of linkedCells) {
-                            const contents = boardState.cellContents[nextCell];
-                            if (contents === undefined) {
-                                continue;
-                            }
-
-                            const moveability = testCheck(contents);
+                            const moveability = testCheck(nextCell);
+                            
                             if (moveability & CellMoveability.CanEnter) {
                                 if (moveability & CellMoveability.CanPass) {
                                     nextCells.add(nextCell);
                                 }
                                 
-                                if (distance >= minDistance && moveability & CellMoveability.CanStop) {
+                                if (distance >= minDistance && (moveability & CellMoveability.CanStop)) {
                                     resultCells.add(nextCell);
                                 }
                             }

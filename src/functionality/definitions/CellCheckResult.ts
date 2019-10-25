@@ -7,6 +7,6 @@ export enum CellMoveability {
 
     StopBeforeThisCell = None,
     StopAtThisCell = CanEnter & CanStop,
-    ContinuePastThisCell = CanEnter & CanPass,
-    StopOrContinuePastThisCell = CanEnter & CanPass & CanStop,
+    ContinueWithoutStopping = CanEnter & CanPass,
+    StopOrContinue = CanEnter & CanPass & CanStop,
 }

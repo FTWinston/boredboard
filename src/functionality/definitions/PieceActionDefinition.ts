@@ -6,6 +6,9 @@ import { IGameState } from '../instances/IGameState';
 import { BoardDefinition } from './BoardDefinition';
 import { IMoveCondition } from './conditions/IMoveCondition';
 import { IBoard } from '../instances/IBoard';
+import { IPiece } from '../instances/IPiece';
+import { Dictionary } from '../../data/Dictionary';
+import { CellMoveability } from './CellCheckResult';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -43,6 +46,13 @@ export class PieceActionDefinition {
             return [];
         }
 
+        const testCell = (cell: string) => {
+            const contents = boardState.cellContents[cell];
+            return contents === undefined
+                ? CellMoveability.None
+                : game.rules.testCellMovement(pieceData, contents);
+        };
+
         for (const condition of this.stateConditions) {
             if (!condition.isValid(game, state, boardState, boardDef, cell, pieceData)) {
                 return [];
@@ -57,11 +67,12 @@ export class PieceActionDefinition {
             toBoard: board,
             fromCell: cell,
             toCell: cell,
+            intermediateCells: [],
         }
 
         let movements: IPieceMovement[] = [];
 
-        this.recursiveApplyMovement(0, emptyMove, movements, boardDef, boardState, pieceData.owner, initialPreviousLinkType);
+        this.recursiveApplyMovement(0, emptyMove, movements, boardDef, testCell, pieceData.owner, initialPreviousLinkType);
 
         // only use generated movements if they satisfy all of their conditions
         movements = movements.filter(movement => {
@@ -89,7 +100,7 @@ export class PieceActionDefinition {
         cumulativeMovement: IPieceMovement,
         movementResults: IPieceMovement[],
         boardDef: BoardDefinition,
-        boardState: IBoard,
+        testCell: (cell: string) => CellMoveability,
         player: number,
         previousLinkType: string | null
     ) {
@@ -102,7 +113,7 @@ export class PieceActionDefinition {
                 movementResults.push(cumulativeMovement);
             }
             else {
-                this.recursiveApplyMovement(sequencePos + 1 , cumulativeMovement, movementResults, boardDef, boardState, player, previousLinkType);
+                this.recursiveApplyMovement(sequencePos + 1 , cumulativeMovement, movementResults, boardDef, testCell, player, previousLinkType);
             }
         }
 
@@ -117,20 +128,28 @@ export class PieceActionDefinition {
 
         // Trace for every link type, and then loop over each destination cell that is reached
         for (const linkType of testLinkTypes) {
-            const destCells = boardDef.traceLink(boardState, testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
+            const destCells = boardDef.traceLink(testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
 
             for (const destCell of destCells) {
                 // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
                 const stepMovement = {
                     ...cumulativeMovement,
                     toCell: destCell,
+                    intermediateCells: cumulativeMovement.intermediateCells.slice(),
                 };
+
+                if (destCell !== stepMovement.fromCell) {
+                    // TODO: this records only "turning" points. Do we want to do that or do we want every cell?
+                    // If we want every cell, need to update what traceLink outputs.
+                    // It could have minDistance removed and just output a single array, then we could slice that.
+                    stepMovement.intermediateCells.push(cumulativeMovement.toCell)
+                }
 
                 if (isLastStep) {
                     movementResults.push(stepMovement);
                 }
                 else {
-                    this.recursiveApplyMovement(sequencePos + 1, stepMovement, movementResults, boardDef, boardState, player, linkType);
+                    this.recursiveApplyMovement(sequencePos + 1, stepMovement, movementResults, boardDef, testCell, player, linkType);
                 }
             }
         }

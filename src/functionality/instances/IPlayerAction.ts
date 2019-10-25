@@ -4,6 +4,7 @@ export interface IPieceMovement {
     toBoard: string;
     fromCell: string;
     toCell: string;
+    intermediateCells: string[];
 }
 
 export interface IPlayerAction {

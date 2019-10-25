@@ -128,22 +128,23 @@ export class PieceActionDefinition {
 
         // Trace for every link type, and then loop over each destination cell that is reached
         for (const linkType of testLinkTypes) {
-            const destCells = boardDef.traceLink(testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
+            const traceCells = boardDef.traceLink(cumulativeMovement.toCell, linkType);
+            const maxDistance = moveElement.maxDistance === undefined
+                ?  traceCells.length - 1
+                : Math.min(traceCells.length - 1, moveElement.maxDistance - 1);
 
-            for (const destCell of destCells) {
+            for (let iTraceCell = moveElement.minDistance - 1; iTraceCell <= maxDistance; iTraceCell++) {
+                // TODO: test each cell (including the ones BEFORE minDistance) to see if we can reach there / continue past there
+
                 // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
                 const stepMovement = {
                     ...cumulativeMovement,
-                    toCell: destCell,
-                    intermediateCells: cumulativeMovement.intermediateCells.slice(),
+                    toCell: traceCells[iTraceCell],
+                    intermediateCells: [
+                        ...cumulativeMovement.intermediateCells,
+                        ...traceCells.slice(0, iTraceCell),
+                    ],
                 };
-
-                if (destCell !== stepMovement.fromCell) {
-                    // TODO: this records only "turning" points. Do we want to do that or do we want every cell?
-                    // If we want every cell, need to update what traceLink outputs.
-                    // It could have minDistance removed and just output a single array, then we could slice that.
-                    stepMovement.intermediateCells.push(cumulativeMovement.toCell)
-                }
 
                 if (isLastStep) {
                     movementResults.push(stepMovement);

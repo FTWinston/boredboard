@@ -14,20 +14,38 @@ export class BoardDefinition {
         // TODO: data.regions;
     }
 
+    private readonly linkCache = new Map<string, Map<string, string[]>>();
+
     public traceLink(
-        testCheck: (cell: string) => CellMoveability,
         fromCell: string,
-        linkType: string,
-        minDistance: number,
-        maxDistance?: number
+        linkType: string
     ) {
-        const resultCells = new Set<string>();
+        let cellCache = this.linkCache.get(fromCell);
+        let resultCells: string[];
+
+        if (cellCache === undefined) {
+            cellCache = new Map<string, string[]>();
+            this.linkCache.set(fromCell, cellCache);
+
+            resultCells = [];
+            cellCache.set(linkType, resultCells);
+        }
+        else {
+            let cachedCells = cellCache.get(linkType);
+            if (cachedCells === undefined) {
+                resultCells = [];
+                cellCache.set(linkType, resultCells);
+            }
+            else {
+                return cachedCells;
+            }
+        }
+
+        const visitedCells = new Set<string>([fromCell]);
 
         let currentCells = new Set<string>([fromCell]);
 
-        let distance = 0;
-
-        while (!(distance++ >= maxDistance!)) { // if max distance is undefined, or if we haven't reached it yet
+        while (true) {
             const nextCells = new Set<string>();
 
             for (const currentCell of currentCells) {
@@ -38,16 +56,10 @@ export class BoardDefinition {
 
                     if (linkedCells !== undefined) {
                         for (const nextCell of linkedCells) {
-                            const moveability = testCheck(nextCell);
-                            
-                            if (moveability & CellMoveability.CanEnter) {
-                                if (moveability & CellMoveability.CanPass) {
-                                    nextCells.add(nextCell);
-                                }
-                                
-                                if (distance >= minDistance && (moveability & CellMoveability.CanStop)) {
-                                    resultCells.add(nextCell);
-                                }
+                            if (!visitedCells.has(nextCell)) {
+                                visitedCells.add(nextCell);
+                                nextCells.add(nextCell);
+                                resultCells.push(nextCell);
                             }
                         }
                     }

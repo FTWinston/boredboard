@@ -8,7 +8,9 @@ import { IMoveCondition } from './conditions/IMoveCondition';
 import { IBoard } from '../instances/IBoard';
 import { IPiece } from '../instances/IPiece';
 import { Dictionary } from '../../data/Dictionary';
-import { CellMoveability } from './CellCheckResult';
+import { CellMoveability } from './CellMoveability';
+import { relationships } from './loading/parseGameRules/relationships';
+import { Relationship } from './Relationship';
 
 interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -48,9 +50,28 @@ export class PieceActionDefinition {
 
         const testCell = (cell: string) => {
             const contents = boardState.cellContents[cell];
-            return contents === undefined
-                ? CellMoveability.None
-                : game.rules.testCellMovement(pieceData, contents);
+            if (contents === undefined) {
+                return CellMoveability.None;
+            }
+
+            let relationships = Relationship.None;
+            
+            for (const id in contents) {
+                const otherPiece = contents[id]!;
+                relationships |= game.rules.getRelationship(pieceData.owner, otherPiece.owner);
+            }
+            
+            let moveability = CellMoveability.All;
+
+            if ((game.rules.cellPassRelationRestriction & relationships) !== Relationship.None) {
+                moveability &= ~CellMoveability.CanPass;    
+            }
+
+            if ((game.rules.cellStopRelationRestriction & relationships) !== Relationship.None) {
+                moveability &= ~CellMoveability.CanStop;    
+            }
+            
+            return moveability;
         };
 
         for (const condition of this.stateConditions) {

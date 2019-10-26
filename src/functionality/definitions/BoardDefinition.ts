@@ -2,7 +2,7 @@ import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readLinkTypes } from './loading/readLinkTypes';
 import { readCellLinks } from './loading/readCellLinks';
 import { GameDefinition } from './GameDefinition';
-import { CellMoveability } from './CellCheckResult';
+import { CellMoveability } from './CellMoveability';
 
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
@@ -40,14 +40,12 @@ export class BoardDefinition {
                         for (const nextCell of linkedCells) {
                             const moveability = testCheck(nextCell);
                             
-                            if (moveability & CellMoveability.CanEnter) {
-                                if (moveability & CellMoveability.CanPass) {
-                                    nextCells.add(nextCell);
-                                }
-                                
-                                if (distance >= minDistance && (moveability & CellMoveability.CanStop)) {
-                                    resultCells.add(nextCell);
-                                }
+                            if (moveability & CellMoveability.CanPass) {
+                                nextCells.add(nextCell);
+                            }
+                            
+                            if (distance >= minDistance && (moveability & CellMoveability.CanStop)) {
+                                resultCells.add(nextCell);
                             }
                         }
                     }

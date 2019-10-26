@@ -3,7 +3,9 @@ import { BoardDefinition } from '../../BoardDefinition';
 import { PieceDefinition } from '../../PieceDefinition';
 import { GameRules } from '../../GameRules';
 import { turnOrder } from './turnOrder';
-import { cellOccupancy } from './cellOccupancy';
+import { moveRestrictions } from './moveRestrictions';
+import { capturing } from './capturing';
+import { relationships } from './relationships';
 
 export interface IGameRulesOptions {
     numPlayers: number;
@@ -13,5 +15,7 @@ export interface IGameRulesOptions {
 
 export const parser = new ConfigurationParser<GameRules, IGameRulesOptions>([
     turnOrder,
-    cellOccupancy,
+    relationships,
+    moveRestrictions,
+    capturing,
 ]);

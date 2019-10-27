@@ -1,7 +1,7 @@
-import { parsePieceActions } from './loading/parsePieceActions';
 import { GameDefinition } from './GameDefinition';
 import { IGameState } from '../instances';
 import chessboard from '../../examples/chess/board.json';
+import { rules } from '../../examples/chess/rules';
 
 type SimpleExample = [string, string, string[]];
 
@@ -10,6 +10,7 @@ const pieceID = 'test';
 
 function createGame(pieceLocation: string, pieceBehaviour: string): [GameDefinition, IGameState] {
     const game = new GameDefinition({
+        rules: rules,
         boards: {
             [boardID]: chessboard,
         },
@@ -46,7 +47,7 @@ it('Calculates piece movement', () => {
 
         const piece = game.pieces.get(pieceID)!;
 
-        const actions = piece.getPossibleActions(game, state, boardID, example[1], 1);
+        const actions = piece.getPossibleActions(state, boardID, example[1], 1);
 
         const destinations = actions.map(m => m.pieceMovement[0].toCell);
 

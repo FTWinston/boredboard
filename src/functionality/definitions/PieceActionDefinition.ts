@@ -51,11 +51,11 @@ export class PieceActionDefinition {
         const testCell = (cell: string) => {
             const contents = boardState.cellContents[cell];
             if (contents === undefined) {
-                return CellMoveability.None;
+                return CellMoveability.All;
             }
 
             let relationships = Relationship.None;
-            
+
             for (const id in contents) {
                 const otherPiece = contents[id]!;
                 relationships |= game.rules.getRelationship(pieceData.owner, otherPiece.owner);

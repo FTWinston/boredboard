@@ -91,6 +91,12 @@ export class PieceActionDefinition {
             intermediateCells: [],
         }
 
+        // TODO: somehow in here check game.rules' capture relationship properties
+        // and add capturing moves to the generated actions as appropriate.
+        // Do we have to re-check the relationships again after doing so in testCell?
+        // possibly, even if we cached the relationships we'd have to re-loop to create any captures
+        // Perhaps the initial scan could "collect" all passed pieces, if capturePassRelations has a value.
+
         let movements: IPieceMovement[] = [];
 
         this.recursiveApplyMovement(0, emptyMove, movements, boardDef, testCell, pieceData.owner, initialPreviousLinkType);

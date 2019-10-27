@@ -37,4 +37,8 @@ export class GameRules {
 
     public cellPassRelationRestriction = Relationship.None;
     public cellStopRelationRestriction = Relationship.None;
+    
+    public capturePassRelations = Relationship.None;
+    public captureStartRelations = Relationship.None;
+    public captureStopRelations = Relationship.None;
 }

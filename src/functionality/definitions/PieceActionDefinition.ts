@@ -21,19 +21,20 @@ interface IPieceActionElement {
 
 export class PieceActionDefinition {
     constructor(
+        readonly game: GameDefinition,
         readonly moveType: MoveType,
         readonly moveSequence: ReadonlyArray<IPieceActionElement>,
         readonly stateConditions: ReadonlyArray<IStateCondition>,
         readonly moveConditions: ReadonlyArray<IMoveCondition>,
     ) {}
 
-    public getPossibleActions(game: GameDefinition, state: IGameState, board: string, cell: string, piece: number) {
+    public getPossibleActions(state: IGameState, board: string, cell: string, piece: number) {
         const boardState = state.boards[board];
         if (boardState === undefined) {
             return [];
         }
         
-        const boardDef = game.boards.get(boardState.definition);
+        const boardDef = this.game.boards.get(boardState.definition);
         if (boardDef === undefined) {
             return [];
         }
@@ -58,16 +59,16 @@ export class PieceActionDefinition {
 
             for (const id in contents) {
                 const otherPiece = contents[id]!;
-                relationships |= game.rules.getRelationship(pieceData.owner, otherPiece.owner);
+                relationships |= this.game.rules.getRelationship(pieceData.owner, otherPiece.owner);
             }
             
             let moveability = CellMoveability.All;
 
-            if ((game.rules.cellPassRelationRestriction & relationships) !== Relationship.None) {
+            if ((this.game.rules.cellPassRelationRestriction & relationships) !== Relationship.None) {
                 moveability &= ~CellMoveability.CanPass;    
             }
 
-            if ((game.rules.cellStopRelationRestriction & relationships) !== Relationship.None) {
+            if ((this.game.rules.cellStopRelationRestriction & relationships) !== Relationship.None) {
                 moveability &= ~CellMoveability.CanStop;    
             }
             
@@ -75,7 +76,7 @@ export class PieceActionDefinition {
         };
 
         for (const condition of this.stateConditions) {
-            if (!condition.isValid(game, state, boardState, boardDef, cell, pieceData)) {
+            if (!condition.isValid(this.game, state, boardState, boardDef, cell, pieceData)) {
                 return [];
             }
         }
@@ -90,13 +91,7 @@ export class PieceActionDefinition {
             toCell: cell,
             intermediateCells: [],
         }
-
-        // TODO: somehow in here check game.rules' capture relationship properties
-        // and add capturing moves to the generated actions as appropriate.
-        // Do we have to re-check the relationships again after doing so in testCell?
-        // possibly, even if we cached the relationships we'd have to re-loop to create any captures
-        // Perhaps the initial scan could "collect" all passed pieces, if capturePassRelations has a value.
-
+        
         let movements: IPieceMovement[] = [];
 
         this.recursiveApplyMovement(0, emptyMove, movements, boardDef, testCell, pieceData.owner, initialPreviousLinkType);
@@ -104,20 +99,39 @@ export class PieceActionDefinition {
         // only use generated movements if they satisfy all of their conditions
         movements = movements.filter(movement => {
             for (const condition of this.moveConditions) {
-                if (!condition.isValid(movement, game, state, boardState, boardDef, pieceData)) {
+                if (!condition.isValid(movement, this.game, state, boardState, boardDef, pieceData)) {
                     return false;
                 }
             }
             return true;
         });
 
-        const actions = movements.map(m => ({
-            actingPlayer: pieceData.owner,
-            actingPiece: piece,
-            targetBoard: m.toBoard,
-            targetCell: m.toCell,
-            pieceMovement: [m],
-        } as IPlayerAction));
+        const actions = movements.map(m => {
+            const action: IPlayerAction = {
+                actingPlayer: pieceData.owner,
+                actingPiece: piece,
+                targetBoard: m.toBoard,
+                targetCell: m.toCell,
+                pieceMovement: [m],
+            };
+
+            if (this.game.rules.captureStartRelations !== Relationship.None) {
+                // TODO: add captures for all matching pieces in m.fromCell
+            }
+
+            if (this.game.rules.captureStopRelations !== Relationship.None) {
+                action.pieceMovement = [
+                    ...action.pieceMovement,
+                    ...this.captureMatchingPieces(pieceData.owner, this.game.rules.captureStopRelations, board, boardState, m.toCell),
+                ]
+            }
+            
+            if (this.game.rules.capturePassRelations !== Relationship.None) {
+                // TODO: add captures for all matching pieces in m.intermediateCells
+            }
+
+            return action;
+        });
 
         return actions;
     }
@@ -155,22 +169,18 @@ export class PieceActionDefinition {
 
         // Trace for every link type, and then loop over each destination cell that is reached
         for (const linkType of testLinkTypes) {
-            const destCells = boardDef.traceLink(testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
+            const destPaths = boardDef.traceLink(testCell, cumulativeMovement.toCell, linkType, moveElement.minDistance, moveElement.maxDistance);
 
-            for (const destCell of destCells) {
+            for (const destPath of destPaths) {
                 // Record movement to this destination cell. If this was the last step, output it. Otherwise, resolve the next step.
                 const stepMovement = {
                     ...cumulativeMovement,
-                    toCell: destCell,
-                    intermediateCells: cumulativeMovement.intermediateCells.slice(),
+                    toCell: destPath.toCell,
+                    intermediateCells: [
+                        ...cumulativeMovement.intermediateCells,
+                        ...destPath.intermediateCells,
+                    ],
                 };
-
-                if (destCell !== stepMovement.fromCell) {
-                    // TODO: this records only "turning" points. Do we want to do that or do we want every cell?
-                    // If we want every cell, need to update what traceLink outputs.
-                    // It could have minDistance removed and just output a single array, then we could slice that.
-                    stepMovement.intermediateCells.push(cumulativeMovement.toCell)
-                }
 
                 if (isLastStep) {
                     movementResults.push(stepMovement);
@@ -180,5 +190,38 @@ export class PieceActionDefinition {
                 }
             }
         }
+    }
+
+    private captureMatchingPieces(forPlayer: number, relationship: Relationship, board: string, boardState: IBoard, cell: string) {
+        const pieces = boardState.cellContents[cell];
+
+        if (pieces === undefined) {
+            return [];
+        }
+
+        const results: IPieceMovement[] = [];
+
+        for (const id in pieces) {
+            const piece = pieces[id];
+
+            if (piece === undefined) {
+                continue;
+            }
+            
+            if ((this.game.rules.getRelationship(forPlayer, piece.owner) | relationship) === Relationship.None) {
+                continue;
+            }
+
+            results.push({
+                fromBoard: board,
+                fromCell: cell,
+                intermediateCells: [],
+                piece: parseInt(id),
+                toBoard: playerCaptureBoard,
+                toCell: playerCaptureCell,
+            });
+        }
+
+        return results;
     }
 }

@@ -1,3 +1,8 @@
+export interface ITracePath {
+    toCell: string;
+    intermediateCells: string[];
+}
+
 export interface IPieceMovement {
     piece: number;
     fromBoard: string;

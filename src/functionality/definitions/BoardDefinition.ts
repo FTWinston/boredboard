@@ -3,6 +3,7 @@ import { readLinkTypes } from './loading/readLinkTypes';
 import { readCellLinks } from './loading/readCellLinks';
 import { GameDefinition } from './GameDefinition';
 import { CellMoveability } from './CellMoveability';
+import { ITracePath } from '../instances/IPlayerAction';
 
 export class BoardDefinition {
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
@@ -21,17 +22,20 @@ export class BoardDefinition {
         minDistance: number,
         maxDistance?: number
     ) {
-        const resultCells = new Set<string>();
+        const resultPaths: Array<ITracePath> = [];
 
-        let currentCells = new Set<string>([fromCell]);
+        let currentPaths: Array<ITracePath> = [{
+            toCell: fromCell,
+            intermediateCells: [],
+        }];
 
         let distance = 0;
 
         while (!(distance++ >= maxDistance!)) { // if max distance is undefined, or if we haven't reached it yet
-            const nextCells = new Set<string>();
+            const nextPaths: Array<ITracePath> = [];
 
-            for (const currentCell of currentCells) {
-                const cellLinks = this.cellLinks.get(currentCell);
+            for (const currentPath of currentPaths) {
+                const cellLinks = this.cellLinks.get(currentPath.toCell);
 
                 if (cellLinks !== undefined) {
                     const linkedCells = cellLinks.get(linkType);
@@ -40,26 +44,34 @@ export class BoardDefinition {
                         for (const nextCell of linkedCells) {
                             const moveability = testCheck(nextCell);
                             
+                            const nextPath = {
+                                toCell: nextCell,
+                                intermediateCells: [
+                                    ...currentPath.intermediateCells,
+                                    currentPath.toCell,
+                                ],
+                            };
+
                             if (moveability & CellMoveability.CanPass) {
-                                nextCells.add(nextCell);
+                                nextPaths.push(nextPath);
                             }
                             
                             if (distance >= minDistance && (moveability & CellMoveability.CanStop)) {
-                                resultCells.add(nextCell);
+                                resultPaths.push(nextPath);
                             }
                         }
                     }
                 }
             }
 
-            if (nextCells.size === 0) {
+            if (nextPaths.length === 0) {
                 break;
             }
 
-            currentCells = nextCells;
+            currentPaths = nextPaths;
         }
 
-        return resultCells;
+        return resultPaths;
     }
 
     public resolveDirection(directionName: string, player: number = 0, baseLinkType: string | null = null) {

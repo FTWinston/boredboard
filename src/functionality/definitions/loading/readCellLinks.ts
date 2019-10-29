@@ -13,7 +13,7 @@ export function readCellLinks(data: IBoardDefinition) {
         }
 
         for (const linkType in cellLinks) {
-            const toCells = cellLinks[linkType];
+            const toCells = cellLinks[linkType]!;
             fromCellInfo.set(linkType, toCells);
         }
     }

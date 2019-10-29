@@ -1,7 +1,14 @@
 import { parsePieceActions } from './parsePieceActions';
 import { MoveType } from '../MoveType';
+import { GameDefinition } from '../GameDefinition';
 
 type SimpleExample = [string, MoveType, Array<[string[], number, number | undefined]>];
+
+const game = new GameDefinition({
+    boards: {},
+    rules: '',
+    pieces: {}
+});
 
 it('parses simple example actions', () => {
     const examples: SimpleExample[] = [
@@ -22,7 +29,7 @@ it('parses simple example actions', () => {
     ]);
 
     for (const example of examples) {
-        const result = parsePieceActions(example[0], directions);
+        const result = parsePieceActions(game, example[0], directions);
         
         if (result.success) {
             expect(result.definition).toHaveLength(1);
@@ -72,7 +79,7 @@ it('Correctly marks errors in erroneous simple examples', () => {
     const directions = new Set<string>(['forward', 'orthogonally', 'diagonally']);
 
     for (const example of examples) {
-        const result = parsePieceActions(example[0], directions);
+        const result = parsePieceActions(game, example[0], directions);
         
         if (!result.success) {
             const expectedErrors = example[1];

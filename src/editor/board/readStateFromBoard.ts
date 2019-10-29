@@ -126,7 +126,7 @@ function readBoardRegions(board: IBoardDefinition) {
         const playerRegions = board.regions[name];
         
         for (const player in playerRegions) {
-            const cells = playerRegions[player];
+            const cells = playerRegions[player as unknown as number]!;
 
             regions.push({
                 name,

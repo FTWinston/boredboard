@@ -16,7 +16,7 @@ export class PieceDefinition {
         for (const action of this.actions) {
             actions = [
                 ...actions,
-                ...action.getPossibleActions(this.game, state, board, cell, id),
+                ...action.getPossibleActions(state, board, cell, id),
             ]
         }
         

@@ -1,6 +1,7 @@
 import { parser } from './parser';
 import { PieceActionDefinition } from '../../PieceActionDefinition';
 import { IParserError } from 'natural-configuration/lib/IParserError';
+import { GameDefinition } from '../../GameDefinition';
 
 type ParseResult = {
     success: true;
@@ -10,11 +11,12 @@ type ParseResult = {
     errors: IParserError[];
 }
 
-export function parsePieceActions(behaviour: string, allowedDirections: ReadonlySet<string>): ParseResult {
+export function parsePieceActions(game: GameDefinition, behaviour: string, allowedDirections: ReadonlySet<string>): ParseResult {
     const definition: PieceActionDefinition[] = [];
     
     const options = {
         allowedDirections,
+        game
     };
 
     const errors = parser.configure(behaviour, definition, options);

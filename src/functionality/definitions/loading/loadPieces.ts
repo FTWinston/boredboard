@@ -9,7 +9,7 @@ export function loadPieces(game: GameDefinition, data: IGameDefinition, allAllow
     for (const pieceName in data.pieces) {
         const piece = data.pieces[pieceName]!;
 
-        const actionParseResult = parsePieceActions(piece.behaviour, allAllowedDirections);
+        const actionParseResult = parsePieceActions(game, piece.behaviour, allAllowedDirections);
         if (!actionParseResult.success) {
             console.log(`failed to parse ${pieceName} behaviour`, actionParseResult.errors);
             continue; // TODO: need a better approach than just logging to console

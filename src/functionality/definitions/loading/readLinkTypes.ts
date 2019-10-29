@@ -84,7 +84,7 @@ function populateRelativeLinks(data: IBoardDefinition) {
         }
 
         for (const fromLinkType in relativeTypeData) {
-            const toLinkTypes = relativeTypeData[fromLinkType];
+            const toLinkTypes = relativeTypeData[fromLinkType]!;
             linkTypeInfo.set(fromLinkType, toLinkTypes);
         }
     }
@@ -105,7 +105,7 @@ function populatePlayerLinkTypes(data: IBoardDefinition) {
         }
 
         for (const player in typePlayers) {
-            const linkTypes = typePlayers[player];
+            const linkTypes = typePlayers[player as unknown as number]!;
             playerTypeInfo.set(parseInt(player), linkTypes);
         }
     }
@@ -117,7 +117,7 @@ function populateLinkGroups(data: IBoardDefinition) {
     const results = new Map<string, string[]>(); // group name, link types
 
     for (const groupName in data.linkGroups) {
-        const linkTypes = data.linkGroups[groupName];
+        const linkTypes = data.linkGroups[groupName]!;
         results.set(groupName, linkTypes);
     }
 

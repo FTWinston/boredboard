@@ -6,10 +6,7 @@ import { IGameState } from '../instances/IGameState';
 import { BoardDefinition } from './BoardDefinition';
 import { IMoveCondition } from './conditions/IMoveCondition';
 import { IBoard } from '../instances/IBoard';
-import { IPiece } from '../instances/IPiece';
-import { Dictionary } from '../../data/Dictionary';
 import { CellMoveability } from './CellMoveability';
-import { relationships } from './loading/parseGameRules/relationships';
 import { Relationship } from './Relationship';
 
 interface IPieceActionElement {
@@ -208,7 +205,7 @@ export class PieceActionDefinition {
                 continue;
             }
             
-            if ((this.game.rules.getRelationship(forPlayer, piece.owner) | relationship) === Relationship.None) {
+            if ((this.game.rules.getRelationship(forPlayer, piece.owner) & relationship) === Relationship.None) {
                 continue;
             }
 

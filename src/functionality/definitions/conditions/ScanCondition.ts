@@ -4,6 +4,7 @@ import { GameDefinition } from '../GameDefinition';
 import { IPiece } from '../../instances/IPiece';
 import { BoardDefinition } from '../BoardDefinition';
 import { IBoard } from '../../instances/IBoard';
+import { CellMoveability } from '../CellMoveability';
 
 export class ScanCondition implements IStateCondition {
     constructor(
@@ -24,10 +25,10 @@ export class ScanCondition implements IStateCondition {
         const linkTypes = boardDef.resolveDirection(this.direction, piece.owner);
 
         for (const linkType of linkTypes) {
-            const testCells = boardDef.traceLink(boardState, testCell, cell, linkType, this.minDistance, this.maxDistance);
+            const testCells = boardDef.traceLink(() => CellMoveability.All, cell, linkType, this.minDistance, this.maxDistance);
 
             for (const testCell of testCells) {
-                const pieces = boardState.cellContents[testCell];
+                const pieces = boardState.cellContents[testCell.toCell];
                 if (pieces !== undefined) {
                     for (const piece in pieces) {
                         const pieceData = pieces[piece as unknown as number]!;

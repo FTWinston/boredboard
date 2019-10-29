@@ -37,7 +37,7 @@ function readBoardLinks(board: IBoardDefinition, linkTypes: Set<string>) {
 
         for (const linkType in cellLinks) {
             linkTypes.add(linkType);
-            const toCells = cellLinks[linkType];
+            const toCells = cellLinks[linkType]!;
 
             for (const toCell of toCells) {
                 links.push({
@@ -61,7 +61,7 @@ function readBoardRelativeLinks(board: IBoardDefinition, relativeLinkTypes: Set<
         const relativeTypeData = board.relativeLinks[relativeLinkType];
 
         for (const fromLinkType in relativeTypeData) {
-            const toLinkTypes = relativeTypeData[fromLinkType];
+            const toLinkTypes = relativeTypeData[fromLinkType]!;
 
             for (const toLinkType of toLinkTypes) {
                 relativeLinks.push({
@@ -80,11 +80,11 @@ function readBoardPlayerLinks(board: IBoardDefinition, playerLinkTypes: Set<stri
     const links: IPlayerLink[] = [];
 
     for (const playerLinkType in board.playerLinks) {
-        const typePlayers = board.playerLinks[playerLinkType];
+        const typePlayers = board.playerLinks[playerLinkType]!;
 
         for (const player in typePlayers) {
             playerLinkTypes.add(playerLinkType);
-            const toLinkTypes = typePlayers[player];
+            const toLinkTypes = typePlayers[player]!;
             const playerID = parseInt(player);
 
             for (const toLinkType of toLinkTypes) {
@@ -106,7 +106,7 @@ function readBoardLinkGroups(board: IBoardDefinition, linkGroupTypes: Set<string
     for (const groupType in board.linkGroups) {
         linkGroupTypes.add(groupType);
 
-        const itemNames = board.linkGroups[groupType];
+        const itemNames = board.linkGroups[groupType]!;
 
         for (const itemName of itemNames) {
             linkGroupItems.push({

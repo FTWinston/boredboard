@@ -11,6 +11,7 @@ export const capturing/*: ISentenceParser<GameRules, IGameRulesOptions>*/ = {
 
         let relation = Relationship.None;
         
+        // TODO: use standard "piece filter" code here. Don't need options hard-coded in regex.
         switch (match[1]) {
             case 'friendly ':
                 relation = Relationship.Self | Relationship.Ally;

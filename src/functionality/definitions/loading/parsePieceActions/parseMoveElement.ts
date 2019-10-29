@@ -9,7 +9,7 @@ export function parseMoveElement(
     error: (error: IParserError) => void,
     optional: boolean,
     moveSequence: IActionElement[],
-    options?: IPieceBehaviourOptions,
+    options: IPieceBehaviourOptions,
 ): boolean {
     let minDistance: number | undefined;
     let maxDistance: number | undefined;
@@ -48,7 +48,7 @@ export function parseMoveElement(
         elementText = elementText.substr(distanceEndsAt + skipLength);
     }
 
-    const directions = parseDirections(elementText, startIndex, options === undefined ? undefined : options.allowedDirections, error);
+    const directions = parseDirections(elementText, startIndex, options.allowedDirections, error);
 
     if (minDistance === undefined || directions.length === 0) {
         return false;

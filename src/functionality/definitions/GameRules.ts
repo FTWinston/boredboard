@@ -30,8 +30,9 @@ export class GameRules {
         fromRels.set(toPlayer, relationship);
     }
 
-    private relationshipMap = new Map<number, Map<number, Relationship>>();
+    private readonly relationshipMap = new Map<number, Map<number, Relationship>>();
 
+    
     public turnSequence: number[];
     public startRandomTurnSequence: boolean;
 
@@ -41,4 +42,19 @@ export class GameRules {
     public capturePassRelations = Relationship.None;
     public captureStartRelations = Relationship.None;
     public captureStopRelations = Relationship.None;
+
+
+    public setCaptureDestination(player: number, board: string, cell: string) {
+        this.playerCaptureDestinations.set(player, [board, cell]);
+    }
+
+    public getCaptureDestination(player: number): [string, string] {
+        const location = this.playerCaptureDestinations.get(player);
+
+        return location === undefined
+            ? ['', '']
+            : location;
+    }
+
+    private readonly playerCaptureDestinations = new Map<number, [string, string]>();
 }

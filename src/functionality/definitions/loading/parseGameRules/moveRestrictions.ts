@@ -10,6 +10,7 @@ export const moveRestrictions/*: ISentenceParser<GameRules, IGameRulesOptions>*/
     ) => {
         let relation = Relationship.None;
 
+        // TODO: use standard "piece filter" code here. Don't need options hard-coded in regex.
         switch (match[2]) {
             case 'a friendly':
                 relation = Relationship.Self | Relationship.Ally;

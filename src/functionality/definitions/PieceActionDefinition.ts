@@ -212,16 +212,22 @@ export class PieceActionDefinition {
                 continue;
             }
 
-            results.push({
-                fromBoard: board,
-                fromCell: cell,
-                intermediateCells: [],
-                piece: parseInt(id),
-                toBoard: playerCaptureBoard,
-                toCell: playerCaptureCell,
-            });
+            results.push(this.createCaptureMovement(forPlayer, parseInt(id), board, cell));
         }
 
         return results;
+    }
+
+    private createCaptureMovement(player: number, piece: number, fromBoard: string, fromCell: string): IPieceMovement {
+        const [playerCaptureBoard, playerCaptureCell] = this.game.rules.getCaptureDestination(player);
+        
+        return {
+            fromBoard,
+            fromCell,
+            intermediateCells: [],
+            piece,
+            toBoard: playerCaptureBoard,
+            toCell: playerCaptureCell,
+        }
     }
 }

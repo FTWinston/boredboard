@@ -5,8 +5,10 @@ import { parseMoveType } from './parseMoveType';
 import { parseCondition } from './parseCondition';
 import { parseMoveElement } from './parseMoveElement';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
+import { GameDefinition } from '../../GameDefinition';
 
 export interface IPieceBehaviourOptions {
+    game: GameDefinition;
     allowedDirections: ReadonlySet<string>;
 }
 
@@ -22,6 +24,10 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
         type: 'standard',
         expressionText: '(?:If (.+?), it|It) can ((\\w+) (.+?)( then (optionally )?(.+?))*)',
         parseMatch: (match, action, error, options) => {
+            if (options === undefined) {
+                return;
+            }
+
             let success = true;
             let groupStartPos: number;
 
@@ -74,7 +80,7 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             }
 
             if (success) {
-                action(modify => modify.push(new PieceActionDefinition(moveType!, moveSequence, stateConditions, moveConditions)));
+                action(modify => modify.push(new PieceActionDefinition(options.game, moveType!, moveSequence, stateConditions, moveConditions)));
             }
         },
         examples: [

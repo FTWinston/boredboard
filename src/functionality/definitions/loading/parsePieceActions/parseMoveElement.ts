@@ -48,12 +48,25 @@ export function parseMoveElement(
         elementText = elementText.substr(distanceEndsAt + skipLength);
     }
 
-    const directions = parseDirections(elementText, startIndex, options.allowedDirections, error);
+    // if there's a " to " anywhere in the subsequent statement, anything after that is an occupancy check
+    const toPos = elementText.indexOf(' to ', startIndex);
+
+    const directionText = toPos === -1
+        ? elementText
+        : elementText.substring(0, toPos);
+
+    const directions = parseDirections(directionText, startIndex, options.allowedDirections, error);
 
     if (minDistance === undefined || directions.length === 0) {
         return false;
     }
-    
+
+    if (toPos !== -1) {
+        startIndex += directionText.length + 4;
+        elementText = elementText.substr(toPos + 4);
+        // TODO: parse occupancy check ... then where do we put that?
+    }
+
     moveSequence.push({
         directions,
         minDistance,

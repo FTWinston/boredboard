@@ -51,7 +51,7 @@ export function parseMoveElement(
     }
 
     // if there's a " to " anywhere in the subsequent statement, anything after that is an occupancy check
-    const toPos = elementText.indexOf(' to ', startIndex);
+    const toPos = elementText.indexOf(' to ');
 
     const directionText = toPos === -1
         ? elementText

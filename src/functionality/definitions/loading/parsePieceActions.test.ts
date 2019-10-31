@@ -13,7 +13,9 @@ const game = new GameDefinition({
 it('parses simple example actions', () => {
     const examples: SimpleExample[] = [
         ['It can slide 1 cell forward.', MoveType.Slide, [[['forward'], 1, 1]]],
+        ['It can slide 1 cell forward to an empty cell.', MoveType.Slide, [[['forward'], 1, 1]]],
         ['It can slide any distance diagonally.', MoveType.Slide, [[['diagonally'], 1, undefined]]],
+        ['It can slide any distance diagonally to a cell containing an enemy piece.', MoveType.Slide, [[['diagonally'], 1, undefined]]],
         ['It can slide any distance orthogonally or diagonally.', MoveType.Slide, [[['orthogonally', 'diagonally'], 1, undefined]]],
         ['It can hop up to 3 cells orthogonally.', MoveType.Hop, [[['orthogonally'], 1, 3]]],
         ['It can leap 2 to 4 cells horizontally or vertically.', MoveType.Leap, [[['horizontally', 'vertically'], 2, 4]]],

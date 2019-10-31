@@ -77,10 +77,10 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             }
         },
         examples: [
-            'It can slide 1 cell forward',
             'It can slide any distance diagonally',
+            'It can slide 1 cell forward to an empty cell',
             'It can hop up to 3 cells orthogonally',
-            'It can leap 2 to 4 cells orthogonally',
+            'It can leap 2 to 4 cells orthogonally to a cell containing an enemy piece',
             'It can leap 2 cells diagonally',
             'It can slide at least 2 cells orthogonally',
             'It can leap 2 to 4 cells horizontally or vertically.',

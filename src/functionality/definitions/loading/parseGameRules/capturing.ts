@@ -1,36 +1,18 @@
 import { GameRules } from '../../GameRules';
 import { Relationship } from '../../Relationship';
+import { parseRelationship } from '../parsePieceActions/parseRelationship';
 
 export const capturing/*: ISentenceParser<GameRules, IGameRulesOptions>*/ = {
     type: 'standard' as 'standard', // if the above type definition worked properly, this assertion wouldn't be needed
-    expressionText: `A moving piece captures any (friendly |enemy |allied |other player's |of the same player's )?pieces? in (?:the )? cells? it (starts from|stops in|moves through)`,
+    expressionText: `A moving piece captures (?:a|an|any) (.*)pieces? in (?:the )? cells? it (starts from|stops in|moves through)`,
     parseMatch: (
         match: RegExpExecArray,
         action: (action: (modify: GameRules) => void) => void
     ) => {
 
-        let relation = Relationship.None;
-        
-        // TODO: use standard "piece filter" code here. Don't need options hard-coded in regex.
-        switch (match[1]) {
-            case 'friendly ':
-                relation = Relationship.Self | Relationship.Ally;
-                break;
-            case 'enemy ':
-                relation = Relationship.Enemy;
-                break;
-            case 'allied ':
-                relation = Relationship.Ally;
-                break;
-            case `other player's `:
-                relation = Relationship.Self | Relationship.Ally;
-                break;
-            case `of the same player's `:
-                relation = Relationship.Ally | Relationship.Enemy;
-                break;
-            default:
-                relation = Relationship.Self | Relationship.Ally | Relationship.Enemy;
-                break;
+        const relation = parseRelationship(match[1]);
+        if (relation === Relationship.None) {
+            return;
         }
         
         let result: (modify: GameRules) => void;

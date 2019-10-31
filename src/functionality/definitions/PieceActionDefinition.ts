@@ -8,12 +8,21 @@ import { IMoveCondition } from './conditions/IMoveCondition';
 import { IBoard } from '../instances/IBoard';
 import { CellMoveability } from './CellMoveability';
 import { Relationship } from './Relationship';
+import { Dictionary } from '../../data/Dictionary';
+import { IPiece } from '../instances/IPiece';
 
-interface IPieceActionElement {
+export type CellContentFilter = (player: number, contents?: Dictionary<number, IPiece>) => boolean;
+
+export interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
     readonly minDistance: number;
     readonly maxDistance?: number;
     readonly optional: boolean;
+    readonly destinationCheck?: CellContentFilter;
+}
+
+interface IConditionalPieceMovement extends IPieceMovement {
+    requiredChecks: Array<(board: IBoard) => boolean>;
 }
 
 export class PieceActionDefinition {
@@ -80,26 +89,35 @@ export class PieceActionDefinition {
 
         const initialPreviousLinkType: string | null = null;
 
-        const emptyMove = {
+        const emptyMove: IConditionalPieceMovement = {
             piece: piece,
             fromBoard: board,
             toBoard: board,
             fromCell: cell,
             toCell: cell,
             intermediateCells: [],
+            requiredChecks: [],
         }
         
-        let movements: IPieceMovement[] = [];
+        let movements: IConditionalPieceMovement[] = [];
 
         this.recursiveApplyMovement(0, emptyMove, movements, boardDef, testCell, pieceData.owner, initialPreviousLinkType);
 
-        // only use generated movements if they satisfy all of their conditions
         movements = movements.filter(movement => {
+            // only use generated movements if they satisfy their own checks
+            for (const check of movement.requiredChecks) {
+                if (!check(boardState)) {
+                    return false;
+                }
+            }
+
+            // only use generated movements if they satisfy all of this move definition's conditions
             for (const condition of this.moveConditions) {
                 if (!condition.isValid(movement, this.game, state, boardState, boardDef, pieceData)) {
                     return false;
                 }
             }
+
             return true;
         });
 
@@ -111,6 +129,8 @@ export class PieceActionDefinition {
                 targetCell: m.toCell,
                 pieceMovement: [m],
             };
+
+            delete m.requiredChecks;
 
             if (this.game.rules.captureStartRelations !== Relationship.None) {
                 // TODO: add captures for all matching pieces in m.fromCell
@@ -135,8 +155,8 @@ export class PieceActionDefinition {
 
     private recursiveApplyMovement(
         sequencePos: number,
-        cumulativeMovement: IPieceMovement,
-        movementResults: IPieceMovement[],
+        cumulativeMovement: IConditionalPieceMovement,
+        movementResults: IConditionalPieceMovement[],
         boardDef: BoardDefinition,
         testCell: (cell: string) => CellMoveability,
         player: number,
@@ -177,7 +197,18 @@ export class PieceActionDefinition {
                         ...cumulativeMovement.intermediateCells,
                         ...destPath.intermediateCells,
                     ],
+                    requiredChecks: [
+                        ...cumulativeMovement.requiredChecks,
+                    ],
                 };
+
+                // ensure that this cell is a valid destination for this step (e.g. it has no pieces in it, or an enemy piece in it)
+                const check = moveElement.destinationCheck;
+                if (check !== undefined) {
+                    const cell = stepMovement.toCell;
+                    stepMovement.requiredChecks.push(board => check(player, board.cellContents[cell]));
+                    continue;
+                }
 
                 if (isLastStep) {
                     movementResults.push(stepMovement);
@@ -221,10 +252,10 @@ export class PieceActionDefinition {
         return {
             fromBoard,
             fromCell,
-            intermediateCells: [],
             piece,
             toBoard: playerCaptureBoard,
             toCell: playerCaptureCell,
+            intermediateCells: [],
         }
     }
 }

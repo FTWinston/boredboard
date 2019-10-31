@@ -1,3 +1,5 @@
+import { IBoard } from './IBoard';
+
 export interface ITracePath {
     toCell: string;
     intermediateCells: string[];

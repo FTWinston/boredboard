@@ -1,14 +1,16 @@
 import { IParserError } from 'natural-configuration';
 import { parseDistance } from './parseDistance';
 import { parseDirections } from './parseDirections';
-import { IPieceBehaviourOptions, IActionElement } from './parser';
+import { IPieceBehaviourOptions } from './parser';
+import { IPieceActionElement, CellContentFilter } from '../../PieceActionDefinition';
+import { parseCellContentFilter } from './parseCellContentFilter';
 
 export function parseMoveElement(
     elementText: string,
     startIndex: number,
     error: (error: IParserError) => void,
     optional: boolean,
-    moveSequence: IActionElement[],
+    moveSequence: IPieceActionElement[],
     options: IPieceBehaviourOptions,
 ): boolean {
     let minDistance: number | undefined;
@@ -61,10 +63,12 @@ export function parseMoveElement(
         return false;
     }
 
+    let destinationCheck: CellContentFilter | undefined;
+
     if (toPos !== -1) {
         startIndex += directionText.length + 4;
         elementText = elementText.substr(toPos + 4);
-        // TODO: parse occupancy check ... then where do we put that?
+        destinationCheck = parseCellContentFilter(elementText, startIndex, options, error);
     }
 
     moveSequence.push({
@@ -72,6 +76,7 @@ export function parseMoveElement(
         minDistance,
         maxDistance,
         optional,
+        destinationCheck,
     });
 
     return true;

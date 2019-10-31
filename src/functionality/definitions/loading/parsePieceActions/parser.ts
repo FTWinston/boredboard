@@ -1,5 +1,5 @@
 import { ConfigurationParser } from 'natural-configuration';
-import { PieceActionDefinition } from '../../PieceActionDefinition';
+import { PieceActionDefinition, IPieceActionElement } from '../../PieceActionDefinition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { parseMoveType } from './parseMoveType';
 import { parseCondition } from './parseCondition';
@@ -10,13 +10,6 @@ import { GameDefinition } from '../../GameDefinition';
 export interface IPieceBehaviourOptions {
     game: GameDefinition;
     allowedDirections: ReadonlySet<string>;
-}
-
-export interface IActionElement {
-    directions: Array<string>;
-    minDistance: number;
-    maxDistance?: number;
-    optional: boolean;
 }
 
 export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourOptions>([
@@ -56,7 +49,7 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
                 success = false;
             }
 
-            const moveSequence: IActionElement[] = [];
+            const moveSequence: IPieceActionElement[] = [];
 
             const firstMove = match[4];
             success = success && parseMoveElement(firstMove, groupStartPos, error, false, moveSequence, options);

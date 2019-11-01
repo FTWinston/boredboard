@@ -1,5 +1,7 @@
 import { IGameState } from '../IGameState';
 import { IPlayerAction, IPieceMovement } from '../IPlayerAction';
+import { placePiece } from './placePiece';
+import { removePiece } from './removePiece';
 
 export function applyAction(action: IPlayerAction, state: IGameState) {
     for (const move of action.pieceMovement) {
@@ -19,29 +21,18 @@ function applyMovement(move: IPieceMovement, state: IGameState) {
         return false;
     }
 
-    const fromCellContent = fromBoardInstance.cellContents[fromCell];
-    if (fromCellContent === undefined) {
-        return false;
-    }
-
     const toBoardInstance = state.boards[toBoard];
     if (toBoardInstance === undefined) {
         return false;
     }
+    
+    const pieceData = removePiece(fromBoardInstance, fromCell, piece);
 
-    const toCellContent = toBoardInstance.cellContents[toCell];
-    if (toCellContent === undefined) {
-        return false;
-    }
-
-    const pieceData = fromCellContent[piece]
     if (pieceData === undefined) {
         return false;
     }
-
-    delete fromCellContent[piece];
-
-    toCellContent[piece] = pieceData;
+    
+    placePiece(toBoardInstance, toCell, piece, pieceData);
 
     return true;
 }

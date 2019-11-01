@@ -3,6 +3,7 @@ import { IPieceBehaviourOptions } from './parser';
 import { CellContentFilter } from '../../PieceActionDefinition';
 import { parseRelationship } from './parseRelationship';
 import { Relationship } from '../../Relationship';
+import { isEmpty } from '../../../instances/functions/isEmpty';
 
 const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x) (?:(.*) )?(\\w+)$");
 
@@ -13,17 +14,7 @@ export function parseCellContentFilter(
     error: (error: IParserError) => void
 ): CellContentFilter {
     if (filterText === 'an empty cell') {
-        return (player, content) => {
-            if (content === undefined) {
-                return true;
-            }
-            
-            for (const piece in content) {
-                return false;
-            }
-
-            return true;
-        };
+        return (_player, content) => content === undefined || isEmpty(content);
     }
 
     if (!filterText.startsWith('a cell containing ')) {

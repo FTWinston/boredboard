@@ -20,10 +20,10 @@ export function copyState(source: IGameState) {
 
         for (const cell in oldBoard.cellContents) {
             const oldContents = oldBoard.cellContents[cell]!;
-            const newContents: Dictionary<number, IPiece> = { ...oldContents };
+            const newContents: Dictionary<string, IPiece> = { ...oldContents };
 
             for (const pieceID in oldContents) {
-                newContents[pieceID as unknown as number] = { ...oldContents[pieceID as unknown as number]! };
+                newContents[pieceID] = { ...oldContents[pieceID]! };
             }
 
             newBoard.cellContents[cell] = newContents;

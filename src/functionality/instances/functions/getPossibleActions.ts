@@ -14,7 +14,7 @@ export function getPossibleActions(game: GameDefinition, state: IGameState, play
             const cellContent = boardData.cellContents![cell];
             
             for (const piece in cellContent) {
-                const pieceData = cellContent[piece as unknown as number]!;
+                const pieceData = cellContent[piece]!;
 
                 if (pieceData.owner === player) {
                     const pieceDefinition = game.pieces.get(pieceData.definition);
@@ -22,7 +22,7 @@ export function getPossibleActions(game: GameDefinition, state: IGameState, play
                     if (pieceDefinition !== undefined) {
                         actions = [
                             ...actions,
-                            ...pieceDefinition.getPossibleActions(state, board, cell, piece as unknown as number),
+                            ...pieceDefinition.getPossibleActions(state, board, cell, piece),
                         ];
                     }
                 }

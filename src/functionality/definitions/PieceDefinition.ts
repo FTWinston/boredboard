@@ -10,13 +10,13 @@ export class PieceDefinition {
         this.actions = actions;
     }
 
-    public getPossibleActions(state: IGameState, board: string, cell: string, id: number) {
+    public getPossibleActions(state: IGameState, board: string, cell: string, piece: string) {
         let actions: IPlayerAction[] = [];
 
         for (const action of this.actions) {
             actions = [
                 ...actions,
-                ...action.getPossibleActions(state, board, cell, id),
+                ...action.getPossibleActions(state, board, cell, piece),
             ]
         }
         

@@ -34,7 +34,7 @@ export class PieceActionDefinition {
         readonly moveConditions: ReadonlyArray<IMoveCondition>,
     ) {}
 
-    public getPossibleActions(state: IGameState, board: string, cell: string, piece: number) {
+    public getPossibleActions(state: IGameState, board: string, cell: string, piece: string) {
         const boardState = state.boards[board];
         if (boardState === undefined) {
             return [];
@@ -240,13 +240,13 @@ export class PieceActionDefinition {
                 continue;
             }
 
-            results.push(this.createCaptureMovement(forPlayer, parseInt(id), board, cell));
+            results.push(this.createCaptureMovement(forPlayer, id, board, cell));
         }
 
         return results;
     }
 
-    private createCaptureMovement(player: number, piece: number, fromBoard: string, fromCell: string): IPieceMovement {
+    private createCaptureMovement(player: number, piece: string, fromBoard: string, fromCell: string): IPieceMovement {
         const [playerCaptureBoard, playerCaptureCell] = this.game.rules.getCaptureDestination(player);
         
         return {

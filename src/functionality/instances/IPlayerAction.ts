@@ -1,12 +1,10 @@
-import { IBoard } from './IBoard';
-
 export interface ITracePath {
     toCell: string;
     intermediateCells: string[];
 }
 
 export interface IPieceMovement {
-    piece: number;
+    piece: string;
     fromBoard: string;
     toBoard: string;
     fromCell: string;
@@ -16,9 +14,9 @@ export interface IPieceMovement {
 
 export interface IPlayerAction {
     actingPlayer: number;
-    actingPiece?: number;
+    actingPiece?: string;
     targetBoard?: string;
     targetCell?: string;
-    targetPiece?: number;
+    targetPiece?: string;
     pieceMovement: IPieceMovement[];
 }

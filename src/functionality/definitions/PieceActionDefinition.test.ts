@@ -47,7 +47,7 @@ it('Calculates piece movement', () => {
 
         const piece = game.pieces.get(pieceID)!;
 
-        const actions = piece.getPossibleActions(state, boardID, example[1], 1);
+        const actions = piece.getPossibleActions(state, boardID, example[1], '1');
 
         const destinations = actions.map(m => m.pieceMovement[0].toCell);
 

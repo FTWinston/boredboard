@@ -31,7 +31,7 @@ export class ScanCondition implements IStateCondition {
                 const pieces = boardState.cellContents[testCell.toCell];
                 if (pieces !== undefined) {
                     for (const piece in pieces) {
-                        const pieceData = pieces[piece as unknown as number]!;
+                        const pieceData = pieces[piece]!;
 
                         if (this.matchPiece(pieceData)) {
                             // TODO: pass out linkType, somehow, so it can be used

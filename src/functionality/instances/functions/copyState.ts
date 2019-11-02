@@ -13,24 +13,30 @@ export function copyState(source: IGameState) {
 
     for (const board in source.boards) {
         const oldBoard = source.boards[board]!
-        const newBoard: IBoard = {
-            definition: oldBoard.definition,
-            cellContents: { ...oldBoard.cellContents },
-        };
-
-        for (const cell in oldBoard.cellContents) {
-            const oldContents = oldBoard.cellContents[cell]!;
-            const newContents: Dictionary<string, IPiece> = { ...oldContents };
-
-            for (const pieceID in oldContents) {
-                newContents[pieceID] = { ...oldContents[pieceID]! };
-            }
-
-            newBoard.cellContents[cell] = newContents;
-        }
+        const newBoard = copyBoard(oldBoard);
 
         dest.boards[board] = newBoard;
     }
 
     return dest;
+}
+
+export function copyBoard(oldBoard: IBoard) {
+    const newBoard: IBoard = {
+        definition: oldBoard.definition,
+        cellContents: { ...oldBoard.cellContents },
+    };
+
+    for (const cell in oldBoard.cellContents) {
+        const oldContents = oldBoard.cellContents[cell]!;
+        const newContents: Dictionary<string, IPiece> = { ...oldContents };
+
+        for (const pieceID in oldContents) {
+            newContents[pieceID] = { ...oldContents[pieceID]! };
+        }
+
+        newBoard.cellContents[cell] = newContents;
+    }
+
+    return newBoard;
 }

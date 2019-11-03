@@ -1461,7 +1461,7 @@
           "south"
         ]
       },
-      "forward-diagonal": {
+      "diagonally-forward": {
         "1": [
           "northeast",
           "northwest"

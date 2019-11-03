@@ -1,5 +1,5 @@
 {
     "imageUrls": {},
-    "behaviour": "It can leap two spaces orthogonally then one space perpendicularly.",
+    "behaviour": "It can leap 2 cells orthogonally then 1 cell perpendicularly.",
     "value": 1
 }

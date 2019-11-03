@@ -12,6 +12,7 @@ export class GameDefinition {
     public readonly rules: Readonly<GameRules>;
     public readonly boards: ReadonlyMap<string, BoardDefinition>;
     public readonly pieces: ReadonlyMap<string, PieceDefinition>;
+    // TODO: this needs a way of indicating that everything loaded correctly
 
     constructor(data: IGameDefinition) {
         let allAllowedDirections: ReadonlySet<string>;

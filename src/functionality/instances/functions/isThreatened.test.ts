@@ -59,15 +59,15 @@ it('Detects threatened pieces in-place', () => {
 
 it('Detects threatened pieces at other locations', () => {
     const examples: MoveExample[] = [
-        ['B5', 'B4', 'D5', true],
-        ['B5', 'B4', 'D4', false],
+        ['B4', 'B5', 'D5', true],
+        ['B4', 'B5', 'D4', false],
         ['B5', 'A5', 'D5', true],
     ];
 
     for (const example of examples) {
         const [currentLocation, testLocation, otherLocation, expectedResult] = example;
 
-        const [game, state] = createGame(testLocation, otherLocation);
+        const [game, state] = createGame(currentLocation, otherLocation);
 
         const result = wouldBeThreatenedAt(game, state, boardID, '1', currentLocation, testLocation);
 

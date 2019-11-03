@@ -4,7 +4,7 @@ import { parseRelationship } from '../parsePieceActions/parseRelationship';
 
 export const capturing/*: ISentenceParser<GameRules, IGameRulesOptions>*/ = {
     type: 'standard' as 'standard', // if the above type definition worked properly, this assertion wouldn't be needed
-    expressionText: `A moving piece captures (?:a|an|any) (.*)pieces? in (?:the )? cells? it (starts from|stops in|moves through)`,
+    expressionText: `A moving piece captures (?:a|an|any) (.*)pieces? in (?:the )?cells? it (starts from|stops in|moves through)`,
     parseMatch: (
         match: RegExpExecArray,
         action: (action: (modify: GameRules) => void) => void

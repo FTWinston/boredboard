@@ -6,8 +6,10 @@ A piece cannot move through a cell containing another piece.
 
 A moving piece captures any enemy piece in the cell it stops in.
 
+`;/*
 Disallow any move that threatens a friendly king.
 If a player cannot move and their king is threatened, end the game with their loss.
 If a player cannot move and their king is not threatened, end the game with a draw.
 If a king is threatened at the start of a turn, say "Check".
 `;
+*/

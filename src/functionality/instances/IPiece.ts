@@ -3,4 +3,5 @@ export interface IPiece {
     owner: number;
     firstMove?: number;
     lastMove?: number;
+    lastThreatened?: number;
 }

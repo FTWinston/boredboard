@@ -2,6 +2,8 @@ import { IParserError } from 'natural-configuration';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IPieceBehaviourOptions } from './parser';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
+import { TurnNumberPropertyCondition, ComparisonProperty } from '../../conditions/TurnNumberPropertyCondition';
+import { NumericComparison } from '../../NumericComparison';
 
 export function parseCondition(
     conditionText: string,
@@ -11,7 +13,25 @@ export function parseCondition(
     moveConditions: IMoveCondition[],
     options?: IPieceBehaviourOptions,
 ): boolean {
-    // TODO: actually parse these
+    
+    if (conditionText === 'it has never moved') {
+        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, undefined));
+        return true;
+    }
+    else if (conditionText === 'it has moved') {
+        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.NotEqual, undefined));
+        return true;
+    }
+    else if (conditionText === 'it has never been threatened') {
+        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.Equals, undefined));
+        return true;
+    }
+    else if (conditionText === 'it has been threatened') {
+        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.NotEqual, undefined));
+        return true;
+    }
+
+    // TODO: actually parse the rest of these ... probably use different regexes for each
 
     error({
         startIndex,

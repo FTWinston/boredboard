@@ -8,7 +8,8 @@ import { Dictionary } from '../../../data/Dictionary';
 // presumably because the memory for them is all allocated once, rather than piecemeal.
 export function copyState(source: IGameState) {
     const dest: IGameState = {
-        boards: { ...source.boards }
+        boards: { ...source.boards },
+        currentTurn: source.currentTurn,
     };
 
     for (const board in source.boards) {

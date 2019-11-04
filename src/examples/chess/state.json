@@ -37,5 +37,6 @@
                 "H8": { "32": { "definition": "rook", "owner": 2 } }
             }
         }
-    }
+    },
+    "currentTurn": 1
 }

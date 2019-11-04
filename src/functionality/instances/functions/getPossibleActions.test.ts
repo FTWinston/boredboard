@@ -25,7 +25,8 @@ function createGame(pieceLocation: string, pieceBehaviour: string): [GameDefinit
     });
 
     const state: IGameState = {
-        boards: { [boardID]: { definition: boardID, cellContents: { [pieceLocation]: { 1: { definition: pieceID, owner: 1 } } } } }
+        boards: { [boardID]: { definition: boardID, cellContents: { [pieceLocation]: { 1: { definition: pieceID, owner: 1 } } } } },
+        currentTurn: 1,
     }
 
     return [

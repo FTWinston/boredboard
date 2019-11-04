@@ -31,7 +31,8 @@ function createGame(testPieceLocation: string, otherPieceLocation: string): [Gam
                     [otherPieceLocation]: { '2': { definition: pieceID, owner: 2 } },
                 }
             }
-        }
+        },
+        currentTurn: 1,
     }
 
     return [

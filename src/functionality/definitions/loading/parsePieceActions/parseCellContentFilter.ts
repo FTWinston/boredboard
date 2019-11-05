@@ -4,8 +4,11 @@ import { CellContentFilter } from '../../PieceActionDefinition';
 import { parseRelationship } from './parseRelationship';
 import { Relationship } from '../../Relationship';
 import { isEmpty } from '../../../instances/functions/isEmpty';
+import { parseCondition } from './parseCondition';
+import { IStateCondition } from '../../conditions/IStateCondition';
+import { IMoveCondition } from '../../conditions/IMoveCondition';
 
-const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x) (?:(.*) )?(\\w+)$");
+const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x) (?:(.*) )?(\\w+?)(?: which (.+))?$");
 
 export function parseCellContentFilter(
     filterText: string,
@@ -58,6 +61,28 @@ export function parseCellContentFilter(
     }
 
     const type = match[4] === 'piece' ? null : match[4];
+
+    if (match[5] !== undefined) {
+        const conditionTexts = match[5].split(' and ');
+        const stateConditions: IStateCondition[] = [];
+        const moveConditions: IMoveCondition[] = [];
+
+        for (const conditionText of conditionTexts) {
+            // TODO: parse conditions for the match piece
+            /*
+            if (!parseCondition(conditionText, error, startIndex + something, stateConditions, moveConditions, options)) {
+                return () => false;
+            }
+            */
+        }
+
+        if (moveConditions.length > 0) {
+            // cannot use moveConditions here
+            return () => false;
+        }
+
+        // TODO: use stateConditions somehow
+    }
 
     return (player, content) => {
         if (content === undefined) {

@@ -14,19 +14,19 @@ export function parseCondition(
     options?: IPieceBehaviourOptions,
 ): boolean {
     
-    if (conditionText === 'it has never moved') {
+    if (conditionText === 'has never moved') {
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, undefined));
         return true;
     }
-    else if (conditionText === 'it has moved') {
+    else if (conditionText === 'has moved') {
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.NotEqual, undefined));
         return true;
     }
-    else if (conditionText === 'it has never been threatened') {
+    else if (conditionText === 'has never been threatened') {
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.Equals, undefined));
         return true;
     }
-    else if (conditionText === 'it has been threatened') {
+    else if (conditionText === 'has been threatened') {
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.NotEqual, undefined));
         return true;
     }

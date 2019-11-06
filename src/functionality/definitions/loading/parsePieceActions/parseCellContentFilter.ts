@@ -8,7 +8,7 @@ import { parseCondition } from './parseCondition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
 
-const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x) (?:(.*) )?(\\w+?)(?: which (.+))?$");
+const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*) )?(\\w+?)(?: which (.+))?$");
 
 export function parseCellContentFilter(
     filterText: string,
@@ -17,7 +17,10 @@ export function parseCellContentFilter(
     error: (error: IParserError) => void
 ): CellContentFilter {
     if (filterText === 'an empty cell') {
-        return (_player, content) => content === undefined || isEmpty(content);
+        return (game, state, board, boardDef, cell) => {
+            const content = board.cellContents[cell];
+            return content === undefined || isEmpty(content);
+        }
     }
 
     if (!filterText.startsWith('a cell containing ')) {
@@ -39,7 +42,7 @@ export function parseCellContentFilter(
         error({
             startIndex,
             length: filterText.length,
-            message: `Couldn't understand this cell content - expected e.g. "a friendly king" or "an enemy piece"`,
+            message: `Couldn't understand this cell content - expected e.g. "a friendly piece" or "an enemy king which has never moved"`,
         });
         
         return () => false;
@@ -49,42 +52,52 @@ export function parseCellContentFilter(
         ? 1
         : parseInt(match[2]);
 
+    startIndex += match[1].length + 1;
+
     const relation = parseRelationship(match[3]);
     if (relation === Relationship.None) {
         error({
             startIndex,
-            length: filterText.length,
+            length: match[3].length,
             message: `Couldn't understand this relationship`,
         });
 
         return () => false;
     }
 
+    if (match[3] !== undefined) {
+        startIndex += match[3].length + 1;
+    }
+
     const type = match[4] === 'piece' ? null : match[4];
 
+    startIndex += match[4].length;
+
+    const stateConditions: IStateCondition[] = [];
+
     if (match[5] !== undefined) {
+        // parse conditions for the filter-matching piece, not the acting piece
+        startIndex += 7;
+
         const conditionTexts = match[5].split(' and ');
-        const stateConditions: IStateCondition[] = [];
         const moveConditions: IMoveCondition[] = [];
 
         for (const conditionText of conditionTexts) {
-            // TODO: parse conditions for the match piece
-            /*
-            if (!parseCondition(conditionText, error, startIndex + something, stateConditions, moveConditions, options)) {
+            if (!parseCondition(conditionText, error, startIndex, stateConditions, moveConditions, options)) {
                 return () => false;
             }
-            */
+
+            startIndex += conditionText.length + 5;
         }
 
         if (moveConditions.length > 0) {
             // cannot use moveConditions here
             return () => false;
         }
-
-        // TODO: use stateConditions somehow
     }
 
-    return (player, content) => {
+    return (game, state, board, boardDef, cell, player) => {
+        const content = board.cellContents[cell];
         if (content === undefined) {
             return false;
         }
@@ -100,6 +113,11 @@ export function parseCellContentFilter(
             }
 
             if (type !== null && piece.definition !== type) {
+                continue;
+            }
+
+            const allValid = stateConditions.every(condition => condition.isValid(game, state, board, boardDef, cell, piece));
+            if (!allValid) {
                 continue;
             }
 

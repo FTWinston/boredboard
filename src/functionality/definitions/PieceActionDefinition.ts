@@ -8,10 +8,15 @@ import { IMoveCondition } from './conditions/IMoveCondition';
 import { IBoard } from '../instances/IBoard';
 import { CellMoveability } from './CellMoveability';
 import { Relationship } from './Relationship';
-import { Dictionary } from '../../data/Dictionary';
-import { IPiece } from '../instances/IPiece';
 
-export type CellContentFilter = (player: number, contents?: Dictionary<number, IPiece>) => boolean;
+export type CellContentFilter = (
+    game: GameDefinition,
+    state: IGameState,
+    boardState: IBoard,
+    boardDef: BoardDefinition,
+    cell: string,
+    player: number
+) => boolean;
 
 export interface IPieceActionElement {
     readonly directions: ReadonlyArray<string>;
@@ -22,7 +27,7 @@ export interface IPieceActionElement {
 }
 
 interface IConditionalPieceMovement extends IPieceMovement {
-    requiredChecks: Array<(board: IBoard) => boolean>;
+    requiredChecks: Array<(state: IGameState, board: IBoard) => boolean>;
 }
 
 export class PieceActionDefinition {
@@ -106,7 +111,7 @@ export class PieceActionDefinition {
         movements = movements.filter(movement => {
             // only use generated movements if they satisfy their own checks
             for (const check of movement.requiredChecks) {
-                if (!check(boardState)) {
+                if (!check(state, boardState)) {
                     return false;
                 }
             }
@@ -206,7 +211,7 @@ export class PieceActionDefinition {
                 const check = moveElement.destinationCheck;
                 if (check !== undefined) {
                     const cell = stepMovement.toCell;
-                    stepMovement.requiredChecks.push(board => check(player, board.cellContents[cell]));
+                    stepMovement.requiredChecks.push((state, board) => check(this.game, state, board, boardDef, cell, player));
                     continue;
                 }
 

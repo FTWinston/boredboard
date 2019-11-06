@@ -19,14 +19,18 @@ it('parses simple example actions', () => {
         ['It can slide any distance orthogonally or diagonally.', MoveType.Slide, [[['orthogonally', 'diagonally'], 1, undefined]]],
         ['It can hop up to 3 cells orthogonally.', MoveType.Hop, [[['orthogonally'], 1, 3]]],
         ['It can leap 2 to 4 cells horizontally or vertically.', MoveType.Leap, [[['horizontally', 'vertically'], 2, 4]]],
-        ['It can leap 2 cells orthogonally then 1 cell perpendicularly.', MoveType.Leap, [[['orthogonally'], 2, 2], [['perpendicularly'], 1, 1]]],
-        ['It can leap 2 cells orthogonally then 1 cell perpendicularly then optionally 1 cell forward.', MoveType.Leap, [[['orthogonally'], 2, 2], [['perpendicularly'], 1, 1], [['forward'], 1, 1]]],
+        ['It can leap 2 cells orthogonally, then 1 cell perpendicularly.', MoveType.Leap, [[['orthogonally'], 2, 2], [['perpendicularly'], 1, 1]]],
+        ['It can leap 2 cells orthogonally, then 1 cell perpendicularly, then optionally 1 cell forward.', MoveType.Leap, [[['orthogonally'], 2, 2], [['perpendicularly'], 1, 1], [['forward'], 1, 1]]],
         ['It can leap 2 cells diagonally.', MoveType.Leap, [[['diagonally'], 2, 2]]],
         ['It can slide at least 2 cells orthogonally.', MoveType.Slide, [[['orthogonally'], 2, undefined]]],
+        ['If it has never moved, it can slide 2 cells forward to an empty cell.', MoveType.Slide, [[['forward'], 2, 2]]],
+        ['It can slide 1 cell sideways to a cell containing an enemy pawn, then 1 cell forward.', MoveType.Slide, [[['sideways'], 1, 1], [['forward'], 1, 1]]],
+        ['It can slide 1 cell sideways to a cell containing an enemy pawn that first moved 1 turn ago, then 1 cell forward.', MoveType.Slide, [[['sideways'], 1, 1], [['forward'], 1, 1]]],
+        //['If it is in the enemy en passant zone, it can slide 1 cell sideways to a cell containing an enemy pawn that first moved 1 turn ago, then 1 cell forward.', MoveType.Slide, [[['sideways'], 1, 1], [['forward'], 1, 1]]],
     ];
 
     const directions = new Set<string>([
-        'forward', 'orthogonally', 'diagonally', 'horizontally', 'vertically',
+        'forward', 'orthogonally', 'diagonally', 'horizontally', 'vertically', 'sideways',
         'perpendicularly' // TODO: should relative directions be passed separately?
     ]);
 

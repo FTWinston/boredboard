@@ -8,7 +8,7 @@ import { parseCondition } from './parseCondition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
 
-const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*) )?(\\w+?)(?: which (.+))?$");
+const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*?) )?(\\w+?)(?: that (.+))?$");
 
 export function parseCellContentFilter(
     filterText: string,
@@ -42,7 +42,7 @@ export function parseCellContentFilter(
         error({
             startIndex,
             length: filterText.length,
-            message: `Couldn't understand this cell content - expected e.g. "a friendly piece" or "an enemy king which has never moved"`,
+            message: `Couldn't understand this cell content - expected e.g. "a friendly piece" or "an enemy king that has never moved"`,
         });
         
         return () => false;
@@ -77,7 +77,7 @@ export function parseCellContentFilter(
 
     if (match[5] !== undefined) {
         // parse conditions for the filter-matching piece, not the acting piece
-        startIndex += 7;
+        startIndex += 6;
 
         const conditionTexts = match[5].split(' and ');
         const moveConditions: IMoveCondition[] = [];

@@ -30,8 +30,11 @@ export function parseCondition(
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.NotEqual, undefined));
         return true;
     }
-
-    // TODO: actually parse the rest of these ... probably use different regexes for each
+    else if (conditionText === 'first moved 1 turn ago') {
+        // TODO: actually parse these properly
+        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, 1));
+        return true;
+    }
 
     error({
         startIndex,

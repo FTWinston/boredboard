@@ -1,5 +1,5 @@
-import React, { useReducer, createContext, Dispatch, useMemo } from 'react';
-import { Route, Switch, Redirect, useParams } from 'react-router-dom';
+import React, { useReducer, createContext, Dispatch } from 'react';
+import { Route, Switch, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import './BoardEditor.css';
 import { reducer, getInitialState, BoardAction } from './boardReducer';
@@ -15,7 +15,11 @@ import { LinkGroups } from './pages/LinkGroups';
 import { PlayerLinks } from './pages/PlayerLinks';
 import { writeBoardFromState } from './writeBoardFromState';
 
-interface Props {
+interface Match {
+    id?: string;
+}
+
+interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     getInitialData: (id?: string) => IBoardDefinition | undefined;
     saveData: (id: string | undefined, board: IBoardDefinition) => void;
@@ -23,102 +27,103 @@ interface Props {
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
 
-export const BoardEditor: React.FunctionComponent<Props> = props => {
-    const { id } = useParams();
-    const [state, dispatch] = useReducer(reducer, getInitialState(props.getInitialData(id)));
+const BoardEditor: React.FunctionComponent<Props> = props => {
+    const [state, dispatch] = useReducer(reducer, getInitialState(props.getInitialData(props.match.params.id)));
+    
+    const { path, url } = props.match;
 
     return (
         <BoardDispatch.Provider value={dispatch}>
             <Switch>
-                <Route path="/image">
+                <Route path={`${path}image`}>
                     <ImageSelector
                         initialUrl={state.imageUrl === '' ? undefined : state.imageUrl}
-                        nextPage="/cells"
+                        nextPage={`${url}/cells`}
                     />
                 </Route>
-                <Route path="/cells">
+                <Route path={`${path}cells`}>
                     <CellSelector
                         boardUrl={state.imageUrl}
                         cells={state.cells}
-                        prevPage="/image"
-                        nextPage="/linktypes"
+                        prevPage={`${url}/image`}
+                        nextPage={`${url}/linktypes`}
                     />
                 </Route>
-                <Route path="/linktypes">
+                <Route path={`${path}linktypes`}>
                     <LinkTypes
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
-                        prevPage="/cells"
-                        nextPage="/bulklinks"
+                        prevPage={`${url}cells`}
+                        nextPage={`${url}/bulklinks`}
                     />
                 </Route>
-                <Route path="/bulklinks">
+                <Route path={`${path}bulklinks`}>
                     <BulkLinker
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
-                        prevPage="/linktypes"
-                        nextPage="/manuallinks"
+                        prevPage={`${url}/linktypes`}
+                        nextPage={`${url}/manuallinks`}
                     />
                 </Route>
-                <Route path="/manuallinks">
+                <Route path={`${path}manuallinks`}>
                     <ManualLinker
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         links={state.links}
-                        prevPage="/bulklinks"
-                        nextPage={state.linkTypes.length <= 1 ? '/regions' : '/directions'}
+                        prevPage={`${url}/bulklinks`}
+                        nextPage={state.linkTypes.length <= 1 ? `${url}/regions` : `${url}/directions`}
                     />
                 </Route>
-                <Route path="/directions">
+                <Route path={`${path}directions`}>
                     <RelativeLinks
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         relativeLinks={state.relativeLinks}
                         playerLinkTypes={state.playerLinkTypes}
-                        prevPage="/manuallinks"
-                        nextPage="/playerdirections"
+                        prevPage={`${url}/manuallinks`}
+                        nextPage={`${url}/playerdirections`}
                     />
                 </Route>
-                <Route path="/playerdirections">
+                <Route path={`${path}playerdirections`}>
                     <PlayerLinks
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
                         playerLinks={state.playerLinks}
                         numPlayers={props.numPlayers}
-                        prevPage="/directions"
-                        nextPage="/directiongroups"
+                        prevPage={`${url}/directions`}
+                        nextPage={`${url}/directiongroups`}
                     />
                 </Route>
-                <Route path="/directiongroups">
+                <Route path={`${path}directiongroups`}>
                     <LinkGroups
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
                         linkGroupTypes={state.linkGroupTypes}
                         linkGroupItems={state.linkGroupItems}
-                        prevPage="/playerdirections"
-                        nextPage="/regions"
+                        prevPage={`${url}/playerdirections`}
+                        nextPage={`${url}/regions`}
                     />
                 </Route>
-                <Route path="/regions">
+                <Route path={`${path}regions`}>
                     <RegionCreator
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         numPlayers={props.numPlayers}
-                        prevPage="/directiongroups"
-                        nextPage="/"
+                        prevPage={`${url}/directiongroups`}
+                        nextPage={url}
                     />
                 </Route>
                 <Route render={() => {
                     if (state.imageUrl === '') {
-                        return <Redirect to="/image" />
+                        return <Redirect to={`${url}/image`} />
                     }
                     return (
                         <BoardSummary
@@ -127,7 +132,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regions={state.regions}
-                            saveData={() => props.saveData(id, writeBoardFromState(state))}
+                            saveData={() => props.saveData(props.match.params.id, writeBoardFromState(state))}
                         />
                     );
                 }} />
@@ -135,3 +140,5 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
         </BoardDispatch.Provider>
     );
 }
+
+export default withRouter(BoardEditor);

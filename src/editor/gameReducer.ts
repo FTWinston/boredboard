@@ -64,7 +64,7 @@ export function reducer(state: IGameDefinition, action: GameAction): IGameDefini
     }
 }
 
-function getNewBoardID(boards: Dictionary<string, IBoardDefinition>) {
+export function getNewBoardID(boards: Dictionary<string, IBoardDefinition>) {
     const baseID = 'new board'
     let id = baseID;
     let number = 0;

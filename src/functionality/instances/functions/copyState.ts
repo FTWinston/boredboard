@@ -1,6 +1,6 @@
 import { IGameState } from '../IGameState';
 import { IPiece } from '../IPiece';
-import { IBoard } from '..';
+import { IBoard } from '../IBoard';
 import { Dictionary } from '../../../data/Dictionary';
 
 // The benchmark here (http://jsben.ch/kFXoo) shows that this method is the fastest in Chrome.

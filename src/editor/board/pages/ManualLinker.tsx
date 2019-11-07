@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ManualLinker.css';
-import { BoardDisplay } from '../../../components/board';
+import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
 import { ILink } from '../boardReducer';
 import { BoardLinkList } from '../components/BoardLinkList';

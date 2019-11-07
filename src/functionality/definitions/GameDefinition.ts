@@ -5,7 +5,7 @@ import { GameRules } from './GameRules';
 import { loadBoards } from './loading/loadBoards';
 import { loadPieces } from './loading/loadPieces';
 import { parseGameRules } from './loading/parseGameRules';
-import { IGameState } from '../instances';
+import { IGameState } from '../instances/IGameState';
 import { IPlayerAction } from '../instances/IPlayerAction';
 
 export class GameDefinition {

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import './RegionCreator.css';
-import { BoardDisplay } from '../../../components/board';
+import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
 
 interface Props {

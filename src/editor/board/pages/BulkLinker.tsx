@@ -1,7 +1,8 @@
 import React, { useState, useMemo, CSSProperties, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './BulkLinker.css';
-import { BoardDisplay, ICellItem } from '../../../components/board';
+import { BoardDisplay } from '../../../components/board/BoardDisplay';
+import { ICellItem } from '../../../components/board/ICellItem';
 import { ILink } from '../boardReducer';
 import { MultiLinkSetup, ScreenDirection, getAngle } from '../components/MultiLinkSetup';
 import { BoardLinkGroups } from '../components/BoardLinkGroups';

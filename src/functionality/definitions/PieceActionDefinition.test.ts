@@ -1,5 +1,5 @@
 import { GameDefinition } from './GameDefinition';
-import { IGameState } from '../instances';
+import { IGameState } from '../instances/IGameState';
 import chessboard from '../../examples/chess/board.json';
 import { rules } from '../../examples/chess/rules';
 

@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './BoardSummary.css';
-import { BoardDisplay, ICellItem } from '../../../components/board';
+import { BoardDisplay } from '../../../components/board/BoardDisplay';
+import { ICellItem } from '../../../components/board/ICellItem';
 import { LabelStyle } from '../../../data/LabelSize';
 import { ILink, IRegion } from '../boardReducer';
 

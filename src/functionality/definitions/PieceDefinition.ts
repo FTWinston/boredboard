@@ -1,6 +1,6 @@
 import { PieceActionDefinition } from './PieceActionDefinition';
 import { GameDefinition } from './GameDefinition';
-import { IGameState } from '../instances';
+import { IGameState } from '../instances/IGameState';
 import { IPlayerAction } from '../instances/IPlayerAction';
 
 export class PieceDefinition {

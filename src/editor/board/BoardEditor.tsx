@@ -1,5 +1,5 @@
-import React, { useReducer, createContext, Dispatch } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React, { useReducer, createContext, Dispatch, useMemo } from 'react';
+import { Route, Switch, Redirect, useParams } from 'react-router-dom';
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import './BoardEditor.css';
 import { reducer, getInitialState, BoardAction } from './boardReducer';
@@ -16,16 +16,16 @@ import { PlayerLinks } from './pages/PlayerLinks';
 import { writeBoardFromState } from './writeBoardFromState';
 
 interface Props {
-    name: string;
     numPlayers: number;
-    initialData?: IBoardDefinition;
-    saveData: (board: IBoardDefinition) => void;
+    getInitialData: (id?: string) => IBoardDefinition | undefined;
+    saveData: (id: string | undefined, board: IBoardDefinition) => void;
 }
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
 
 export const BoardEditor: React.FunctionComponent<Props> = props => {
-    const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
+    const { id } = useParams();
+    const [state, dispatch] = useReducer(reducer, getInitialState(props.getInitialData(id)));
 
     return (
         <BoardDispatch.Provider value={dispatch}>
@@ -127,7 +127,7 @@ export const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regions={state.regions}
-                            saveData={() => props.saveData(writeBoardFromState(state))}
+                            saveData={() => props.saveData(id, writeBoardFromState(state))}
                         />
                     );
                 }} />

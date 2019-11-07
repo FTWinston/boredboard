@@ -1,16 +1,16 @@
 import React from 'react';
 import './App.css';
-import { BoardEditor } from './editor/board';
+import { GameEditor } from './editor';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
     <Router>
       <div className="App">
-        <BoardEditor
+        <GameEditor
             name="sample"
             numPlayers={2}
-            saveData={board => console.log('saved board data', JSON.stringify(board))}
+            saveData={game => console.log('saved game data', JSON.stringify(game))}
         />
       </div>
     </Router>

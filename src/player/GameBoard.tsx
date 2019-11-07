@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { BoardDisplay } from '../components/board/BoardDisplay';
-import { GameDefinition } from '../functionality/definitions';
 import chess from '../examples/chess'
 import initialState from '../examples/chess/state.json'
 import './GameBoard.css';
@@ -12,7 +11,7 @@ interface Props {
 }
 
 export const GameBoard: FunctionComponent<Props> = props => {
-    const game = useMemo(() => new GameDefinition(chess), []);
+    // const game = useMemo(() => new GameDefinition(chess), []);
 
     const rawBoard = useMemo(() => chess.boards['board']!, []);
 

@@ -55,9 +55,6 @@ export function parseDistance(
     }
 
     if (firstDist >= mainDist) {
-        const numberEnd = distance.lastIndexOf(' ');
-        const numberStart = distance.lastIndexOf(' ', numberEnd - 1) + 1;
-
         error({
             startIndex: startIndex + match[1].length,
             length: distance.length - match[1].length,

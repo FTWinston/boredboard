@@ -22,7 +22,7 @@ export class GameRules {
 
     public setRelationship(fromPlayer: number, toPlayer: number, relationship: Relationship) {
         let fromRels = this.relationshipMap.get(fromPlayer);
-        if (fromRels == undefined) {
+        if (fromRels === undefined) {
             fromRels = new Map<number, Relationship>();
             this.relationshipMap.set(fromPlayer, fromRels);
         }

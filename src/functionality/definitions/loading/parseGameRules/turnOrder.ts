@@ -1,4 +1,4 @@
-import { IParserError, ISentenceParser } from 'natural-configuration';
+import { IParserError } from 'natural-configuration';
 import { GameRules } from '../../GameRules';
 import { IGameRulesOptions } from './parser';
 

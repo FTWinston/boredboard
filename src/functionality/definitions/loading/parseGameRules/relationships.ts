@@ -3,7 +3,7 @@ import { Relationship } from '../../Relationship';
 
 export const relationships/*: ISentenceParser<GameRules, IGameRulesOptions>*/ = {
     type: 'standard' as 'standard', // if the above type definition worked properly, this assertion wouldn't be needed
-    expressionText: 'Player (\d+) is an (ally|enemy) of player (\d+)(, and vice versa)?',
+    expressionText: 'Player (\\d+) is an (ally|enemy) of player (\\d+)(, and vice versa)?',
     parseMatch: (
         match: RegExpExecArray,
         action: (action: (modify: GameRules) => void) => void

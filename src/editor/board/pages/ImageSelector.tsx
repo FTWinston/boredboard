@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ImageSelector.css';
 import { BoardDispatch } from '../BoardEditor';
-import svg from '../../../chessboard.svg';
+import svg from '../../../examples/chess/board.svg';
 
 interface Props {
     initialUrl?: string;

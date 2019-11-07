@@ -41,17 +41,17 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
     return (
         <GameDispatch.Provider value={dispatch}>
             <Switch>
-                <Route path={`${path}board/:id`}>
+                <Route path={`${path}/board/:id`}>
                     <BoardEditor
                         numPlayers={props.numPlayers}
                         getInitialData={getBoard}
                         saveData={saveBoard}
                     />
                 </Route>
-                <Route path={`${path}`} exact>
+                <Route path={path} exact>
                     <div>
                         Game summary here. List of boards, pieces, rules.
-                        For now <Link to={`${url}board/${getNewBoardID(state.boards)}`}>go edit a board</Link>.
+                        For now <Link to={`${url}/board/${getNewBoardID(state.boards)}`}>go edit a board</Link>.
                     </div>
                 </Route> 
                 <Route>

@@ -35,13 +35,13 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
     return (
         <BoardDispatch.Provider value={dispatch}>
             <Switch>
-                <Route path={`${path}image`}>
+                <Route path={`${path}/image`}>
                     <ImageSelector
                         initialUrl={state.imageUrl === '' ? undefined : state.imageUrl}
                         nextPage={`${url}/cells`}
                     />
                 </Route>
-                <Route path={`${path}cells`}>
+                <Route path={`${path}/cells`}>
                     <CellSelector
                         boardUrl={state.imageUrl}
                         cells={state.cells}
@@ -49,18 +49,18 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={`${url}/linktypes`}
                     />
                 </Route>
-                <Route path={`${path}linktypes`}>
+                <Route path={`${path}/linktypes`}>
                     <LinkTypes
                         boardUrl={state.imageUrl}
                         cells={state.cells}
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
                         playerLinkTypes={state.playerLinkTypes}
-                        prevPage={`${url}cells`}
+                        prevPage={`${url}/cells`}
                         nextPage={`${url}/bulklinks`}
                     />
                 </Route>
-                <Route path={`${path}bulklinks`}>
+                <Route path={`${path}/bulklinks`}>
                     <BulkLinker
                         boardUrl={state.imageUrl}
                         cells={state.cells}
@@ -70,7 +70,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={`${url}/manuallinks`}
                     />
                 </Route>
-                <Route path={`${path}manuallinks`}>
+                <Route path={`${path}/manuallinks`}>
                     <ManualLinker
                         boardUrl={state.imageUrl}
                         cells={state.cells}
@@ -80,7 +80,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={state.linkTypes.length <= 1 ? `${url}/regions` : `${url}/directions`}
                     />
                 </Route>
-                <Route path={`${path}directions`}>
+                <Route path={`${path}/directions`}>
                     <RelativeLinks
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
@@ -90,7 +90,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={`${url}/playerdirections`}
                     />
                 </Route>
-                <Route path={`${path}playerdirections`}>
+                <Route path={`${path}/playerdirections`}>
                     <PlayerLinks
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
@@ -101,7 +101,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={`${url}/directiongroups`}
                     />
                 </Route>
-                <Route path={`${path}directiongroups`}>
+                <Route path={`${path}/directiongroups`}>
                     <LinkGroups
                         linkTypes={state.linkTypes}
                         relativeLinkTypes={state.relativeLinkTypes}
@@ -112,7 +112,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={`${url}/regions`}
                     />
                 </Route>
-                <Route path={`${path}regions`}>
+                <Route path={`${path}/regions`}>
                     <RegionCreator
                         boardUrl={state.imageUrl}
                         cells={state.cells}

@@ -8,7 +8,7 @@ import { LabelStyle } from '../../data/LabelSize';
 
 interface Props {
     filePath: string;
-    className: string;
+    className?: string;
     onReady?: (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => void;
     cellClicked?: (cellID: string) => void;
     labelStyle?: LabelStyle;

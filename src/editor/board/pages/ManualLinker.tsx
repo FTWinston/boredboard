@@ -10,7 +10,7 @@ import { LabelStyle } from '../../../data/LabelSize';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
     prevPage: string;
@@ -72,8 +72,8 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                 filePath={props.boardUrl}
                 cells={props.cells}
                 labelStyle={LabelStyle.FillCell}
-                selectableCells={linkFrom === null ? undefined : [linkFrom]}
-                moveableCells={linkedTo === null ? undefined : [linkedTo]}
+                selectableCells={linkFrom === null ? undefined : new Set<string>([linkFrom])}
+                moveableCells={linkedTo === null ? undefined : new Set<string>([linkedTo])}
                 cellClicked={cellClicked}
             />
             

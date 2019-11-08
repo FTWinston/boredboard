@@ -9,7 +9,7 @@ import { SelectorMulti } from '../components/SelectorMulti';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     nextPage: string;
     prevPage: string;
 }
@@ -17,25 +17,25 @@ interface Props {
 export const CellSelector: React.FunctionComponent<Props> = props => {
     const context = useContext(BoardDispatch);
 
-    const [elementIDs, setElementIDs] = useState([] as string[]);
+    const [elementIDs, setElementIDs] = useState(new Set<string>());
     
     const readBoardElements = (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => {
-        const ids = elements.map(e => e.id).sort();
+        const ids = new Set<string>(elements.map(e => e.id));
         setElementIDs(ids);
 
         // if we had cells from a previous image, remove any that don't exist in the new one
-        if (props.cells.length > 0) {
-            const remainingCells = props.cells.filter(id => ids.indexOf(id) !== -1);
-            if (remainingCells.length !== props.cells.length) {
+        if (props.cells.size > 0) {
+            const remainingCells = [...props.cells].filter(id => ids.has(id));
+            if (remainingCells.length !== props.cells.size) {
                 context({
                     type: 'set cells',
-                    cells: remainingCells,
+                    cells: new Set<string>(remainingCells),
                 });
             }
         }
     };
 
-    const continueLink = props.cells.length === 0
+    const continueLink = props.cells.size === 0
         ? <div title="Cannot continue until cells are selected">Continue</div>
         : <Link to={props.nextPage}>Continue</Link>
 
@@ -65,14 +65,14 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
 
                 <SelectAllNone
                     selectAll={
-                        props.cells.length === elementIDs.length
+                        props.cells.size === elementIDs.size
                             ? undefined
                             : () => context({ type: 'set cells', cells: elementIDs})
                     }
                     selectNone={
-                        props.cells.length === 0
+                        props.cells.size === 0
                             ? undefined
-                            : () => context({ type: 'set cells', cells: []})
+                            : () => context({ type: 'set cells', cells: new Set<string>()})
                     }
                 />
                 

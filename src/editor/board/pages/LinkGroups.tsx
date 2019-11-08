@@ -46,11 +46,11 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
     }
 
     const [options, disallowedValues] = useMemo(() => [
-        [
+        new Set<string>([
             ...props.linkTypes,
             ...props.relativeLinkTypes, // TODO: should we be including these?
             ...props.playerLinkTypes,
-        ],
+        ]),
         [
             ...props.linkTypes,
             ...props.relativeLinkTypes,
@@ -77,7 +77,7 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
                     key={groupType}
                     prefixText={`These are ${groupType}:`}
                     options={options}
-                    selectedValues={groupItems}
+                    selectedValues={new Set<string>(groupItems)}
                     changeValue={changeValue}
                 />
             );

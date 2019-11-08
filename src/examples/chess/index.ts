@@ -9,11 +9,15 @@ import bishop from './pieces/bishop.json';
 import queen from './pieces/queen.json';
 import king from './pieces/king.json';
 import { rules } from './rules';
+import imageOverride from './board.svg';
 
 export default {
     rules,
     boards: {
-        'board': board as IBoardDefinition,
+        'board': {
+            ...board as IBoardDefinition,
+            imageUrl: imageOverride, // ensure correct webpack path is used
+        },
     },
     pieces: {
         'pawn': pawn as IPieceDefinition,

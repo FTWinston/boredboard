@@ -9,7 +9,7 @@ import { BoardLinkGroups } from '../components/BoardLinkGroups';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
     nextPage: string;
@@ -19,7 +19,7 @@ interface Props {
 export const BulkLinker: React.FunctionComponent<Props> = props => {
     const root = useRef<HTMLDivElement>(null);
 
-    const [selectedCells, setSelectedCells] = useState([] as string[]);
+    const [selectedCells, setSelectedCells] = useState(new Set<string>());
 
     const [distance, setDistance] = useState(50);
 
@@ -29,7 +29,7 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
         () => {
             const display = renderLinkPointer(direction, Math.round(distance));
 
-            return selectedCells.map(cell => ({
+            return [...selectedCells].map(cell => ({
                 key: cell,
                 cell: cell,
                 display,
@@ -49,14 +49,13 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
                 selectableCells={selectedCells}
                 contents={linkDisplays}
                 cellClicked={cell => {
-                    let cells: string[];
-                    const index = selectedCells.indexOf(cell);
-                    if (index === -1) {
-                        cells = [...selectedCells, cell];
+                    let cells = new Set<string>(selectedCells);
+
+                    if (cells.has(cell)) {
+                        cells.delete(cell);
                     }
                     else {
-                        cells = selectedCells.slice();
-                        cells.splice(index, 1);
+                        cells.add(cell);
                     }
                     setSelectedCells(cells);
                 }}

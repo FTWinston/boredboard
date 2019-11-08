@@ -9,7 +9,7 @@ import { disallowedNames } from '../../../data/reservedWords';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     linkTypes: string[];
     relativeLinkTypes: string[];
     playerLinkTypes: string[];

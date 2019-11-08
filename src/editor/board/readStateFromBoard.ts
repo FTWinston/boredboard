@@ -16,7 +16,7 @@ export function readStateFromBoard(board: IBoardDefinition) {
 
     return {
         imageUrl: board.imageUrl,
-        cells: Object.keys(board.links),
+        cells: new Set<string>(Object.keys(board.links)),
         linkTypes: [...linkTypes],
         links,
         relativeLinkTypes: [...relativeLinkTypes],

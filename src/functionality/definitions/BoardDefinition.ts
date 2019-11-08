@@ -6,12 +6,20 @@ import { CellMoveability } from './CellMoveability';
 import { ITracePath } from '../instances/IPlayerAction';
 
 export class BoardDefinition {
+    public readonly imageUrl: string;
+    public readonly cells: ReadonlySet<string>;
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
     private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
 
     constructor(private readonly game: GameDefinition, data: IBoardDefinition, addDirectionsTo?: Set<string>) {
-        this.cellLinks = readCellLinks(data);
+        this.imageUrl = data.imageUrl;
+
+        const cells = new Set<string>();
+        this.cellLinks = readCellLinks(data, cells);
+        this.cells = cells;
+
         this.directionCache = readLinkTypes(data, addDirectionsTo);
+        
         // TODO: data.regions;
     }
 

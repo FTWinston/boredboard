@@ -8,7 +8,7 @@ import { ILink, IRegion } from '../boardReducer';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
     regions: IRegion[];
@@ -26,7 +26,7 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
 
             const links = props.links.filter(l => l.fromCell === selectedCell);
 
-            const destCells = links.map(l => l.toCell);
+            const destCells = new Set<string>(links.map(l => l.toCell));
 
             const contentItems: ICellItem[] = links.map(l => ({
                 key: l.toCell + l.type,
@@ -63,7 +63,7 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
                 labelStyle={LabelStyle.SmallCorner}
                 cells={props.cells}
                 cellClicked={cell => setSelectedCell(cell)}
-                selectableCells={selectedCell === undefined ? undefined : [selectedCell]}
+                selectableCells={selectedCell === undefined ? undefined : new Set<string>([selectedCell])}
                 moveableCells={destinationCells}
                 contents={cellContents}
             />

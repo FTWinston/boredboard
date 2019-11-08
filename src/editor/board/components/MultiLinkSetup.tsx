@@ -6,7 +6,7 @@ import { SelectorSingle } from './SelectorSingle';
 
 interface Props {
     className?: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
     direction: ScreenDirection;
@@ -14,8 +14,8 @@ interface Props {
     setDirection: (dir: ScreenDirection) => void;
     distance: number;
     setDistance: (dist: number) => void;
-    selectedCells: string[];
-    setSelectedCells: (cells: string[]) => void;
+    selectedCells: Set<string>;
+    setSelectedCells: (cells: Set<string>) => void;
 }
 
 interface ICreationInfo {
@@ -114,14 +114,14 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
 
             <SelectAllNone
                 selectAll={
-                    props.cells.length === props.selectedCells.length
+                    props.cells.size === props.selectedCells.size
                         ? undefined
-                        : () => props.setSelectedCells(props.cells)
+                        : () => props.setSelectedCells(new Set<string>(props.cells))
                 }
                 selectNone={
-                    props.selectedCells.length === 0
+                    props.selectedCells.size === 0
                         ? undefined
-                        : () => props.setSelectedCells([])
+                        : () => props.setSelectedCells(props.selectedCells)
                 }
             />
             
@@ -143,7 +143,7 @@ export const MultiLinkSetup: React.FunctionComponent<Props> = props => {
 
             <p>
                 <button
-                    disabled={props.selectedCells.length === 0}
+                    disabled={props.selectedCells.size === 0}
                     onClick={() => tryCreateLinks(props.getBoardElements, props.selectedCells, props.distance, props.direction, selectedLinkType, createLinks)}
                 >
                     Create links
@@ -180,7 +180,7 @@ export function getAngle(direction: ScreenDirection) {
 
 function tryCreateLinks(
     getBoardElements: () => NodeListOf<Element>,
-    selectedCells: string[],
+    selectedCells: ReadonlySet<string>,
     distance: number,
     screenDir: ScreenDirection,
     linkType: string,
@@ -196,7 +196,7 @@ function tryCreateLinks(
 
     for (const item of contentItems) {
         const fromCell = item.getAttribute('data-cell');
-        if (fromCell === null || selectedCells.indexOf(fromCell) === -1) {
+        if (fromCell === null || !selectedCells.has(fromCell)) {
             continue;
         }
         

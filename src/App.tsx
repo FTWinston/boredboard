@@ -2,7 +2,9 @@ import React from 'react';
 import './App.css';
 import { GameEditor } from './editor';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { GameBoard } from './player/GameBoard';
+import { Game } from './player/Game';
+import chessDefinition from './examples/chess'
+import chessState from './examples/chess/state.json'
 
 const App: React.FC = () => {
   return (
@@ -17,7 +19,10 @@ const App: React.FC = () => {
             />
           </Route>
           <Route path="/play">
-            <GameBoard />
+            <Game
+                definition={chessDefinition}
+                state={chessState}
+            />
           </Route>
           <Route>
             <p>To edit a new game definition, <Link to="/edit">click here</Link>.</p>

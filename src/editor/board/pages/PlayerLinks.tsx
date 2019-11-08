@@ -83,7 +83,7 @@ export const PlayerLinks: React.FunctionComponent<Props> = props => {
                         key={playerLinkType}
                         prefixText={`${playerLinkType} is:`}
                         options={props.linkTypes}
-                        selectedValues={existingLinks}
+                        selectedValues={new Set<string>(existingLinks)}
                         changeValue={changeValue}
                     />
                 );

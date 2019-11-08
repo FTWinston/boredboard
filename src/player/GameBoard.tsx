@@ -1,32 +1,24 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { BoardDisplay } from '../components/board/BoardDisplay';
-import chess from '../examples/chess'
-import initialState from '../examples/chess/state.json'
 import './GameBoard.css';
 import { ICellItem } from '../components/board/ICellItem';
-import { IGameState } from '../functionality/instances/IGameState';
+import { GameDefinition } from '../functionality/definitions';
+import { IBoard } from '../functionality/instances/IBoard';
 
 interface Props {
-
+    game: GameDefinition;
+    state: IBoard;
 }
 
 export const GameBoard: FunctionComponent<Props> = props => {
-    // const game = useMemo(() => new GameDefinition(chess), []);
-
-    const rawBoard = useMemo(() => chess.boards['board']!, []);
-
-    const cells = useMemo(() => {
-        const ids: string[] = [];
-        for (const cell in rawBoard.links) {
-            ids.push(cell);
-        }
-        return ids;
-    }, [rawBoard]);
-
+    const boardDef = useMemo(
+        () => props.game.boards.get(props.state.definition),
+        [props.game, props.state]
+    );
 
     const contents = useMemo(() => {
         const output: ICellItem[] = [];
-        const cellContents = (initialState as IGameState).boards['board']!.cellContents;
+        const cellContents = props.state.cellContents;
 
         for (const cell in cellContents) {
             const cellContent = cellContents[cell]!;
@@ -40,12 +32,18 @@ export const GameBoard: FunctionComponent<Props> = props => {
             }
         }
         return output;
-    }, []);
+    }, [props.state.cellContents]);
 
-    return <BoardDisplay
-        className="gameBoard"
-        filePath={rawBoard.imageUrl}
-        cells={cells}
-        contents={contents}
-    />
+    if (boardDef === undefined) {
+        return <div>Error: Board definition not found</div>
+    }
+
+    return (
+        <BoardDisplay
+            className="gameBoard"
+            filePath={boardDef.imageUrl}
+            cells={boardDef.cells}
+            contents={contents}
+        />
+    );
 }

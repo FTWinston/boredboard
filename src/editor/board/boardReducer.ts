@@ -32,7 +32,7 @@ export interface IRegion {
 
 export interface IState {
     imageUrl: string;
-    cells: string[];
+    cells: Set<string>;
     linkTypes: string[];
     links: ILink[];
     relativeLinkTypes: string[];
@@ -49,7 +49,7 @@ export type BoardAction = {
     url: string;
 } | {
     type: 'set cells';
-    cells: string[];
+    cells: Set<string>;
 } | {
     type: 'add cell';
     cell: string;
@@ -173,7 +173,7 @@ export function getInitialState(board?: IBoardDefinition): IState {
 
     return {
         imageUrl: '',
-        cells: [],
+        cells: new Set<string>(),
         linkTypes: [],
         links: [],
         relativeLinkTypes: [],
@@ -198,10 +198,10 @@ export function reducer(state: IState, action: BoardAction): IState {
             return replaceCells(state, action.cells);
 
         case 'add cell':
-            return replaceCells(state, addToListCopy(state.cells, action.cell))
+            return replaceCells(state, addToSetCopy(state.cells, action.cell))
 
         case 'remove cell':
-            return replaceCells(state, removeFromListCopy(state.cells, action.cell))
+            return replaceCells(state, removeFromSetCopy(state.cells, action.cell))
             
         case 'set link types':
             return {
@@ -488,54 +488,50 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ...state,
                 regions: action.regions.map(r => ({ // only include valid cells
                     ...r,
-                    cells: r.cells.filter(c => state.cells.indexOf(c) !== -1),
+                    cells: r.cells.filter(c => state.cells.has(c)),
                 })),
             };
     }
 }
 
-function replaceCells(state: IState, cells: string[]) {
+function replaceCells(state: IState, cells: Set<string>) {
     return {
         ...state,
         cells,
         links: state.links.filter( // remove invalid links
-            l => cells.indexOf(l.fromCell) !== -1
-            && cells.indexOf(l.toCell) !== -1
+            l => cells.has(l.fromCell)
+            && cells.has(l.toCell)
         ),
         regions: state.regions.map(r => ({ // remove invalid cells from existing regions
             ...r,
-            cells: r.cells.filter(c => cells.indexOf(c) !== -1),
+            cells: r.cells.filter(c => cells.has(c)),
         })),
     };
 }
 
-function addToListCopy<T>(list: T[], item: T): T[] {
-    const pos = list.indexOf(item);
-    if (pos !== -1) {
-        return list;
+function addToSetCopy<T>(existing: Set<T>, item: T) {
+    if (existing.has(item)) {
+        return existing;
     }
 
-    return [
-        ...list,
-        item,
-    ];
+    const newSet = new Set<T>(existing);
+    newSet.add(item);
+    return newSet;
 }
 
-function removeFromListCopy<T>(list: T[], item: T): T[] {
-    const pos = list.indexOf(item);
-    if (pos === -1) {
-        return list;
+function removeFromSetCopy<T>(existing: Set<T>, item: T) {
+    if (!existing.has(item)) {
+        return existing;
     }
 
-    list = list.slice();
-    list.splice(pos, 1);
-
-    return list;
+    const newSet = new Set<T>(existing);
+    newSet.delete(item);
+    return newSet;
 }
 
 function isValidLink(link: ILink, state: IState) {
-    return state.cells.indexOf(link.fromCell) !== -1
-        && state.cells.indexOf(link.toCell) !== -1
+    return state.cells.has(link.fromCell)
+        && state.cells.has(link.toCell)
         && state.linkTypes.indexOf(link.type) !== -1;
 }
 

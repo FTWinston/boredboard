@@ -6,7 +6,7 @@ import { BoardDispatch } from '../BoardEditor';
 
 interface Props {
     boardUrl: string;
-    cells: string[];
+    cells: ReadonlySet<string>;
     numPlayers: number;
     prevPage: string;
     nextPage: string;

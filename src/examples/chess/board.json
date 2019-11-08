@@ -1,5 +1,5 @@
 {
-    "imageUrl": "/static/media/board.ec985d7f.svg",
+    "imageUrl": "./board.svg",
     "links": {
       "A1": {
         "north": [

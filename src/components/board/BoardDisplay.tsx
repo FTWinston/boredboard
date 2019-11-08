@@ -12,10 +12,10 @@ interface Props {
     onReady?: (svg: SVGSVGElement, elements: SVGGraphicsElement[]) => void;
     cellClicked?: (cellID: string) => void;
     labelStyle?: LabelStyle;
-    cells: string[];
-    selectableCells?: string[];
-    moveableCells?: string[];
-    attackableCells?: string[];
+    cells: ReadonlySet<string>;
+    selectableCells?: ReadonlySet<string>;
+    moveableCells?: ReadonlySet<string>;
+    attackableCells?: ReadonlySet<string>;
     contents?: ICellItem[];
 }
 
@@ -43,7 +43,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         const target = e.target as SVGGraphicsElement;
         const cellID = target.getAttribute('id');
 
-        if (cellID !== null && props.cells.indexOf(cellID) !== -1 && cellClicked) {
+        if (cellID !== null && props.cells.has(cellID) && cellClicked) {
             cellClicked(cellID);
         }
     }, [cellClicked, props.cells]);
@@ -68,7 +68,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
                 break;
         }
 
-        return props.cells.map(id => ({
+        return [...props.cells].map(id => ({
             key: id,
             cell: id,
             display: <div className={className}>{id}</div>
@@ -187,13 +187,13 @@ function createFilters(svg: SVGElement) {
 </filter>`;
 }
 
-function createProxy(cellIDs: string[] | undefined, className: string) {
-    if (cellIDs === undefined || cellIDs.length === 0) {
+function createProxy(cellIDs: ReadonlySet<string> | undefined, className: string) {
+    if (cellIDs === undefined || cellIDs.size === 0) {
         return undefined;
     }
 
     return <SvgProxy
-        selector={'#' + cellIDs.join(',#')}
+        selector={'#' + [...cellIDs].join(',#')}
         class={className}
     />
 }

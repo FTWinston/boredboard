@@ -70,7 +70,7 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
                         key={relativeLinkType}
                         prefixText={`${relativeLinkType} is:`}
                         options={props.linkTypes.filter(t => t !== fromType)}
-                        selectedValues={toTypes}
+                        selectedValues={new Set<string>(toTypes)}
                         changeValue={changeValue}
                     />
                 );

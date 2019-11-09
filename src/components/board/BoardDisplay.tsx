@@ -153,6 +153,8 @@ function removeProblematicAttributes(svg: SVGSVGElement) {
     svg.removeAttribute('x');
     svg.removeAttribute('y');
     svg.removeAttribute('id');
+    svg.removeAttribute('src');
+    svg.removeAttribute('onClick');
 }
 
 function getCellElements(svg: SVGSVGElement, setCellElements: (pos: Map<string, SVGGraphicsElement>) => void) {

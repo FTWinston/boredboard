@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { SvgLoader } from 'react-svgmt';
 import { BoardDisplay } from '../components/board/BoardDisplay';
 import './GameBoard.css';
 import { ICellItem } from '../components/board/ICellItem';
@@ -57,14 +58,17 @@ function determinePieceDisplay(
     const definition = game.pieces.get(piece.definition);
     if (definition === undefined) {
         console.log(`cannot find piece definition: ${piece.definition}`);
-        return 'error';
+        return `${piece.definition} error`;
     }
     
     const imageUrl = definition.imageUrls.get(piece.owner);
     if (imageUrl === undefined) {
         console.log(`Piece has no image for player ${piece.owner}`, definition.imageUrls);
-        return 'error';
+        return `${piece.definition} error`;
     }
 
-    return <img src={imageUrl} alt={`player ${piece.owner} ${piece.definition}`} />;
+    return <SvgLoader
+        path={imageUrl}
+        className="board__piece"
+    />
 }

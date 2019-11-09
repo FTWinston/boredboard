@@ -1,5 +1,5 @@
 {
     "imageUrls": { "white": "./default/white/knight.svg", "black": "./default/black/knight.svg" },
-    "behaviour": "It can leap 2 cells orthogonally then 1 cell perpendicularly.",
+    "behaviour": "It can leap 2 cells orthogonally, then 1 cell perpendicularly.",
     "value": 1
 }

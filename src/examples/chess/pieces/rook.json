@@ -1,5 +1,5 @@
 {
-    "imageUrls": {},
+    "imageUrls": { "1": "./default/white/rook.svg", "2": "./default/black/rook.svg" },
     "behaviour": "It can slide any distance orthogonally.",
     "value": 5
 }

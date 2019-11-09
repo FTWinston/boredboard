@@ -1,5 +1,5 @@
 {
-    "imageUrls": {},
+    "imageUrls": { "1": "./default/white/bishop.svg", "2": "./default/black/bishop.svg" },
     "behaviour": "It can slide any distance diagonally.",
     "value": 3
 }

@@ -15,7 +15,15 @@ export function loadPieces(game: GameDefinition, data: IGameDefinition, allAllow
             continue; // TODO: need a better approach than just logging to console
         }
 
-        pieces.set(pieceName, new PieceDefinition(game, piece.value, actionParseResult.definition));
+        const imageUrls = new Map<number, string>();
+        console.log('loading, image urls are', piece.imageUrls);
+
+        for (const player in piece.imageUrls) {
+            const iPlayer = parseInt(player);
+            imageUrls.set(iPlayer, piece.imageUrls[iPlayer]!); 
+        }
+
+        pieces.set(pieceName, new PieceDefinition(game, piece.value, actionParseResult.definition, imageUrls));
     }
 
     return pieces;

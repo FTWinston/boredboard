@@ -4,11 +4,12 @@ import { IGameState } from '../instances/IGameState';
 import { IPlayerAction } from '../instances/IPlayerAction';
 
 export class PieceDefinition {
-    public readonly actions: ReadonlyArray<PieceActionDefinition>;
-
-    constructor(private readonly game: GameDefinition, readonly value: number, actions: PieceActionDefinition[]) {
-        this.actions = actions;
-    }
+    constructor(
+        private readonly game: GameDefinition,
+        readonly value: number,
+        readonly actions: ReadonlyArray<PieceActionDefinition>,
+        readonly imageUrls: ReadonlyMap<number, string>
+    ) { }
 
     public getPossibleActions(state: IGameState, board: string, cell: string, piece: string) {
         let actions: IPlayerAction[] = [];

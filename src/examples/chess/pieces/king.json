@@ -1,5 +1,5 @@
 {
-    "imageUrls": {},
+    "imageUrls": { "1": "./default/white/king.svg", "2": "./default/black/king.svg" },
     "behaviour": "It can slide 1 cell orthogonally or diagonally. If it has never been threatened and it has never moved, and there is a friendly rook 3 cells to its east that has never moved, it can slide 2 cells east then the rook will hop 2 cells west. If it has never been threatened and it has never moved, and there is a friendly rook 4 cells to its west that has never moved, it can slide 3 cells west then the rook will hop 2 cells east.",
     "value": 99
 }

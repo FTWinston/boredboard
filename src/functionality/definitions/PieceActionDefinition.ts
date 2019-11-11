@@ -129,6 +129,9 @@ export class PieceActionDefinition {
         const actions = movements.map(m => {
             const action: IPlayerAction = {
                 actingPlayer: pieceData.owner,
+                fromCell: m.fromBoard === m.toBoard
+                    ? m.fromCell
+                    : undefined,
                 actingPiece: piece,
                 targetBoard: m.toBoard,
                 targetCell: m.toCell,

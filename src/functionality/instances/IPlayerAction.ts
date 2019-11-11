@@ -14,6 +14,7 @@ export interface IPieceMovement {
 
 export interface IPlayerAction {
     actingPlayer: number;
+    fromCell?: string;
     actingPiece?: string;
     targetBoard?: string;
     targetCell?: string;

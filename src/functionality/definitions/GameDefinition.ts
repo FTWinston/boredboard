@@ -6,7 +6,7 @@ import { loadBoards } from './loading/loadBoards';
 import { loadPieces } from './loading/loadPieces';
 import { parseGameRules } from './loading/parseGameRules';
 import { IGameState } from '../instances/IGameState';
-import { IPlayerAction } from '../instances/IPlayerAction';
+import { getPossibleActions } from '../instances/functions/getPossibleActions';
 
 export class GameDefinition {
     public readonly rules: Readonly<GameRules>;
@@ -35,35 +35,6 @@ export class GameDefinition {
     }
 
     public getPossibleActions(player: number, state: IGameState) {
-        let actions: IPlayerAction[] = [];
-        
-        for (const board in state.boards) {
-            const boardData = state.boards[board]!;
-
-            for (const cell in boardData.cellContents) {
-                const cellData = boardData.cellContents[cell]!;
-
-                for (const piece in cellData) {
-                    const pieceData = cellData[piece]!;
-
-                    if (pieceData.owner !== player) {
-                        continue;
-                    }
-
-                    const pieceDef = this.pieces.get(pieceData.definition);
-
-                    if (pieceDef === undefined) {
-                        continue;
-                    }
-
-                    actions = [
-                        ...actions,
-                        ...pieceDef.getPossibleActions(state, board, cell, piece),
-                    ];
-                }
-            }
-        }
-
-        return actions;
+        return getPossibleActions(this, state, player);
     }
 }

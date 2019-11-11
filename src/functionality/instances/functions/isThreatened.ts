@@ -88,16 +88,19 @@ function checkThreat(
                 continue;
             }
 
-            // TODO: this needs to ignore checking for threat! Otherwise we could get in an infinite loop.
-            const actions = pieceDef.getPossibleActions(state, board, cell, testPiece);
-
-            const [captureBoard, captureCell] = game.rules.getCaptureDestination(player); // TODO: this should be for the player doing the capturing, not the captured player
-
-            const canCapture = actions.some(a => a.pieceMovement.some(m => m.piece === piece
-                && m.toBoard === captureBoard && m.toCell === captureCell));
-
-            if (canCapture) {
-                return true;
+            // This is for the player doing the capturing, not the player being captured
+            const [captureBoard, captureCell] = game.rules.getCaptureDestination(pieceData.owner);
+            
+            for (const action of pieceDef.actions) {
+                // TODO: this needs to ignore checking for threat! Otherwise we could get in an infinite loop.
+                const actions = action.getPossibleActions(state, board, cell, testPiece);
+                
+                const canCapture = actions.some(a => a.pieceMovement.some(m => m.piece === piece
+                    && m.toBoard === captureBoard && m.toCell === captureCell));
+    
+                if (canCapture) {
+                    return true;
+                }
             }
         }
     }

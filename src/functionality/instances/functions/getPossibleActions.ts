@@ -16,15 +16,20 @@ export function getPossibleActions(game: GameDefinition, state: IGameState, play
             for (const piece in cellContent) {
                 const pieceData = cellContent[piece]!;
 
-                if (pieceData.owner === player) {
-                    const pieceDefinition = game.pieces.get(pieceData.definition);
+                if (pieceData.owner !== player) {
+                    continue;
+                }
 
-                    if (pieceDefinition !== undefined) {
-                        actions = [
-                            ...actions,
-                            ...pieceDefinition.getPossibleActions(state, board, cell, piece),
-                        ];
-                    }
+                const pieceDefinition = game.pieces.get(pieceData.definition);
+                if (pieceDefinition === undefined) {
+                    continue;
+                }
+
+                for (const action of pieceDefinition.actions) {
+                    actions = [
+                        ...actions,
+                        ...action.getPossibleActions(state, board, cell, piece),
+                    ];
                 }
             }
         }

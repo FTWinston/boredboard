@@ -16,7 +16,6 @@ export function loadPieces(game: GameDefinition, data: IGameDefinition, allAllow
         }
 
         const imageUrls = new Map<number, string>();
-        console.log('loading, image urls are', piece.imageUrls);
 
         for (const player in piece.imageUrls) {
             const iPlayer = parseInt(player);

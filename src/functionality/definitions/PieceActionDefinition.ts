@@ -75,7 +75,7 @@ export class PieceActionDefinition {
             
             let moveability = CellMoveability.All;
 
-            if ((this.game.rules.cellPassRelationRestriction & relationships) !== Relationship.None) {
+            if (this.moveType !== MoveType.Leap && (this.game.rules.cellPassRelationRestriction & relationships) !== Relationship.None) {
                 moveability &= ~CellMoveability.CanPass;    
             }
 
@@ -215,7 +215,6 @@ export class PieceActionDefinition {
                 if (check !== undefined) {
                     const cell = stepMovement.toCell;
                     stepMovement.requiredChecks.push((state, board) => check(this.game, state, board, boardDef, cell, player));
-                    continue;
                 }
 
                 if (isLastStep) {

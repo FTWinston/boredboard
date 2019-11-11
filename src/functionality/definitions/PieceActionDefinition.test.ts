@@ -2,6 +2,7 @@ import { GameDefinition } from './GameDefinition';
 import { IGameState } from '../instances/IGameState';
 import chessboard from '../../examples/chess/board.json';
 import { rules } from '../../examples/chess/rules';
+import { IPlayerAction } from '../instances/IPlayerAction';
 
 type SimpleExample = [string, string, string[]];
 
@@ -48,7 +49,14 @@ it('Calculates piece movement', () => {
 
         const piece = game.pieces.get(pieceID)!;
 
-        const actions = piece.getPossibleActions(state, boardID, example[1], '1');
+        let actions: IPlayerAction[] = [];
+
+        for (const action of piece.actions) {
+            actions = [
+                ...actions,
+                ...action.getPossibleActions(state, boardID, example[1], '1'),
+            ];
+        }
 
         const destinations = actions.map(m => m.pieceMovement[0].toCell);
 

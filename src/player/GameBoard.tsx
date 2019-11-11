@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import { SvgLoader } from 'react-svgmt';
 import { BoardDisplay } from '../components/board/BoardDisplay';
 import './GameBoard.css';
@@ -6,10 +6,12 @@ import { ICellItem } from '../components/board/ICellItem';
 import { GameDefinition } from '../functionality/definitions';
 import { IBoard } from '../functionality/instances/IBoard';
 import { IPiece } from '../functionality/instances/IPiece';
+import { IPlayerAction } from '../functionality/instances/IPlayerAction';
 
 interface Props {
     game: GameDefinition;
     state: IBoard;
+    possibleMoves: IPlayerAction[];
 }
 
 export const GameBoard: FunctionComponent<Props> = props => {
@@ -37,6 +39,43 @@ export const GameBoard: FunctionComponent<Props> = props => {
         return output;
     }, [props.state.cellContents, props.game]);
 
+    const [selectedCell, setSelectedCell] = useState(undefined as string | undefined);
+
+    const selectableCells = useMemo(
+        () => {
+            if (selectedCell !== undefined) {
+                return new Set<string>([selectedCell]);
+            }
+
+            const cells = props.possibleMoves.map(
+                m => m.fromCell !== undefined
+                    ? m.fromCell
+                    : m.targetCell === undefined
+                        ? undefined
+                        : m.targetCell
+            ).filter(c => c !== undefined) as string[];
+            
+            return new Set<string>(cells);
+        }
+        , [selectedCell, props.possibleMoves]
+    );
+
+    const moveableCells = useMemo(
+        () => {
+            if (selectedCell === undefined) {
+                return undefined;
+            }
+
+            const cells = props.possibleMoves
+                .filter(m => m.fromCell === selectedCell)
+                .map(m => m.targetCell)
+                .filter(m => m !== undefined) as string[];
+
+            return new Set<string>(cells);
+        }
+        , [selectedCell, props.possibleMoves]
+    );
+
     if (boardDef === undefined) {
         return <div>Error: Board definition not found</div>
     }
@@ -47,6 +86,9 @@ export const GameBoard: FunctionComponent<Props> = props => {
             filePath={boardDef.imageUrl}
             cells={boardDef.cells}
             contents={contents}
+            selectableCells={selectableCells}
+            moveableCells={moveableCells}
+            cellClicked={cell => setSelectedCell(selectedCell === cell ? undefined : cell)}
         />
     );
 }

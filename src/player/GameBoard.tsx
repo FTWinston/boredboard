@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo, useState, useLayoutEffect } from 'react';
 import { SvgLoader } from 'react-svgmt';
 import { BoardDisplay } from '../components/board/BoardDisplay';
 import './GameBoard.css';
@@ -86,14 +86,19 @@ export const GameBoard: FunctionComponent<Props> = props => {
                 if (possibleActions.length > 0) {
                     selectAction(possibleActions[0]);
                     // TODO: disambiguate between possible moves
-
-                    setSelectedCell(undefined);
                 }
             }
             
             setSelectedCell(selectedCell === cell ? undefined : cell);
         }
     }, [selectedCell, selectAction, possibleMoves, moveableCells]);
+
+    useLayoutEffect(() => {
+        // clear selection when possible moves change
+        if (selectedCell !== undefined) {
+            setSelectedCell(undefined);
+        }
+    }, [props.possibleMoves, props.state]); // eslint-disable-line
 
     if (boardDef === undefined) {
         return <div>Error: Board definition not found</div>

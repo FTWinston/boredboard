@@ -21,7 +21,7 @@ const App: React.FC = () => {
           <Route path="/play">
             <Game
                 definition={chessDefinition}
-                state={chessState}
+                initialState={chessState}
             />
           </Route>
           <Route>

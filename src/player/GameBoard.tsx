@@ -12,6 +12,7 @@ interface Props {
     game: GameDefinition;
     state: IBoard;
     possibleMoves: IPlayerAction[];
+    selectAction?: (action: IPlayerAction) => void;
 }
 
 export const GameBoard: FunctionComponent<Props> = props => {
@@ -76,6 +77,24 @@ export const GameBoard: FunctionComponent<Props> = props => {
         , [selectedCell, props.possibleMoves]
     );
 
+    const { selectAction, possibleMoves } = props;
+
+    const cellClicked = useMemo(() => {
+        return (cell: string) => {
+            if (selectAction !== undefined && moveableCells !== undefined && moveableCells.has(cell)) {
+                const possibleActions = possibleMoves.filter(m => m.fromCell === selectedCell && m.targetCell === cell);
+                if (possibleActions.length > 0) {
+                    selectAction(possibleActions[0]);
+                    // TODO: disambiguate between possible moves
+
+                    setSelectedCell(undefined);
+                }
+            }
+            
+            setSelectedCell(selectedCell === cell ? undefined : cell);
+        }
+    }, [selectedCell, selectAction, possibleMoves, moveableCells]);
+
     if (boardDef === undefined) {
         return <div>Error: Board definition not found</div>
     }
@@ -88,7 +107,7 @@ export const GameBoard: FunctionComponent<Props> = props => {
             contents={contents}
             selectableCells={selectableCells}
             moveableCells={moveableCells}
-            cellClicked={cell => setSelectedCell(selectedCell === cell ? undefined : cell)}
+            cellClicked={cellClicked}
         />
     );
 }

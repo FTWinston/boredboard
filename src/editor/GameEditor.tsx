@@ -1,10 +1,10 @@
 import React, { useReducer, createContext, Dispatch, useMemo } from 'react';
-import { Route, Switch, Redirect, Link, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { IGameDefinition } from '../data/IGameDefinition';
-import './GameEditor.css';
-import { reducer, getInitialState, GameAction, getNewBoardID } from './gameReducer';
+import { reducer, getInitialState, GameAction } from './gameReducer';
 import { BoardEditor } from './board';
 import { IBoardDefinition } from '../data/IBoardDefinition';
+import { EditorSummary } from './summary';
 
 interface Props {
     name: string;
@@ -49,11 +49,13 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                     />
                 </Route>
                 <Route path={path} exact>
-                    <div>
-                        Game summary here. List of boards, pieces, rules.
-                        For now <Link to={`${url}/board/${getNewBoardID(state.boards)}`}>go edit a board</Link>.
-                    </div>
-                </Route> 
+                    <EditorSummary
+                        name={props.name}
+                        boards={state.boards}
+                        pieces={state.pieces}
+                        rules={state.rules}
+                    />
+                </Route>
                 <Route>
                     <Redirect to={url} />
                 </Route>

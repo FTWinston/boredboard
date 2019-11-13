@@ -1,0 +1,7 @@
+.editorListItem {
+    display: flex;
+}
+
+.editorListItem__name {
+    flex-grow: 1;
+}

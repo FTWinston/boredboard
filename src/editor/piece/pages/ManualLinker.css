@@ -1,0 +1,39 @@
+.manualLinker__columns {
+    flex-grow: 1;
+    display: flex;
+    overflow-y: hidden;
+}
+
+.manualLinker .boardEditor__content {
+    overflow-y: hidden;
+}
+
+.manualLinker__createLink,
+.manualLinker__existingLinks {
+    flex-basis: 0;
+    flex-grow: 1;
+    overflow-y: hidden;
+}
+
+.manualLinker__existingLinks {
+    display: flex;
+    flex-direction: column;
+}
+
+.manualLinker__existingLinkList {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.manualLinker__createLink {
+    padding-right: 1em;
+}
+
+.manualLinker__existingLinks {
+    border-left: solid grey 1px;
+    padding-left: 1em;
+}
+
+.manualLinker__link {
+    cursor: pointer;
+}

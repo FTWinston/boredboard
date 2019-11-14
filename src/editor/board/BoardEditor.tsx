@@ -7,7 +7,7 @@ import { ImageSelector } from './pages/ImageSelector';
 import { CellSelector } from './pages/CellSelector';
 import { BulkLinker } from './pages/BulkLinker';
 import { RegionCreator } from './pages/RegionCreator';
-import { BoardSummary } from './pages/BoardSummary';
+import BoardSummary from './pages/BoardSummary';
 import { LinkTypes } from './pages/LinkTypes';
 import { ManualLinker } from './pages/ManualLinker';
 import { RelativeLinks } from './pages/RelativeLinks';
@@ -121,7 +121,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         nextPage={url}
                     />
                 </Route>
-                <Route render={() => {
+                <Route exact render={() => {
                     if (state.imageUrl === '') {
                         return <Redirect to={`${url}/image`} />
                     }
@@ -136,6 +136,9 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         />
                     );
                 }} />
+                <Route>
+                    <Redirect to={url} />
+                </Route>
             </Switch>
         </BoardDispatch.Provider>
     );

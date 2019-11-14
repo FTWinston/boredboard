@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './BoardSummary.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { ICellItem } from '../../../components/board/ICellItem';
 import { LabelStyle } from '../../../data/LabelSize';
 import { ILink, IRegion } from '../boardReducer';
 
-interface Props {
+interface Props extends RouteComponentProps {
     boardUrl: string;
     cells: ReadonlySet<string>;
     linkTypes: string[];
@@ -15,7 +15,7 @@ interface Props {
     saveData: () => void;
 }
 
-export const BoardSummary: React.FunctionComponent<Props> = props => {
+const BoardSummary: React.FunctionComponent<Props> = props => {
     const [selectedCell, setSelectedCell] = useState(undefined as string | undefined);
     
     const [destinationCells, cellContents] = useMemo(
@@ -49,9 +49,9 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
 
     const directionLinks = props.linkTypes.length > 1
         ? <>
-            <li><Link to="/directions">Relative directions</Link></li>
-            <li><Link to="/directiongroups">Direction groups</Link></li>
-            <li><Link to="/playerdirections">Player directions</Link></li>
+            <li><Link to={`${props.match.url}/directions`}>Relative directions</Link></li>
+            <li><Link to={`${props.match.url}/directiongroups`}>Direction groups</Link></li>
+            <li><Link to={`${props.match.url}/playerdirections`}>Player directions</Link></li>
         </>
         : undefined;
 
@@ -82,13 +82,13 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
                 </p>
 
                 <ol>
-                    <li><Link to="/image">Change image</Link></li>
-                    <li><Link to="/cells">Modify cells</Link></li>
-                    <li><Link to="/linktypes">Link types</Link></li>
-                    <li><Link to="/bulklinks">Bulk links</Link></li>
-                    <li><Link to="/manuallinks">Manual links</Link></li>
+                    <li><Link to={`${props.match.url}/image`}>Change image</Link></li>
+                    <li><Link to={`${props.match.url}/cells`}>Modify cells</Link></li>
+                    <li><Link to={`${props.match.url}/linktypes`}>Link types</Link></li>
+                    <li><Link to={`${props.match.url}/bulklinks`}>Bulk links</Link></li>
+                    <li><Link to={`${props.match.url}/manuallinks`}>Manual links</Link></li>
                     {directionLinks}
-                    <li><Link to="/regions">Modify regions</Link></li>
+                    <li><Link to={`${props.match.url}/regions`}>Modify regions</Link></li>
                 </ol>
             </div>
 
@@ -98,3 +98,5 @@ export const BoardSummary: React.FunctionComponent<Props> = props => {
         </div>
     );
 }
+
+export default withRouter(BoardSummary);

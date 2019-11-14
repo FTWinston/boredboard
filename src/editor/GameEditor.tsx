@@ -5,6 +5,8 @@ import { reducer, getInitialState, GameAction } from './gameReducer';
 import { BoardEditor } from './board';
 import { IBoardDefinition } from '../data/IBoardDefinition';
 import { EditorSummary } from './summary';
+import { IPieceDefinition } from '../data/IPieceDefinition';
+import { PieceEditor } from './piece';
 
 interface Props {
     name: string;
@@ -36,6 +38,24 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
         return (id: string | undefined) => id === undefined ? undefined : state.boards[id];
     }, [state.boards])
 
+    const savePiece = useMemo(() => {
+        return (id: string | undefined, piece: IPieceDefinition) => dispatch(id === undefined
+            ? {
+                type: 'add piece',
+                piece,
+            }
+            : {
+                type: 'set piece',
+                id,
+                piece,
+            }
+        );
+    }, [dispatch]);
+
+    const getPiece = useMemo(() => {
+        return (id: string | undefined) => id === undefined ? undefined : state.pieces[id];
+    }, [state.pieces])
+
     let { path, url } = useRouteMatch()!;
     
     return (
@@ -46,6 +66,13 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         getInitialData={getBoard}
                         saveData={saveBoard}
+                    />
+                </Route>
+                <Route path={`${path}/piece/:id`}>
+                    <PieceEditor
+                        numPlayers={props.numPlayers}
+                        getInitialData={getPiece}
+                        saveData={savePiece}
                     />
                 </Route>
                 <Route path={path} exact>

@@ -39,12 +39,12 @@ export const EditorItemList: FunctionComponent<Props> = props => {
         <div className="editorItemList">
             <h3 className="editorItemList__title">{props.itemType}s</h3>
             <ul className="editorItemList__list">
-                {itemNames.map(i => (
-                    <li className="editorItemList__listItem editorListItem" key={i}>
-                        <span className="editorListItem__name">{i}</span>
-                        <Link className="editorListItem__edit" to={getEditUrl(i)}>edit this {props.itemType}</Link>
-                        <button className="editorListItem__rename" onClick={() => renameItem(i, 'TODO: Renaming')}>rename this {props.itemType}</button>
-                        <button className="editorListItem__remove" onClick={() => removeItem(i)}>remove this {props.itemType}</button>
+                {itemNames.map(name => (
+                    <li className="editorItemList__listItem editorListItem" key={name}>
+                        <span className="editorListItem__name">{name}</span>
+                        <Link className="editorListItem__edit" to={getEditUrl(name)}>edit this {props.itemType}</Link>
+                        <button className="editorListItem__rename" onClick={() => renameItem(name, 'TODO: Renaming')}>rename this {props.itemType}</button>
+                        <button className="editorListItem__remove" onClick={() => removeItem(name)}>remove this {props.itemType}</button>
                     </li>
                 ))}
 

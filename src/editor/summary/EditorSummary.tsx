@@ -1,11 +1,10 @@
-import React, { FunctionComponent, useContext } from 'react';
+import React, { FunctionComponent } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { IPieceDefinition } from '../../data/IPieceDefinition';
 import { Dictionary } from '../../data/Dictionary';
 import './EditorSummary.css';
 import { EditorItemList } from './components/EditorItemList';
-import { GameDispatch } from '../GameEditor';
 
 
 interface Props extends RouteComponentProps<{}> {
@@ -16,8 +15,6 @@ interface Props extends RouteComponentProps<{}> {
 }
 
 const EditorSummary: FunctionComponent<Props> = props => {
-    const context = useContext(GameDispatch);
-
     return (
         <div className="editorSummary">
             <h2 className="editorSummary__title">Editing game: {props.name}</h2>

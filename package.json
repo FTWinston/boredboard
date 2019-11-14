@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "natural-configuration": "git+https://github.com/FTWinston/NaturalConfigurationJS.git",
+    "natural-configuration-ui": "git+https://github.com/FTWinston/NaturalConfigurationUI.git",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",

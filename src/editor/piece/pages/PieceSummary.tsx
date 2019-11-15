@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './PieceSummary.css';
-import { Dictionary } from '../../../data/Dictionary';
+import { IPlayerImage } from '../pieceReducer';
 
 interface Props extends RouteComponentProps {
-    images: Dictionary<number, string>
+    images: IPlayerImage[];
     behaviour: string;
     saveData: () => void;
 }

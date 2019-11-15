@@ -7,6 +7,7 @@ import { ImageSelector } from './pages/ImageSelector';
 import PieceSummary from './pages/PieceSummary';
 import { BehaviourEditor } from './pages/BehaviourEditor';
 import { writePieceFromState } from './writePieceFromState';
+import { GameDefinition } from '../../functionality/definitions/GameDefinition';
 
 interface Match {
     id?: string;
@@ -14,6 +15,7 @@ interface Match {
 
 interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
+    game: GameDefinition;
     getInitialData: (id?: string) => IPieceDefinition | undefined;
     saveData: (id: string | undefined, board: IPieceDefinition) => void;
 }
@@ -36,15 +38,16 @@ const PieceEditor: React.FunctionComponent<Props> = props => {
                 </Route>
                 <Route path={`${path}/behaviour`}>
                     <BehaviourEditor
-                        behaviour=""
+                        behaviour={state.behaviour}
+                        game={props.game}
                         prevPage={`${url}/image`}
                         nextPage={url}
                     />
                 </Route>
                 <Route exact>
                     <PieceSummary
-                        images={{}}
-                        behaviour=""
+                        images={state.images}
+                        behaviour={state.behaviour}
                         saveData={() => props.saveData(props.match.params.id, writePieceFromState(state, props.numPlayers))}
                     />
                 </Route>

@@ -7,6 +7,7 @@ import { IBoardDefinition } from '../data/IBoardDefinition';
 import { EditorSummary } from './summary';
 import { IPieceDefinition } from '../data/IPieceDefinition';
 import { PieceEditor } from './piece';
+import { GameDefinition } from '../functionality/definitions';
 
 interface Props {
     name: string;
@@ -56,7 +57,12 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
         return (id: string | undefined) => id === undefined ? undefined : state.pieces[id];
     }, [state.pieces])
 
-    let { path, url } = useRouteMatch()!;
+    const { path, url } = useRouteMatch()!;
+
+    const game = useMemo(
+        () => new GameDefinition(state),
+        [state]
+    );
     
     return (
         <GameDispatch.Provider value={dispatch}>
@@ -70,6 +76,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                 </Route>
                 <Route path={`${path}/piece/:id`}>
                     <PieceEditor
+                        game={game}
                         numPlayers={props.numPlayers}
                         getInitialData={getPiece}
                         saveData={savePiece}

@@ -83,8 +83,8 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             'It can leap 2 to 4 cells orthogonally to a cell containing an enemy piece',
             'It can leap 2 cells diagonally',
             'It can slide at least 2 cells orthogonally',
-            'It can leap 2 to 4 cells horizontally or vertically.',
-            'It can slide any distance orthogonally or diagonally.',
+            'It can leap 2 to 4 cells horizontally or vertically',
+            'It can slide any distance orthogonally or diagonally',
         ]
     },
 ]);

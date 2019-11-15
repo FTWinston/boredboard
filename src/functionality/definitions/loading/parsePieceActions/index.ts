@@ -31,3 +31,7 @@ export function parsePieceActions(game: GameDefinition, behaviour: string, allow
             errors: errors,
         };
 }
+
+export function getExamplePieceActions() {
+    return parser.examples;
+}

@@ -1,0 +1,7 @@
+.behaviourEditor__text {
+    min-height: 8em;
+}
+
+.behaviourEditor__error--selected {
+    background-color: #ffffcc;
+}

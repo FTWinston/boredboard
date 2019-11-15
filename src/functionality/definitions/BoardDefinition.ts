@@ -99,4 +99,14 @@ export class BoardDefinition {
             ? []
             : linkTypes;
     }
+
+    public appendDirections(output: Set<string>) {
+        for (const [, byPlayer] of this.directionCache) {
+            for (const [, byBaseType] of byPlayer) {
+                for (const [direction] of byBaseType) {
+                    output.add(direction);
+                }
+            }
+        }
+    }
 }

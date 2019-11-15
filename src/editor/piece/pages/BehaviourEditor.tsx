@@ -6,6 +6,7 @@ import { PieceDispatch } from '../PieceEditor';
 import { GameDefinition } from '../../../functionality/definitions';
 import { parsePieceActions, getExamplePieceActions } from '../../../functionality/definitions/loading/parsePieceActions';
 import { IParserError } from 'natural-configuration';
+import { getAllDirections } from '../../../functionality/instances/functions/getAllLinkTypes';
 
 interface Props {
     game: GameDefinition;
@@ -20,14 +21,9 @@ export const BehaviourEditor: React.FunctionComponent<Props> = props => {
     const [text, setText] = useState(props.behaviour);
 
     const errors = useMemo(() => {
-        const directions = new Set<string>([ // TODO: get these from the game
-            'north',
-            'south',
-            'east',
-            'west',
-        ]);
-
+        const directions = getAllDirections(props.game);
         const result = parsePieceActions(props.game, text, directions)
+        
         return result.success
             ? []
             : result.errors;

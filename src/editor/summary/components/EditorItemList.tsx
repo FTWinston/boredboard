@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom';
+import './EditorItemList.css';
 import { GameDispatch } from '../../GameEditor';
 import { Dictionary } from '../../../data/Dictionary';
-import { getNewID } from '../../gameReducer';
 
 interface Props {
     items: Dictionary<string, any>;
@@ -32,8 +32,6 @@ export const EditorItemList: FunctionComponent<Props> = props => {
         oldID,
         newID,
     });
-    
-    const newUrl = `${props.rootUrl}/${props.itemType}/${getNewID(props.items, `new ${props.itemType}`)}`;
 
     return (
         <div className="editorItemList">
@@ -49,7 +47,7 @@ export const EditorItemList: FunctionComponent<Props> = props => {
                 ))}
 
                 <li className="editorItemList__listItem editorListItem editorListItem--addNew">
-                    <Link to={newUrl}>add new {props.itemType}</Link>
+                    <Link to={`${props.rootUrl}/${props.itemType}/new`}>add new {props.itemType}</Link>
                 </li>
             </ul>
         </div>

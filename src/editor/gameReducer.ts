@@ -151,7 +151,7 @@ export function reducer(state: IGameDefinition, action: GameAction): IGameDefini
     }
 }
 
-export function getNewID<T>(items: Dictionary<string, T>, baseID: string) {
+function getNewID<T>(items: Dictionary<string, T>, baseID: string) {
     let id = baseID;
     let number = 0;
 

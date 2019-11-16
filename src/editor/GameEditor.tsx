@@ -22,7 +22,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
     const [state, dispatch] = useReducer(reducer, props.initialData === undefined ? getInitialState() : props.initialData);
 
     const saveBoard = useMemo(() => {
-        return (id: string | undefined, board: IBoardDefinition) => dispatch(id === undefined
+        return (id: string | undefined, board: IBoardDefinition) => dispatch(id === 'new' || id === undefined
             ? {
                 type: 'add board',
                 board,
@@ -40,7 +40,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
     }, [state.boards])
 
     const savePiece = useMemo(() => {
-        return (id: string | undefined, piece: IPieceDefinition) => dispatch(id === undefined
+        return (id: string | undefined, piece: IPieceDefinition) => dispatch(id === 'new' || id === undefined
             ? {
                 type: 'add piece',
                 piece,

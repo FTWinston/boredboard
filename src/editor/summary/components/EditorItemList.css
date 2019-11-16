@@ -1,7 +1,22 @@
 .editorListItem {
     display: flex;
+    max-width: 35em;
+    padding: 0.2em 0.5em;
 }
 
 .editorListItem__name {
     flex-grow: 1;
+}
+
+.editorListItem__edit, .editorListItem__rename, .editorListItem__remove {
+    margin-left: 0.5em;
+}
+
+.editorListItem:nth-child(2n):not(.editorListItem--addNew) {
+    background-color: #eee;
+}
+
+.editorListItem--addNew {
+    margin-top: 0.5em;
+    justify-content: center;
 }

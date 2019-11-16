@@ -44,13 +44,18 @@ const PieceEditor: React.FunctionComponent<Props> = props => {
                         nextPage={url}
                     />
                 </Route>
-                <Route exact>
-                    <PieceSummary
-                        images={state.images}
-                        behaviour={state.behaviour}
-                        saveData={() => props.saveData(props.match.params.id, writePieceFromState(state, props.numPlayers))}
-                    />
-                </Route>
+                <Route exact render={() => {
+                    if (state.images.length === 0) {
+                        return <Redirect to={`${url}/image`} />
+                    }
+                    return (
+                        <PieceSummary
+                            images={state.images}
+                            behaviour={state.behaviour}
+                            saveData={() => props.saveData(props.match.params.id, writePieceFromState(state, props.numPlayers))}
+                        />
+                    );
+                }} />
                 <Route>
                     <Redirect to={url} />
                 </Route>

@@ -13,7 +13,14 @@ export function parseCondition(
     moveConditions: IMoveCondition[],
     options?: IPieceBehaviourOptions,
 ): boolean {
-    
+    // ignore "it" or "that" on first word here ... it could be either depending on context. However other first words can differ.
+    if (conditionText.startsWith('it ')) {
+        conditionText = conditionText.substr(3);
+    }
+    else if (conditionText.startsWith('that ')) {
+        conditionText = conditionText.substr(5);
+    }
+
     if (conditionText === 'has never moved') {
         stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, undefined));
         return true;
@@ -39,7 +46,7 @@ export function parseCondition(
     error({
         startIndex,
         length: conditionText.length,
-        message: `Unrecognised condition.`,
+        message: `Unrecognised condition: ${conditionText}`,
     });
 
     return false;

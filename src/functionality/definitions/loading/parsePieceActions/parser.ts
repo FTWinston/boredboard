@@ -15,7 +15,7 @@ export interface IPieceBehaviourOptions {
 export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBehaviourOptions>([
     {
         type: 'standard',
-        expressionText: '(?:If it (.+?), it|It) can ((\\w+) (.+?)(, then (optionally )?(.+?))*)',
+        expressionText: '(?:If (.+?), it|It) can ((\\w+) (.+?)(, then (optionally )?(.+?))*)',
         parseMatch: (match, action, error, options) => {
             if (options === undefined) {
                 return;
@@ -30,12 +30,12 @@ export const parser = new ConfigurationParser<PieceActionDefinition[], IPieceBeh
             
             if (strConditions !== undefined) {
                 groupStartPos = 3;
-                for (const strCondition of strConditions.split(' and it ')) {
+                for (const strCondition of strConditions.split(', and ')) {
                     success = success && parseCondition(strCondition, error, groupStartPos, stateConditions, moveConditions, options);
-                    groupStartPos += strCondition.length + 5;
+                    groupStartPos += strCondition.length + 6;
                 }
 
-                groupStartPos += 4;
+                groupStartPos += 9;
             }
             else {
                 groupStartPos = 7;

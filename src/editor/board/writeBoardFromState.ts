@@ -3,8 +3,6 @@ import { IState } from './boardReducer';
 import { Dictionary } from '../../data/Dictionary';
 
 export function writeBoardFromState(state: IState): IBoardDefinition {
-    // TODO: saving logic
-    
     return {
         imageUrl: state.imageUrl,
         links: writeLinks(state),

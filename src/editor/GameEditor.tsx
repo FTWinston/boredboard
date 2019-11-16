@@ -8,6 +8,7 @@ import { EditorSummary } from './summary';
 import { IPieceDefinition } from '../data/IPieceDefinition';
 import { PieceEditor } from './piece';
 import { GameDefinition } from '../functionality/definitions';
+import { writeGameFromState } from './writeGameFromState';
 
 interface Props {
     name: string;
@@ -19,7 +20,7 @@ interface Props {
 export const GameDispatch = createContext<Dispatch<GameAction>>(ignore => {});
 
 export const GameEditor: React.FunctionComponent<Props> = props => {
-    const [state, dispatch] = useReducer(reducer, props.initialData === undefined ? getInitialState() : props.initialData);
+    const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
 
     const saveBoard = useMemo(() => {
         return (id: string | undefined, board: IBoardDefinition) => dispatch(id === 'new' || id === undefined
@@ -29,14 +30,16 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
             }
             : {
                 type: 'set board',
-                id,
-                board,
+                board: {
+                    id: id,
+                    ...board,
+                },
             }
         );
     }, [dispatch]);
 
     const getBoard = useMemo(() => {
-        return (id: string | undefined) => id === undefined ? undefined : state.boards[id];
+        return (id: string | undefined) => id === undefined ? undefined : state.boards.find(b => b.id === id);
     }, [state.boards])
 
     const savePiece = useMemo(() => {
@@ -47,20 +50,22 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
             }
             : {
                 type: 'set piece',
-                id,
-                piece,
+                piece: {
+                    id: id,
+                    ...piece,
+                },
             }
         );
     }, [dispatch]);
 
     const getPiece = useMemo(() => {
-        return (id: string | undefined) => id === undefined ? undefined : state.pieces[id];
+        return (id: string | undefined) => id === undefined ? undefined : state.pieces.find(p => p.id === id);
     }, [state.pieces])
 
     const { path, url } = useRouteMatch()!;
 
     const game = useMemo(
-        () => new GameDefinition(state),
+        () => new GameDefinition(writeGameFromState(state)),
         [state]
     );
     

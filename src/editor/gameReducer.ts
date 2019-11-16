@@ -1,15 +1,25 @@
-import { Dictionary } from '../data/Dictionary';
 import { IBoardDefinition } from '../data/IBoardDefinition';
 import { IGameDefinition } from '../data/IGameDefinition';
 import { IPieceDefinition } from '../data/IPieceDefinition';
+import { readStateFromGame } from './readStateFromGame';
+
+export interface INamed {
+    id: string;
+}
+
+interface IBoard extends IBoardDefinition, INamed {}
+
+interface IPiece extends IPieceDefinition, INamed {}
+
+export interface IState {
+    boards: IBoard[];
+    pieces: IPiece[];
+    rules: string;
+}
 
 export type GameAction = {
-    type: 'set boards';
-    boards: Dictionary<string, IBoardDefinition>;
-} | {
     type: 'set board';
-    id: string;
-    board: IBoardDefinition;
+    board: IBoard;
 } | {
     type: 'add board';
     board: IBoardDefinition;
@@ -21,12 +31,8 @@ export type GameAction = {
     oldID: string;
     newID: string;
 } | {
-    type: 'set pieces';
-    pieces: Dictionary<string, IPieceDefinition>;
-} | {
     type: 'set piece';
-    id: string;
-    piece: IPieceDefinition;
+    piece: IPiece;
 } | {
     type: 'add piece';
     piece: IPieceDefinition;
@@ -39,124 +45,121 @@ export type GameAction = {
     newID: string;
 }
 
-export function getInitialState(): IGameDefinition {
+export function getInitialState(game?: IGameDefinition): IState {
+    if (game !== undefined) {
+        // IT IS FINE HERE ... something mutates it later ... and its not the reducer. Grief, is "name" the problem?
+        return readStateFromGame(game);
+    }
+
     return {
-        boards: {},
-        pieces: {},
+        boards: [],
+        pieces: [],
         rules: '',
     };
 }
 
-export function reducer(state: IGameDefinition, action: GameAction): IGameDefinition {
+export function reducer(state: IState, action: GameAction): IState {
     switch (action.type) {
-        case 'set boards':
-            return {
-                ...state,
-                boards: action.boards,
-            };
-        
         case 'set board':
             return {
                 ...state,
-                boards: {
-                    ...state.boards,
-                    [action.id]: action.board,
-                },
+                boards: [
+                    ...state.boards.filter(b => b.id !== action.board.id),
+                    action.board,
+                ],
             };
         
         case 'add board':
             return {
                 ...state,
-                boards: {
+                boards: [
                     ...state.boards,
-                    [getNewID(state.boards, 'new board')]: action.board,
-                },
+                    {
+                        ...action.board,
+                        id: getNewID(state.boards, 'new board'),
+                    },
+                ],
             };
 
         case 'remove board': {
-            const boards = {
-                ...state.boards,
-            };
-            delete boards[action.id];
-
             return {
                 ...state,
-                boards,
+                boards: state.boards.filter(b => b.id !== action.id),
             };
         }
 
         case 'rename board': {
-            const boards = {
-                ...state.boards,
-            };
-            const board = boards[action.oldID];
-            delete boards[action.oldID];
-            boards[action.newID] = board;
+            const board = state.boards.find(b => b.id === action.oldID);
+            if (board === undefined) {
+                return state;
+            }
 
             return {
                 ...state,
-                boards,
+                boards: state.boards.map(b => b !== board
+                    ? b
+                    : {
+                        ...board,
+                        id: action.newID
+                    }
+                ),
             };
         }
 
-        case 'set pieces':
-            return {
-                ...state,
-                pieces: action.pieces,
-            };
-        
         case 'set piece':
             return {
                 ...state,
-                pieces: {
-                    ...state.pieces,
-                    [action.id]: action.piece,
-                },
+                pieces: [
+                    ...state.pieces.filter(b => b.id !== action.piece.id),
+                    action.piece,
+                ],
             };
         
         case 'add piece':
             return {
                 ...state,
-                pieces: {
+                pieces: [
                     ...state.pieces,
-                    [getNewID(state.pieces, 'new piece')]: action.piece,
-                },
+                    {
+                        ...action.piece,
+                        id: getNewID(state.pieces, 'new piece'),
+                    },
+                ],
             };
 
         case 'remove piece': {
-            const pieces = {
-                ...state.pieces,
-            };
-            delete pieces[action.id];
-
             return {
                 ...state,
-                pieces,
+                pieces: state.pieces.filter(p => p.id !== action.id),
             };
         }
 
         case 'rename piece': {
-            const pieces = {
-                ...state.pieces,
-            };
-            const piece = pieces[action.oldID];
-            delete pieces[action.oldID];
-            pieces[action.newID] = piece;
+            const piece = state.pieces.find(p => p.id === action.oldID);
+            if (piece === undefined) {
+                return state;
+            }
 
             return {
                 ...state,
-                pieces,
+                pieces: state.pieces.map(p => p !== piece
+                    ? p
+                    : {
+                        ...piece,
+                        id: action.newID
+                    }
+                ),
             };
         }
     }
 }
 
-function getNewID<T>(items: Dictionary<string, T>, baseID: string) {
+function getNewID<T>(items: INamed[], baseID: string) {
     let id = baseID;
     let number = 0;
 
     while (true) {
-        if (!items.hasOwnProperty(id)) {
+        if (items.find(i => i.id === id) === undefined) { // eslint-disable-line
             return id;
         }
 

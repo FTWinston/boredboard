@@ -22,7 +22,7 @@ interface Match {
 interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     getInitialData: (id?: string) => IBoardDefinition | undefined;
-    saveData: (id: string | undefined, board: IBoardDefinition) => void;
+    saveData: (id: string | undefined, board: IBoardDefinition, isValid: boolean) => void;
 }
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
@@ -132,7 +132,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regions={state.regions}
-                            saveData={() => props.saveData(props.match.params.id, writeBoardFromState(state))}
+                            saveData={() => props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */)}
                         />
                     );
                 }} />

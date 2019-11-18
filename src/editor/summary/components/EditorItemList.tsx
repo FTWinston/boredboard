@@ -2,10 +2,10 @@ import React, { FunctionComponent, useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 import './EditorItemList.css';
 import { GameDispatch } from '../../GameEditor';
-import { INamed } from '../../gameReducer';
+import { IValidationItem } from '../../gameReducer';
 
 interface Props {
-    items: INamed[];
+    items: IValidationItem<any>[];
     itemType: 'board' | 'piece';
     rootUrl: string;
 }

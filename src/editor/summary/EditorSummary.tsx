@@ -4,13 +4,13 @@ import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { IPieceDefinition } from '../../data/IPieceDefinition';
 import './EditorSummary.css';
 import { EditorItemList } from './components/EditorItemList';
-import { INamed } from '../gameReducer';
+import { IValidationItem } from '../gameReducer';
 
 
 interface Props extends RouteComponentProps<{}> {
     name: string;
-    boards: Array<IBoardDefinition & INamed>;
-    pieces: Array<IPieceDefinition & INamed>;
+    boards: Array<IValidationItem<IBoardDefinition>>;
+    pieces: Array<IValidationItem<IPieceDefinition>>;
     rules: string;
 }
 

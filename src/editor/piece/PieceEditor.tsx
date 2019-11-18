@@ -17,7 +17,7 @@ interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     game: GameDefinition;
     getInitialData: (id?: string) => IPieceDefinition | undefined;
-    saveData: (id: string | undefined, board: IPieceDefinition) => void;
+    saveData: (id: string | undefined, board: IPieceDefinition, isValid: boolean) => void;
 }
 
 export const PieceDispatch = createContext<Dispatch<PieceAction>>(ignore => {});
@@ -52,7 +52,7 @@ const PieceEditor: React.FunctionComponent<Props> = props => {
                         <PieceSummary
                             images={state.images}
                             behaviour={state.behaviour}
-                            saveData={() => props.saveData(props.match.params.id, writePieceFromState(state, props.numPlayers))}
+                            saveData={() => props.saveData(props.match.params.id, writePieceFromState(state, props.numPlayers), false /* TODO: validate */)}
                         />
                     );
                 }} />

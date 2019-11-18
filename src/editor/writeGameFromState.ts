@@ -1,4 +1,4 @@
-import { IState, INamed } from './gameReducer';
+import { IState, IValidationItem } from './gameReducer';
 import { IGameDefinition } from '../data/IGameDefinition';
 import { Dictionary } from '../data/Dictionary';
 
@@ -10,15 +10,11 @@ export function writeGameFromState(state: IState): IGameDefinition {
     };
 }
 
-function createDictionary<TVal>(
-    source: Array<INamed & TVal>
-) {
+function createDictionary<TVal>(source: Array<IValidationItem<TVal>>) {
     const dest: Dictionary<string, TVal> = {};
 
     for (const item of source) {
-        const copy = { ...item };
-        delete copy['id'];
-        dest[item.id] = copy;
+        dest[item.id] = item.value;
     }
 
     return dest;

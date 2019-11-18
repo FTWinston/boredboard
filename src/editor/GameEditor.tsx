@@ -23,43 +23,61 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
     const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
 
     const saveBoard = useMemo(() => {
-        return (id: string | undefined, board: IBoardDefinition) => dispatch(id === 'new' || id === undefined
+        return (id: string | undefined, board: IBoardDefinition, isValid: boolean) => dispatch(id === 'new' || id === undefined
             ? {
                 type: 'add board',
+                isValid,
                 board,
             }
             : {
                 type: 'set board',
-                board: {
-                    id: id,
-                    ...board,
-                },
+                id,
+                isValid,
+                board,
             }
         );
     }, [dispatch]);
 
     const getBoard = useMemo(() => {
-        return (id: string | undefined) => id === undefined ? undefined : state.boards.find(b => b.id === id);
+        return (id: string | undefined) => {
+            if (id === undefined) {
+                return undefined;
+            }
+            
+            const board = state.boards.find(b => b.id === id);
+            return board === undefined
+                ? undefined
+                : board.value;
+        }
     }, [state.boards])
 
     const savePiece = useMemo(() => {
-        return (id: string | undefined, piece: IPieceDefinition) => dispatch(id === 'new' || id === undefined
+        return (id: string | undefined, piece: IPieceDefinition, isValid: boolean) => dispatch(id === 'new' || id === undefined
             ? {
                 type: 'add piece',
+                isValid,
                 piece,
             }
             : {
                 type: 'set piece',
-                piece: {
-                    id: id,
-                    ...piece,
-                },
+                id,
+                isValid,
+                piece,
             }
         );
     }, [dispatch]);
 
     const getPiece = useMemo(() => {
-        return (id: string | undefined) => id === undefined ? undefined : state.pieces.find(p => p.id === id);
+        return (id: string | undefined) => {
+            if (id === undefined) {
+                return undefined;
+            }
+            
+            const piece = state.pieces.find(p => p.id === id);
+            return piece === undefined
+                ? undefined
+                : piece.value;
+        }
     }, [state.pieces])
 
     const { path, url } = useRouteMatch()!;

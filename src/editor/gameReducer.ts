@@ -3,25 +3,27 @@ import { IGameDefinition } from '../data/IGameDefinition';
 import { IPieceDefinition } from '../data/IPieceDefinition';
 import { readStateFromGame } from './readStateFromGame';
 
-export interface INamed {
+export interface IValidationItem<T> {
     id: string;
+    isValid: boolean;
+    value: T;
 }
 
-interface IBoard extends IBoardDefinition, INamed {}
-
-interface IPiece extends IPieceDefinition, INamed {}
-
 export interface IState {
-    boards: IBoard[];
-    pieces: IPiece[];
+    boards: IValidationItem<IBoardDefinition>[];
+    pieces: IValidationItem<IPieceDefinition>[];
     rules: string;
+    rulesValid: boolean;
 }
 
 export type GameAction = {
     type: 'set board';
-    board: IBoard;
+    id: string;
+    isValid: boolean;
+    board: IBoardDefinition;
 } | {
     type: 'add board';
+    isValid: boolean;
     board: IBoardDefinition;
 } | {
     type: 'remove board';
@@ -32,9 +34,12 @@ export type GameAction = {
     newID: string;
 } | {
     type: 'set piece';
-    piece: IPiece;
+    id: string;
+    isValid: boolean;
+    piece: IPieceDefinition;
 } | {
     type: 'add piece';
+    isValid: boolean;
     piece: IPieceDefinition;
 } | {
     type: 'remove piece';
@@ -43,11 +48,14 @@ export type GameAction = {
     type: 'rename piece';
     oldID: string;
     newID: string;
+} | {
+    type: 'set rules';
+    rules: string;
+    isValid: boolean;
 }
 
 export function getInitialState(game?: IGameDefinition): IState {
     if (game !== undefined) {
-        // IT IS FINE HERE ... something mutates it later ... and its not the reducer. Grief, is "name" the problem?
         return readStateFromGame(game);
     }
 
@@ -55,6 +63,7 @@ export function getInitialState(game?: IGameDefinition): IState {
         boards: [],
         pieces: [],
         rules: '',
+        rulesValid: false,
     };
 }
 
@@ -64,8 +73,12 @@ export function reducer(state: IState, action: GameAction): IState {
             return {
                 ...state,
                 boards: [
-                    ...state.boards.filter(b => b.id !== action.board.id),
-                    action.board,
+                    ...state.boards.filter(b => b.id !== action.id),
+                    {
+                        id: action.id,
+                        isValid: action.isValid,
+                        value: action.board
+                    },
                 ],
             };
         
@@ -75,8 +88,9 @@ export function reducer(state: IState, action: GameAction): IState {
                 boards: [
                     ...state.boards,
                     {
-                        ...action.board,
                         id: getNewID(state.boards, 'new board'),
+                        isValid: action.isValid,
+                        value: action.board,
                     },
                 ],
             };
@@ -100,7 +114,7 @@ export function reducer(state: IState, action: GameAction): IState {
                     ? b
                     : {
                         ...board,
-                        id: action.newID
+                        id: action.newID,
                     }
                 ),
             };
@@ -110,8 +124,12 @@ export function reducer(state: IState, action: GameAction): IState {
             return {
                 ...state,
                 pieces: [
-                    ...state.pieces.filter(b => b.id !== action.piece.id),
-                    action.piece,
+                    ...state.pieces.filter(b => b.id !== action.id),
+                    {
+                        id: action.id,
+                        isValid: action.isValid,
+                        value: action.piece
+                    },
                 ],
             };
         
@@ -121,8 +139,9 @@ export function reducer(state: IState, action: GameAction): IState {
                 pieces: [
                     ...state.pieces,
                     {
-                        ...action.piece,
                         id: getNewID(state.pieces, 'new piece'),
+                        isValid: action.isValid,
+                        value: action.piece,
                     },
                 ],
             };
@@ -146,15 +165,22 @@ export function reducer(state: IState, action: GameAction): IState {
                     ? p
                     : {
                         ...piece,
-                        id: action.newID
+                        id: action.newID,
                     }
                 ),
             };
         }
+
+        case 'set rules':
+            return {
+                ...state,
+                rules: action.rules,
+                rulesValid: action.isValid,
+            };
     }
 }
 
-function getNewID<T>(items: INamed[], baseID: string) {
+function getNewID<T>(items: IValidationItem<T>[], baseID: string) {
     let id = baseID;
     let number = 0;
 

@@ -10,7 +10,7 @@
    viewBox="0 0 1200 1200"
    enable-background="new 0 0 1200 1200">
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="A1"
 	   width="150"
 	   height="150"
@@ -23,7 +23,7 @@
 	   height="150"
 	   width="150"
 	   id="A2"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="1050"
@@ -31,23 +31,23 @@
 	   height="150"
 	   width="150"
 	   id="A3"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="A4"
 	   width="150"
 	   height="150"
 	   x="450"
-	   y="1050"	
+	   y="1050"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="A5"
 	   width="150"
 	   height="150"
 	   x="600"
-	   y="1050"	
+	   y="1050"
 	/>
 	<rect
 	   y="1050"
@@ -55,7 +55,7 @@
 	   height="150"
 	   width="150"
 	   id="A6"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="1050"
@@ -63,15 +63,15 @@
 	   height="150"
 	   width="150"
 	   id="A7"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="A8"
 	   width="150"
 	   height="150"
 	   x="1050"
-	   y="1050"	
+	   y="1050"
 	/>
 	<rect
 	   y="900"
@@ -79,26 +79,26 @@
 	   height="150"
 	   width="150"
 	   id="B8"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="B7"
 	   width="150"
 	   height="150"
 	   x="-1050"
 	   y="900"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="B6"
 	   width="150"
 	   height="150"
 	   x="-900"
 	   y="900"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="900"
@@ -106,8 +106,8 @@
 	   height="150"
 	   width="150"
 	   id="B5"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="900"
@@ -115,26 +115,26 @@
 	   height="150"
 	   width="150"
 	   id="B4"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="B3"
 	   width="150"
 	   height="150"
 	   x="-450"
 	   y="900"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="B2"
 	   width="150"
 	   height="150"
 	   x="-300"
 	   y="900"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="900"
@@ -142,8 +142,8 @@
 	   height="150"
 	   width="150"
 	   id="B1"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="750"
@@ -151,23 +151,23 @@
 	   height="150"
 	   width="150"
 	   id="C1"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="C2"
 	   width="150"
 	   height="150"
 	   x="150"
-	   y="750"	
+	   y="750"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="C3"
 	   width="150"
 	   height="150"
 	   x="300"
-	   y="750"	
+	   y="750"
 	/>
 	<rect
 	   y="750"
@@ -175,7 +175,7 @@
 	   height="150"
 	   width="150"
 	   id="C4"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="750"
@@ -183,23 +183,23 @@
 	   height="150"
 	   width="150"
 	   id="C5"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="C6"
 	   width="150"
 	   height="150"
 	   x="750"
-	   y="750"	
+	   y="750"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="C7"
 	   width="150"
 	   height="150"
 	   x="900"
-	   y="750"	
+	   y="750"
 	/>
 	<rect
 	   y="750"
@@ -207,16 +207,16 @@
 	   height="150"
 	   width="150"
 	   id="C8"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="D8"
 	   width="150"
 	   height="150"
 	   x="-1200"
 	   y="600"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="600"
@@ -224,8 +224,8 @@
 	   height="150"
 	   width="150"
 	   id="D7"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="600"
@@ -233,26 +233,26 @@
 	   height="150"
 	   width="150"
 	   id="D6"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="D5"
 	   width="150"
 	   height="150"
 	   x="-750"
 	   y="600"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="D4"
 	   width="150"
 	   height="150"
 	   x="-600"
 	   y="600"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="600"
@@ -260,8 +260,8 @@
 	   height="150"
 	   width="150"
 	   id="D3"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="600"
@@ -269,25 +269,25 @@
 	   height="150"
 	   width="150"
 	   id="D2"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="D1"
 	   width="150"
 	   height="150"
 	   x="-150"
 	   y="600"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="E1"
 	   width="150"
 	   height="150"
 	   x="0"
-	   y="450"	
+	   y="450"
 	/>
 	<rect
 	   y="450"
@@ -295,7 +295,7 @@
 	   height="150"
 	   width="150"
 	   id="E2"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="450"
@@ -303,23 +303,23 @@
 	   height="150"
 	   width="150"
 	   id="E3"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="E4"
 	   width="150"
 	   height="150"
 	   x="450"
-	   y="450"	
+	   y="450"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="E5"
 	   width="150"
 	   height="150"
 	   x="600"
-	   y="450"	
+	   y="450"
 	/>
 	<rect
 	   y="450"
@@ -327,7 +327,7 @@
 	   height="150"
 	   width="150"
 	   id="E6"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="450"
@@ -335,15 +335,15 @@
 	   height="150"
 	   width="150"
 	   id="E7"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="E8"
 	   width="150"
 	   height="150"
 	   x="1050"
-	   y="450"	
+	   y="450"
 	/>
 	<rect
 	   y="300"
@@ -351,26 +351,26 @@
 	   height="150"
 	   width="150"
 	   id="F8"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="F7"
 	   width="150"
 	   height="150"
 	   x="-1050"
 	   y="300"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="F6"
 	   width="150"
 	   height="150"
 	   x="-900"
 	   y="300"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="300"
@@ -378,8 +378,8 @@
 	   height="150"
 	   width="150"
 	   id="F5"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="300"
@@ -387,26 +387,26 @@
 	   height="150"
 	   width="150"
 	   id="F4"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="F3"
 	   width="150"
 	   height="150"
 	   x="-450"
 	   y="300"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="F2"
 	   width="150"
 	   height="150"
 	   x="-300"
 	   y="300"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="300"
@@ -414,8 +414,8 @@
 	   height="150"
 	   width="150"
 	   id="F1"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="150"
@@ -423,23 +423,23 @@
 	   height="150"
 	   width="150"
 	   id="G1"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="G2"
 	   width="150"
 	   height="150"
 	   x="150"
-	   y="150"	
+	   y="150"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="G3"
 	   width="150"
 	   height="150"
 	   x="300"
-	   y="150"	
+	   y="150"
 	/>
 	<rect
 	   y="150"
@@ -447,7 +447,7 @@
 	   height="150"
 	   width="150"
 	   id="G4"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
 	   y="150"
@@ -455,23 +455,23 @@
 	   height="150"
 	   width="150"
 	   id="G5"
-	   style="fill:#000000;stroke:none"	
+	   data-fill="dark"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="G6"
 	   width="150"
 	   height="150"
 	   x="750"
-	   y="150"	
+	   y="150"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="G7"
 	   width="150"
 	   height="150"
 	   x="900"
-	   y="150"	
+	   y="150"
 	/>
 	<rect
 	   y="150"
@@ -479,16 +479,16 @@
 	   height="150"
 	   width="150"
 	   id="G8"
-	   style="fill:#ffffff;stroke:none"	
+	   data-fill="light"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="H8"
 	   width="150"
 	   height="150"
 	   x="-1200"
 	   y="0"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="0"
@@ -496,8 +496,8 @@
 	   height="150"
 	   width="150"
 	   id="H7"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="0"
@@ -505,26 +505,26 @@
 	   height="150"
 	   width="150"
 	   id="H6"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="H5"
 	   width="150"
 	   height="150"
 	   x="-750"
 	   y="0"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#000000;stroke:none"
+	   data-fill="dark"
 	   id="H4"
 	   width="150"
 	   height="150"
 	   x="-600"
 	   y="0"
-	   transform="scale(-1,1)"	
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="0"
@@ -532,8 +532,8 @@
 	   height="150"
 	   width="150"
 	   id="H3"
-	   style="fill:#ffffff;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="light"
+	   transform="scale(-1,1)"
 	/>
 	<rect
 	   y="0"
@@ -541,24 +541,16 @@
 	   height="150"
 	   width="150"
 	   id="H2"
-	   style="fill:#000000;stroke:none"
-	   transform="scale(-1,1)"	
+	   data-fill="dark"
+	   transform="scale(-1,1)"
 	/>
 	<rect
-	   style="fill:#ffffff;stroke:none"
+	   data-fill="light"
 	   id="H1"
 	   width="150"
 	   height="150"
 	   x="-150"
 	   y="0"
-	   transform="scale(-1,1)"	
-	/>
-	<rect
 	   transform="scale(-1,1)"
-	   y="5"
-	   x="-1195"
-	   height="1190"
-	   width="1190"
-	   style="fill:none;stroke:#333333;stroke-width:10;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"	
 	/>
 </svg>

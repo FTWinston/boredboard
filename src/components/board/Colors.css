@@ -1,0 +1,24 @@
+/* board colors */
+.board__svg [data-fill="light"] {
+    fill: #eee;
+}
+
+.board__svg [data-fill="mid"] {
+    fill: #999;
+}
+
+.board__svg [data-fill="dark"] {
+    fill: #555;
+}
+
+.board__svg [data-stroke="light"] {
+    stroke: #eee;
+}
+
+.board__svg [data-stroke="mid"] {
+    stroke: #999;
+}
+
+.board__svg [data-stroke="dark"] {
+    stroke: #555;
+}

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react'
 import { SvgLoader, SvgProxy } from 'react-svgmt';
 import ResizeObserver from 'resize-observer-polyfill';
 import './BoardDisplay.css';
+import './Colors.css';
 import { ContentItems } from './ContentItems';
 import { ICellItem } from './ICellItem';
 import { LabelStyle } from '../../data/LabelSize';

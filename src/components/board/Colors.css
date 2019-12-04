@@ -1,24 +1,50 @@
 /* board colors */
-.board__svg [data-fill="light"] {
+svg.board__image [data-fill="light"] {
     fill: #eee;
 }
 
-.board__svg [data-fill="mid"] {
+svg.board__image [data-fill="mid"] {
     fill: #999;
 }
 
-.board__svg [data-fill="dark"] {
+svg.board__image [data-fill="dark"] {
     fill: #555;
 }
 
-.board__svg [data-stroke="light"] {
+svg.board__image [data-stroke="light"] {
     stroke: #eee;
 }
 
-.board__svg [data-stroke="mid"] {
+svg.board__image [data-stroke="mid"] {
     stroke: #999;
 }
 
-.board__svg [data-stroke="dark"] {
+svg.board__image [data-stroke="dark"] {
     stroke: #555;
+}
+
+
+/* piece colors */
+svg.board__piece [data-fill="light"] {
+    fill: #fff;
+}
+
+svg.board__piece [data-fill="mid"] {
+    fill: #666;
+}
+
+svg.board__piece [data-fill="dark"] {
+    fill: #000;
+}
+
+svg.board__piece [data-stroke="light"] {
+    stroke: #fff;
+}
+
+svg.board__piece [data-stroke="mid"] {
+    stroke: #666;
+}
+
+svg.board__piece [data-stroke="dark"] {
+    stroke: #000;
 }

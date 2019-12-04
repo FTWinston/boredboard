@@ -110,7 +110,7 @@ export const BoardDisplay: React.FunctionComponent<Props> = props => {
         <div className={className} ref={root}>
             <SvgLoader
                 path={props.filePath}
-                className="board__svg"
+                className="board__image"
                 onSVGReady={onReady}
                 onClick={elementClicked}
             >

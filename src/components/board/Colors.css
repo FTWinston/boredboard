@@ -1,50 +1,73 @@
+/* these variable values should be user-configurable */
+.board {
+    --board-light-color: #eeeed2;
+    --board-mid-color: #b2c294;
+    --board-dark-color: #769656;
+
+    --piece-light-color: #fff;
+    --piece-mid-color: #666;
+    --piece-dark-color: #000;
+}
+
 /* board colors */
 svg.board__image [data-fill="light"] {
-    fill: #eee;
+    fill: #eeeed2;
+    fill: var(--board-light-color, #eeeed2);
 }
 
 svg.board__image [data-fill="mid"] {
-    fill: #999;
+    fill: #b2c294;
+    fill: var(--board-mid-color, #b2c294);
 }
 
 svg.board__image [data-fill="dark"] {
-    fill: #555;
+    fill: #769656;
+    fill: var(--board-dark-color, #769656);
 }
 
 svg.board__image [data-stroke="light"] {
-    stroke: #eee;
+    stroke: #eeeed2;
+    stroke: var(--board-light-color, #eeeed2);
 }
 
 svg.board__image [data-stroke="mid"] {
-    stroke: #999;
+    stroke: #b2c294;
+    stroke: var(--board-mid-color, #b2c294);
 }
 
 svg.board__image [data-stroke="dark"] {
-    stroke: #555;
+    stroke: #769656;
+    stroke: var(--board-dark-color, #769656);
 }
 
 
 /* piece colors */
 svg.board__piece [data-fill="light"] {
     fill: #fff;
+    fill: var(--piece-light-color, #fff);
 }
 
 svg.board__piece [data-fill="mid"] {
     fill: #666;
+    fill: var(--piece-mid-color, #666);
 }
 
 svg.board__piece [data-fill="dark"] {
     fill: #000;
+    fill: var(--piece-dark-color, #000);
 }
 
 svg.board__piece [data-stroke="light"] {
     stroke: #fff;
+    stroke: var(--piece-light-color, #fff);
 }
 
 svg.board__piece [data-stroke="mid"] {
     stroke: #666;
+    stroke: var(--piece-mid-color, #666);
 }
 
 svg.board__piece [data-stroke="dark"] {
     stroke: #000;
+    stroke: var(--piece-dark-color, #000);
 }

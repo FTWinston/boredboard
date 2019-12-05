@@ -40,7 +40,7 @@ export class GameRules {
         }
 
         for (const [toPlayer, testRelationship] of fromRels) {
-            if (testRelationship === relationship) {
+            if ((testRelationship & relationship) !== 0) {
                 results.push(toPlayer);
             }
         }

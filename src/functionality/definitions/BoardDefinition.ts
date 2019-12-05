@@ -1,6 +1,7 @@
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { readLinkTypes } from './loading/readLinkTypes';
 import { readCellLinks } from './loading/readCellLinks';
+import { readRegions } from './loading/readRegions';
 import { GameDefinition } from './GameDefinition';
 import { CellMoveability } from './CellMoveability';
 import { ITracePath } from '../instances/IPlayerAction';
@@ -10,6 +11,7 @@ export class BoardDefinition {
     public readonly cells: ReadonlySet<string>;
     private readonly cellLinks: ReadonlyMap<string, ReadonlyMap<string, ReadonlyArray<string>>>; // from cell, link type, to cells
     private readonly directionCache: ReadonlyMap<number, ReadonlyMap<string | null, ReadonlyMap<string, ReadonlyArray<string>>>>; // player, base link type, direction name, link types
+    private readonly regionCache: ReadonlyMap<string, ReadonlyMap<number, ReadonlySet<string>>>;
 
     constructor(private readonly game: GameDefinition, data: IBoardDefinition, addDirectionsTo?: Set<string>) {
         this.imageUrl = data.imageUrl;
@@ -20,7 +22,7 @@ export class BoardDefinition {
 
         this.directionCache = readLinkTypes(data, addDirectionsTo);
         
-        // TODO: data.regions;
+        this.regionCache = readRegions(data);
     }
 
     public traceLink(
@@ -108,5 +110,26 @@ export class BoardDefinition {
                 }
             }
         }
+    }
+
+    public isCellInRegion(cell: string, name: string, players: number[] = []) {
+        const regionByPlayer = this.regionCache.get(name);
+        if (regionByPlayer === undefined) {
+            return false;
+        }
+
+        const forAllPlayers = regionByPlayer.get(0);
+        if (forAllPlayers !== undefined && forAllPlayers.has(cell)) {
+            return true;
+        }
+
+        for (const player of players) {
+            const forSpecificPlayer = regionByPlayer.get(player);
+            if (forSpecificPlayer !== undefined && forSpecificPlayer.has(cell)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -30,7 +30,25 @@ export class GameRules {
         fromRels.set(toPlayer, relationship);
     }
 
-    private readonly relationshipMap = new Map<number, Map<number, Relationship>>();
+    public getPlayersByRelationship(fromPlayer: number, relationship: Relationship) {
+        const fromRels = this.relationshipMap.get(fromPlayer);
+
+        const results: number[] = [];
+
+        if (fromRels === undefined) {
+            return results;
+        }
+
+        for (const [toPlayer, testRelationship] of fromRels) {
+            if (testRelationship === relationship) {
+                results.push(toPlayer);
+            }
+        }
+
+        return results;
+    }
+
+    private readonly relationshipMap = new Map<number, Map<number, Relationship>>(); // from player, to player, relationship
 
     
     public turnSequence: number[];

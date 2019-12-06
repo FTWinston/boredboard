@@ -1,6 +1,6 @@
 import { IParserError } from 'natural-configuration';
 import { IPieceBehaviourOptions } from './parser';
-import { CellContentFilter } from '../../PieceActionDefinition';
+import { CellFilter } from '../../PieceActionDefinition';
 import { parseRelationship } from './parseRelationship';
 import { Relationship } from '../../Relationship';
 import { isEmpty } from '../../../instances/functions/isEmpty';
@@ -8,22 +8,17 @@ import { parseCondition } from './parseCondition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
 
+const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+))?(?: containing (.+))?");
 const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*?) )?(\\w+?)(?: that (.+))?$");
 
-export function parseCellContentFilter(
+export function parseCellFilter(
     filterText: string,
     startIndex: number,
     options: IPieceBehaviourOptions,
     error: (error: IParserError) => void
-): CellContentFilter {
-    if (filterText === 'an empty cell') {
-        return (game, state, board, boardDef, cell) => {
-            const content = board.cellContents[cell];
-            return content === undefined || isEmpty(content);
-        }
-    }
-
-    if (!filterText.startsWith('a cell containing ')) {
+): CellFilter {
+    const filterMatch = filterText.match(filterExpression);
+    if (filterMatch === null) {
         error({
             startIndex,
             length: filterText.length,
@@ -32,16 +27,62 @@ export function parseCellContentFilter(
 
         return () => false;
     }
-    
-    startIndex += 18;
-    filterText = filterText.substr(18);
 
-    const match = filterText.match(pieceExpression);
+    let regionMatch = filterMatch[2];
+    if (regionMatch === undefined) {
+        regionMatch = '';
+    }
+    
+    let containsMatch = filterMatch[3];
+    if (containsMatch === undefined) {
+        containsMatch = '';
+    }
+
+    if (filterMatch[1] !== undefined && filterMatch[1].length > 0) {
+        // empty cell ... therefore "containing" should not be present
+        if (containsMatch.length > 0) {
+            error({
+                startIndex,
+                length: filterText.length,
+                message: `Couldn't understand this condition - expected e.g. "an empty cell" or "a cell containing an enemy piece"`,
+            });
+
+            return () => false;
+        }
+
+        if (regionMatch.length > 0) {
+            startIndex += 17;
+
+            // TODO: account for region match
+        }
+
+        return (game, state, board, boardDef, cell) => {
+            const content = board.cellContents[cell];
+            return content === undefined || isEmpty(content);
+        }
+    }
+    else if (containsMatch.length === 0 && regionMatch.length === 0) {
+        // "a cell" isn't a valid filter ... is it? Oh why not, I guess.
+        return () => true;
+    }
+
+    if (regionMatch.length > 0) {
+        startIndex += 10;
+
+        // TODO: account for region match
+
+        startIndex += regionMatch.length;
+    }
+    else {
+        startIndex += 18;
+    }
+
+    const match = containsMatch.match(pieceExpression);
 
     if (match === null) {
         error({
             startIndex,
-            length: filterText.length,
+            length: containsMatch.length,
             message: `Couldn't understand this cell content - expected e.g. "a friendly piece" or "an enemy king that has never moved"`,
         });
         

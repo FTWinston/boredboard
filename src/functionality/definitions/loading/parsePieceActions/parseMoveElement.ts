@@ -2,8 +2,8 @@ import { IParserError } from 'natural-configuration';
 import { parseDistance } from './parseDistance';
 import { parseDirections } from './parseDirections';
 import { IPieceBehaviourOptions } from './parser';
-import { IPieceActionElement, CellContentFilter } from '../../PieceActionDefinition';
-import { parseCellContentFilter } from './parseCellContentFilter';
+import { IPieceActionElement, CellFilter } from '../../PieceActionDefinition';
+import { parseCellFilter } from './parseCellFilter';
 
 export function parseMoveElement(
     elementText: string,
@@ -63,12 +63,12 @@ export function parseMoveElement(
         return false;
     }
 
-    let destinationCheck: CellContentFilter | undefined;
+    let destinationCheck: CellFilter | undefined;
 
     if (toPos !== -1) {
         startIndex += directionText.length + 4;
         elementText = elementText.substr(toPos + 4);
-        destinationCheck = parseCellContentFilter(elementText, startIndex, options, error);
+        destinationCheck = parseCellFilter(elementText, startIndex, options, error);
     }
 
     moveSequence.push({

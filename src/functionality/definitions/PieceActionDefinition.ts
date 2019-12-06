@@ -9,7 +9,7 @@ import { IBoard } from '../instances/IBoard';
 import { CellMoveability } from './CellMoveability';
 import { Relationship } from './Relationship';
 
-export type CellContentFilter = (
+export type CellFilter = (
     game: GameDefinition,
     state: IGameState,
     boardState: IBoard,
@@ -23,7 +23,7 @@ export interface IPieceActionElement {
     readonly minDistance: number;
     readonly maxDistance?: number;
     readonly optional: boolean;
-    readonly destinationCheck?: CellContentFilter;
+    readonly destinationCheck?: CellFilter;
 }
 
 interface IConditionalPieceMovement extends IPieceMovement {

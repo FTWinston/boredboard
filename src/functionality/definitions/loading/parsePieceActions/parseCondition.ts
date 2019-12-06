@@ -2,8 +2,9 @@ import { IParserError } from 'natural-configuration';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IPieceBehaviourOptions } from './parser';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
-import { TurnNumberPropertyCondition, ComparisonProperty } from '../../conditions/TurnNumberPropertyCondition';
-import { NumericComparison } from '../../NumericComparison';
+import { parseRegionCondition } from './conditions/parseRegionCondition';
+import { parseThreatenedCondition } from './conditions/parseThreatenedCondition';
+import { parseMovedCondition } from './conditions/parseMovedCondition';
 
 export function parseCondition(
     conditionText: string,
@@ -21,25 +22,31 @@ export function parseCondition(
         conditionText = conditionText.substr(5);
     }
 
-    if (conditionText === 'has never moved') {
-        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, undefined));
+    if (conditionText.indexOf(' moved') !== -1) {
+        const condition = parseMovedCondition(conditionText, error, startIndex);
+        if (condition === null) {
+            return false;
+        }
+
+        stateConditions.push(condition);
         return true;
     }
-    else if (conditionText === 'has moved') {
-        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.NotEqual, undefined));
+    else if (conditionText.indexOf(' threatened') !== -1) {
+        const condition = parseThreatenedCondition(conditionText, error, startIndex);
+        if (condition === null) {
+            return false;
+        }
+
+        stateConditions.push(condition);
         return true;
     }
-    else if (conditionText === 'has never been threatened') {
-        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.Equals, undefined));
-        return true;
-    }
-    else if (conditionText === 'has been threatened') {
-        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.NotEqual, undefined));
-        return true;
-    }
-    else if (conditionText === 'first moved 1 turn ago') {
-        // TODO: actually parse these properly
-        stateConditions.push(new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, 1));
+    else if (conditionText.startsWith('is in')) {
+        const condition = parseRegionCondition(conditionText, error, startIndex);
+        if (condition === null) {
+            return false;
+        }
+
+        stateConditions.push(condition);
         return true;
     }
 

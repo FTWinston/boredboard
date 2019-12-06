@@ -1484,6 +1484,10 @@
         "east",
         "south",
         "north"
+      ],
+      "sideways": [
+        "west",
+        "east"
       ]
     },
     "regions": {

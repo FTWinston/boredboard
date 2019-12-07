@@ -8,7 +8,7 @@ import { parseCondition } from './parseCondition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
 
-const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+))?(?: containing (.+))?");
+const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+?))?(?: containing (.+))?$");
 const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*?) )?(\\w+?)(?: that (.+))?$");
 
 export function parseCellFilter(
@@ -44,7 +44,7 @@ export function parseCellFilter(
             error({
                 startIndex,
                 length: filterText.length,
-                message: `Couldn't understand this condition - expected e.g. "an empty cell" or "a cell containing an enemy piece"`,
+                message: `Couldn't understand this condition - an empty cell cannot contain anything.`,
             });
 
             return () => false;

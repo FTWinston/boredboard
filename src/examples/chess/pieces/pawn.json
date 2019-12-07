@@ -1,5 +1,5 @@
 {
     "imageUrls": { "1": "./default/white/pawn.svg", "2": "./default/black/pawn.svg" },
-    "behaviour": "It can slide 1 cell forward to an empty cell. If it has never moved, it can slide 2 cells forward to an empty cell. It can slide 1 cell diagonally-forward to a cell containing an enemy piece. If it is in the enemy en passant zone, it can slide 1 cell sideways to a cell containing an enemy pawn that first moved 1 turn ago, then 1 cell forward.",
+    "behaviour": "It can slide 1 cell forward to an empty cell. If it has never moved, it can slide 2 cells forward to an empty cell. It can slide 1 cell diagonally-forward to a cell containing an enemy piece. It can slide 1 cell sideways to a cell in the enemy en passant zone containing an enemy pawn that first moved 1 turn ago, then 1 cell forward.",
     "value": 1
 }

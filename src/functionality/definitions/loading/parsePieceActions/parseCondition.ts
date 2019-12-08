@@ -22,7 +22,24 @@ export function parseCondition(
         conditionText = conditionText.substr(5);
     }
 
-    if (conditionText.indexOf(' moved') !== -1) {
+    if (conditionText.startsWith('is in')) {
+        const condition = parseRegionCondition(conditionText, error, startIndex);
+        if (condition === null) {
+            return false;
+        }
+
+        stateConditions.push(condition);
+        return true;
+    }
+    else if (conditionText.startsWith('there is')) {
+        // TODO: parse scan condition
+        // e.g. "there is a friendly rook 4 cells to its west that has never moved"
+        // ... rephrase that to "4 cells to the west there is a friendly rook that has never moved"
+        // ... but then it doesn't start with "there is"
+        // ... uh well this is an ugly option "there is 4 cells to the west a friendly rook that has never moved"
+        return true;
+    }
+    else if (conditionText.indexOf(' moved') !== -1) {
         const condition = parseMovedCondition(conditionText, error, startIndex);
         if (condition === null) {
             return false;
@@ -33,15 +50,6 @@ export function parseCondition(
     }
     else if (conditionText.indexOf(' threatened') !== -1) {
         const condition = parseThreatenedCondition(conditionText, error, startIndex);
-        if (condition === null) {
-            return false;
-        }
-
-        stateConditions.push(condition);
-        return true;
-    }
-    else if (conditionText.startsWith('is in')) {
-        const condition = parseRegionCondition(conditionText, error, startIndex);
         if (condition === null) {
             return false;
         }

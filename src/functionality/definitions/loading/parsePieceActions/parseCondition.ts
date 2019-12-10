@@ -5,6 +5,7 @@ import { IMoveCondition } from '../../conditions/IMoveCondition';
 import { parseRegionCondition } from './conditions/parseRegionCondition';
 import { parseThreatenedCondition } from './conditions/parseThreatenedCondition';
 import { parseMovedCondition } from './conditions/parseMovedCondition';
+import { parseScanCondition } from './parseScanCondition';
 
 export function parseCondition(
     conditionText: string,
@@ -32,9 +33,11 @@ export function parseCondition(
         return true;
     }
     else if (conditionText.startsWith('there is')) {
-        // TODO: parse scan condition, use parsePiecefilter and parsePieceConditions
-        // e.g. "there is a friendly rook 4 cells to its west that has never moved"
-        //                [piece filter ] [   scan range    ] that [piece condition]
+        const condition = parseScanCondition(conditionText, error, startIndex, options);
+        if ( condition === null) {
+            return false;
+        }
+        stateConditions.push(condition);
         return true;
     }
     else if (conditionText.indexOf(' moved') !== -1) {

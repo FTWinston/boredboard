@@ -1,20 +1,20 @@
 import { IParserError } from 'natural-configuration';
-import { NumericComparison } from '../../NumericComparison';
+import { NumericComparison, alwaysFails, equals, atLeast, atMost, greaterThan, lessThan, notEqual } from '../../NumericComparison';
 
-export function parseNumericComparison(text: string, startIndex: number, error: (error: IParserError) => void) {
+export function parseNumericComparison(text: string, startIndex: number, error: (error: IParserError) => void): NumericComparison {
     switch (text.toLowerCase()) {
         case 'exactly':
-            return NumericComparison.Equals;
+            return equals;
         case 'at least':
-            return NumericComparison.GreaterThanOrEqual;
+            return atLeast;
         case 'at most':
-            return NumericComparison.LessThanOrEqual;
+            return atMost;
         case 'more than':
-            return NumericComparison.GreaterThan;
+            return greaterThan;
         case 'less than':
-            return NumericComparison.GreaterThan;
+            return lessThan;
         case 'not':
-            return NumericComparison.NotEqual;
+            return notEqual;
     }
     
     error({
@@ -22,5 +22,6 @@ export function parseNumericComparison(text: string, startIndex: number, error: 
         length: text.length,
         message: `Unrecognised numeric comparison: ${text}. Expected e.g. exactly, at least, at most, more than, less than.`,
     });
-    return null;
+
+    return alwaysFails;
 }

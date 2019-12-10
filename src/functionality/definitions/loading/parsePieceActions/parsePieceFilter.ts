@@ -1,12 +1,12 @@
 import { IParserError } from 'natural-configuration';
 import { parseRelationship } from './parseRelationship';
 import { Relationship } from '../../Relationship';
-import { NumericComparison } from '../../NumericComparison';
 import { parseNumericComparison } from './parseNumericComparison';
+import { equals, NumericComparison, alwaysFails } from '../../NumericComparison';
 
 const pieceExpression = new RegExp("^(?:(.+?) )?(a|an|one|any|(\\d+)x?) (?:(.+?) )?(\\w+)$");
 
-const failResult: [NumericComparison, number, Relationship, string | null] = [NumericComparison.Equals, 1, Relationship.None, null];
+const failResult: [NumericComparison, number, Relationship, string | null] = [alwaysFails, 1, Relationship.None, null];
 
 export function parsePieceFilter(
     filterText: string,
@@ -26,7 +26,7 @@ export function parsePieceFilter(
     }
 
     const comparison = match[1] === undefined
-        ? NumericComparison.Equals
+        ? equals
         : parseNumericComparison(match[1], startIndex, error);
 
     if (comparison === null) {

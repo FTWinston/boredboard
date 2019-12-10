@@ -1,6 +1,6 @@
 import { IParserError } from 'natural-configuration';
 import { TurnNumberPropertyCondition, ComparisonProperty } from '../../../conditions/TurnNumberPropertyCondition';
-import { NumericComparison } from '../../../NumericComparison';
+import { equals, notEqual } from '../../../NumericComparison';
 import { parseNumericComparison } from '../parseNumericComparison';
 
 const moveExpression = new RegExp('^(first|last) moved (?:(.*?) )?(\\d+) turns? ago$')
@@ -11,10 +11,10 @@ export function parseMovedCondition(
     startIndex: number,
 ) {
     if (conditionText === 'has never moved') {
-        return new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.Equals, undefined);
+        return new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, equals, undefined);
     }
     else if (conditionText === 'has moved') {
-        return new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, NumericComparison.NotEqual, undefined);
+        return new TurnNumberPropertyCondition(ComparisonProperty.FirstMove, notEqual, undefined);
     }
 
     const match = conditionText.match(moveExpression);
@@ -35,7 +35,7 @@ export function parseMovedCondition(
 
     const comparisonText = match[2];
     const comparison = comparisonText === undefined || comparisonText.length === 0
-        ? NumericComparison.Equals
+        ? equals
         : parseNumericComparison(comparisonText, startIndex + match[1].length + 7, error);
 
     return comparison === null

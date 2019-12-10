@@ -13,44 +13,12 @@ export enum ComparisonProperty {
 }
 
 export class TurnNumberPropertyCondition implements IStateCondition {
-    private readonly check: (value?: number) => boolean;
-
     constructor(
         private readonly property: ComparisonProperty,
-        comparison: NumericComparison,
-        value?: number
+        private readonly comparison: NumericComparison,
+        private readonly value?: number
     ) {
-        switch (comparison) {
-            case NumericComparison.Equals:
-                this.check = test => test === value;
-                break;
-            case NumericComparison.NotEqual:
-                this.check = test => test !== value;
-                break;
-            case NumericComparison.LessThan:
-                this.check = value === undefined
-                    ? () => false
-                    : test => test! < value;
-                break;
-            case NumericComparison.GreaterThan:
-                this.check = value === undefined
-                    ? () => false
-                    : test => test! > value;
-                break;
-            case NumericComparison.LessThanOrEqual:
-                this.check = value === undefined
-                    ? () => false
-                    : test => test! <= value;
-                break;
-            case NumericComparison.GreaterThanOrEqual:
-                this.check = value === undefined
-                    ? () => false
-                    : test => test! >= value;
-                break;
-            default:
-                this.check = () => false;
-                break;
-        }
+
     }
 
     public isValid(
@@ -81,7 +49,7 @@ export class TurnNumberPropertyCondition implements IStateCondition {
             ? undefined
             : state.currentTurn - propertyValue;
 
-        return this.check(comparisonValue);
+        return this.comparison(comparisonValue, this.value);
     }
 
     public isActionValid() {

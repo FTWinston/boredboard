@@ -1,7 +1,7 @@
 import { IParserError } from 'natural-configuration';
 import { TurnNumberPropertyCondition, ComparisonProperty } from '../../../conditions/TurnNumberPropertyCondition';
-import { NumericComparison } from '../../../NumericComparison';
 import { parseNumericComparison } from '../parseNumericComparison';
+import { equals, notEqual } from '../../../NumericComparison';
 
 const moveExpression = new RegExp('^last threatened (?:(.*?) )?(\\d+) turns? ago$')
 
@@ -11,10 +11,10 @@ export function parseThreatenedCondition(
     startIndex: number,
 ) {
     if (conditionText === 'has never been threatened') {
-        return new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.Equals, undefined);
+        return new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, equals, undefined);
     }
     else if (conditionText === 'has been threatened') {
-        return new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, NumericComparison.NotEqual, undefined);
+        return new TurnNumberPropertyCondition(ComparisonProperty.LastThreatened, notEqual, undefined);
     }
 
     const match = conditionText.match(moveExpression);
@@ -33,7 +33,7 @@ export function parseThreatenedCondition(
 
     const comparisonText = match[1];
     const comparison = comparisonText === undefined || comparisonText.length === 0
-        ? NumericComparison.Equals
+        ? equals
         : parseNumericComparison(comparisonText, startIndex + 16, error);
 
     return comparison === null

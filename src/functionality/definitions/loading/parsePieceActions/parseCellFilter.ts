@@ -1,18 +1,11 @@
 import { IParserError } from 'natural-configuration';
 import { IPieceBehaviourOptions } from './parser';
 import { CellFilter } from '../../PieceActionDefinition';
-import { parseRelationship } from './parseRelationship';
-import { Relationship } from '../../Relationship';
 import { isEmpty } from '../../../instances/functions/isEmpty';
-import { parseCondition } from './parseCondition';
-import { IStateCondition } from '../../conditions/IStateCondition';
-import { IMoveCondition } from '../../conditions/IMoveCondition';
 import { parsePieceFilter } from './parsePieceFilter';
 import { parsePieceConditions } from './parsePieceConditions';
-import { tsExpressionWithTypeArguments } from '@babel/types';
 
 const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+?))?(?: containing (.+))?$");
-const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*?) )?(\\w+?)(?: that (.+))?$");
 
 export function parseCellFilter(
     filterText: string,
@@ -127,11 +120,6 @@ export function parseCellFilter(
             num++;
         }
 
-        // TODO: comparison type ... want a separate function for handling these
-        if (num >= quantity) {
-            return true;
-        }
-
-        return false;
+        return comparison(num, quantity);
     };
 }

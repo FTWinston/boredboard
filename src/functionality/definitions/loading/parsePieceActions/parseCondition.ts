@@ -34,6 +34,7 @@ export function parseCondition(
     else if (conditionText.startsWith('there is')) {
         // TODO: parse scan condition
         // e.g. "there is a friendly rook 4 cells to its west that has never moved"
+        //                [piece filter ] [    scan range   ] [  piece condition ]       piece filter is currently part of a cell filter. Can we split that out?
         // ... rephrase that to "4 cells to the west there is a friendly rook that has never moved"
         // ... but then it doesn't start with "there is"
         // ... uh well this is an ugly option "there is 4 cells to the west a friendly rook that has never moved"

@@ -7,6 +7,9 @@ import { isEmpty } from '../../../instances/functions/isEmpty';
 import { parseCondition } from './parseCondition';
 import { IStateCondition } from '../../conditions/IStateCondition';
 import { IMoveCondition } from '../../conditions/IMoveCondition';
+import { parsePieceFilter } from './parsePieceFilter';
+import { parsePieceConditions } from './parsePieceConditions';
+import { tsExpressionWithTypeArguments } from '@babel/types';
 
 const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+?))?(?: containing (.+))?$");
 const pieceExpression = new RegExp("^(a|an|one|any|(\\d+)x?) (?:(.*?) )?(\\w+?)(?: that (.+))?$");
@@ -77,65 +80,24 @@ export function parseCellFilter(
         startIndex += 18;
     }
 
-    const match = containsMatch.match(pieceExpression);
 
-    if (match === null) {
-        error({
-            startIndex,
-            length: containsMatch.length,
-            message: `Couldn't understand this cell content - expected e.g. "a friendly piece" or "an enemy king that has never moved"`,
-        });
-        
-        return () => false;
-    }
+    const conditionStartPos = containsMatch.indexOf(' that ');
+    const [comparison, quantity, relation, type] = parsePieceFilter(
+        conditionStartPos === -1
+            ? containsMatch
+            : containsMatch.substr(0, conditionStartPos),
+        startIndex,
+        error,
+    );
 
-    const quantity = match[2] === undefined
-        ? 1
-        : parseInt(match[2]);
-
-    startIndex += match[1].length + 1;
-
-    const relation = parseRelationship(match[3]);
-    if (relation === Relationship.None) {
-        error({
-            startIndex,
-            length: match[3].length,
-            message: `Couldn't understand this relationship`,
-        });
-
-        return () => false;
-    }
-
-    if (match[3] !== undefined) {
-        startIndex += match[3].length + 1;
-    }
-
-    const type = match[4] === 'piece' ? null : match[4];
-
-    startIndex += match[4].length;
-
-    const stateConditions: IStateCondition[] = [];
-
-    if (match[5] !== undefined) {
-        // parse conditions for the filter-matching piece, not the acting piece
-        startIndex += 6;
-
-        const conditionTexts = match[5].split(' and ');
-        const moveConditions: IMoveCondition[] = [];
-
-        for (const conditionText of conditionTexts) {
-            if (!parseCondition(conditionText, error, startIndex, stateConditions, moveConditions, options)) {
-                return () => false;
-            }
-
-            startIndex += conditionText.length + 5;
-        }
-
-        if (moveConditions.length > 0) {
-            // cannot use moveConditions here
-            return () => false;
-        }
-    }
+    const stateConditions = conditionStartPos === -1
+        ? []
+        : parsePieceConditions(
+            containsMatch.substr(conditionStartPos + 6),
+            startIndex + conditionStartPos + 6,
+            options,
+            error
+        );
 
     return (game, state, board, boardDef, cell, player) => {
         const content = board.cellContents[cell];
@@ -162,9 +124,12 @@ export function parseCellFilter(
                 continue;
             }
 
-            if (++num >= quantity) {
-                return true;
-            }
+            num++;
+        }
+
+        // TODO: comparison type ... want a separate function for handling these
+        if (num >= quantity) {
+            return true;
         }
 
         return false;

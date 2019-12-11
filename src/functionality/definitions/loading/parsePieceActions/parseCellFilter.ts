@@ -4,6 +4,9 @@ import { CellFilter } from '../../PieceActionDefinition';
 import { isEmpty } from '../../../instances/functions/isEmpty';
 import { parsePieceFilter } from './parsePieceFilter';
 import { parsePieceConditions } from './parsePieceConditions';
+import { Relationship } from '../../Relationship';
+import { IStateCondition } from '../../conditions/IStateCondition';
+import { NumericComparison } from '../../NumericComparison';
 
 const filterExpression = new RegExp("^a(n empty)? cell(?: in (.+?))?(?: containing (.+))?$");
 
@@ -92,12 +95,24 @@ export function parseCellFilter(
             error
         );
 
+    return createCellFilter(options, type, relation, comparison, quantity, stateConditions);
+}
+
+export function createCellFilter(
+    options: IPieceBehaviourOptions,
+    type: string | null,
+    relation: Relationship,
+    comparison: NumericComparison,
+    quantity: number,
+    stateConditions: IStateCondition[]
+): CellFilter {
     return (game, state, board, boardDef, cell, player) => {
         const content = board.cellContents[cell];
+
         if (content === undefined) {
             return false;
         }
-        
+
         let num = 0;
 
         for (const id in content) {
@@ -113,6 +128,7 @@ export function parseCellFilter(
             }
 
             const allValid = stateConditions.every(condition => condition.isValid(game, state, board, boardDef, cell, piece));
+
             if (!allValid) {
                 continue;
             }

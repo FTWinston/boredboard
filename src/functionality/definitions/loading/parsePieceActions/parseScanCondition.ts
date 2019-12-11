@@ -3,9 +3,11 @@ import { IStateCondition } from '../../conditions/IStateCondition';
 import { IPieceBehaviourOptions } from './parser';
 import { parsePieceFilter } from './parsePieceFilter';
 import { parsePieceConditions } from './parsePieceConditions';
+import { ScanCondition } from '../../conditions/ScanCondition';
+import { createCellFilter } from './parseCellFilter';
 
 // TODO: numeric comparison on the distance? at least, more than ... but also a "range" would be good
-const scanExpression = new RegExp("^there is (.+?) (\d+) cells? (?:to the )?(\w+)(?: that (.+))?$");
+const scanExpression = new RegExp("^there (is|are) (.+?) (\d+) cells? (?:to the )?(\w+)(?: that (.+))?$");
 
 export function parseScanCondition(
     conditionText: string,
@@ -13,7 +15,6 @@ export function parseScanCondition(
     startIndex: number,
     options: IPieceBehaviourOptions,
 ): IStateCondition | null {
-    // TODO: parse scan condition, use parsePiecefilter and parsePieceConditions
     // e.g. "there is a friendly rook 4 cells to its west that has never moved"
     //                [piece filter ] [   scan range    ] that [piece condition]
     
@@ -29,34 +30,27 @@ export function parseScanCondition(
         return null;
     }
 
-    startIndex += 9;
-    const pieceFilterText = match[1];
+    startIndex += 7 + match[1].length;
+    const pieceFilterText = match[2];
     const [comparison, quantity, relation, type] = parsePieceFilter(pieceFilterText, startIndex, error);
 
     startIndex += pieceFilterText.length;
-    const distanceText = match[2];
+    const distanceText = match[3];
     const distance = parseInt(distanceText);
 
-    const directionText = match[3];
+    const directionText = match[4];
     startIndex = conditionText.indexOf(directionText, startIndex);
-    const direction  = directionText; // TODO: parse direction text
+
+    const direction  = directionText;
 
     startIndex += directionText.length + 6;
-    const pieceConditionText = match[4];
+    const pieceConditionText = match[5];
 
     const pieceConditions = pieceConditionText === undefined
         ? []
         : parsePieceConditions(pieceConditionText, startIndex, options, error);
 
-    // TODO: create condition
+    const cellFilter = createCellFilter(options, type, relation, comparison, quantity, pieceConditions);
 
-    // TODO: also see if any of these things above failed
-
-    error({
-        startIndex,
-        length: conditionText.length,
-        message: `Unrecognised condition: ${conditionText}`,
-    });
-
-    return null;
+    return new ScanCondition(cellFilter, direction, distance, distance);
 }

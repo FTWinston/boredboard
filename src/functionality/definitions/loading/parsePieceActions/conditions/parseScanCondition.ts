@@ -7,7 +7,7 @@ import { ScanCondition } from '../../../conditions/ScanCondition';
 import { createCellFilter } from '../parseCellFilter';
 
 // TODO: numeric comparison on the distance? at least, more than ... but also a "range" would be good
-const scanExpression = new RegExp("^there (is|are) (.+?) (\\d+) cells? (?:to the )?(\\w+)(?: that (.+))?$");
+const scanExpression = new RegExp("^there (is|are) (.+?) (\\d+) cells? (?:to (?:its|the) )?(\\w+)(?: that (.+))?$");
 
 export function parseScanCondition(
     conditionText: string,

@@ -95,11 +95,10 @@ export function parseCellFilter(
             error
         );
 
-    return createCellFilter(options, type, relation, comparison, quantity, stateConditions);
+    return createCellFilter(type, relation, comparison, quantity, stateConditions);
 }
 
 export function createCellFilter(
-    options: IPieceBehaviourOptions,
     type: string | null,
     relation: Relationship,
     comparison: NumericComparison,
@@ -117,7 +116,7 @@ export function createCellFilter(
 
         for (const id in content) {
             const piece = content[id]!;
-            const relationship = options.game.rules.getRelationship(player, piece.owner);
+            const relationship = game.rules.getRelationship(player, piece.owner);
 
             if ((relationship & relation) === 0) {
                 continue;

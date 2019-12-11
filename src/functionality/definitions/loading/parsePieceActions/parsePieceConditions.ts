@@ -7,7 +7,7 @@ import { IMoveCondition } from '../../conditions/IMoveCondition';
 export function parsePieceConditions(
     filterText: string,
     startIndex: number,
-    options: IPieceBehaviourOptions,
+    options: IPieceBehaviourOptions | undefined,
     error: (error: IParserError) => void
 ): IStateCondition[] {
     const stateConditions: IStateCondition[] = [];

@@ -1,19 +1,19 @@
 import { IParserError } from 'natural-configuration';
-import { IStateCondition } from '../../conditions/IStateCondition';
-import { IPieceBehaviourOptions } from './parser';
-import { parsePieceFilter } from './parsePieceFilter';
-import { parsePieceConditions } from './parsePieceConditions';
-import { ScanCondition } from '../../conditions/ScanCondition';
-import { createCellFilter } from './parseCellFilter';
+import { IStateCondition } from '../../../conditions/IStateCondition';
+import { IPieceBehaviourOptions } from '../parser';
+import { parsePieceFilter } from '../parsePieceFilter';
+import { parsePieceConditions } from '../parsePieceConditions';
+import { ScanCondition } from '../../../conditions/ScanCondition';
+import { createCellFilter } from '../parseCellFilter';
 
 // TODO: numeric comparison on the distance? at least, more than ... but also a "range" would be good
-const scanExpression = new RegExp("^there (is|are) (.+?) (\d+) cells? (?:to the )?(\w+)(?: that (.+))?$");
+const scanExpression = new RegExp("^there (is|are) (.+?) (\\d+) cells? (?:to the )?(\\w+)(?: that (.+))?$");
 
 export function parseScanCondition(
     conditionText: string,
     error: (error: IParserError) => void,
     startIndex: number,
-    options: IPieceBehaviourOptions,
+    options?: IPieceBehaviourOptions,
 ): IStateCondition | null {
     // e.g. "there is a friendly rook 4 cells to its west that has never moved"
     //                [piece filter ] [   scan range    ] that [piece condition]
@@ -50,7 +50,7 @@ export function parseScanCondition(
         ? []
         : parsePieceConditions(pieceConditionText, startIndex, options, error);
 
-    const cellFilter = createCellFilter(options, type, relation, comparison, quantity, pieceConditions);
+    const cellFilter = createCellFilter(type, relation, comparison, quantity, pieceConditions);
 
     return new ScanCondition(cellFilter, direction, distance, distance);
 }

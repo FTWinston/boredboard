@@ -5,7 +5,7 @@ import { IMoveCondition } from '../../conditions/IMoveCondition';
 import { parseRegionCondition } from './conditions/parseRegionCondition';
 import { parseThreatenedCondition } from './conditions/parseThreatenedCondition';
 import { parseMovedCondition } from './conditions/parseMovedCondition';
-import { parseScanCondition } from './parseScanCondition';
+import { parseScanCondition } from './conditions/parseScanCondition';
 
 export function parseCondition(
     conditionText: string,

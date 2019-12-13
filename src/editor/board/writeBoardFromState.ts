@@ -21,7 +21,7 @@ function ensureProperty<TKey extends keyof any, TVal>(
     let val = record[key];
 
     if (val !== undefined) {
-        return val;
+        return val!;
     }
 
     record[key] = defaultVal;
@@ -34,8 +34,8 @@ function writeLinks(state: IState) {
 
     for (const link of state.links) {
         const fromCellData = ensureProperty(links, link.fromCell, {});
-        const linkTypeData = ensureProperty(fromCellData!, link.type, []);
-        linkTypeData!.push(link.toCell);
+        const linkTypeData = ensureProperty(fromCellData, link.type, []);
+        linkTypeData.push(link.toCell);
     }
 
     return links;
@@ -47,8 +47,8 @@ function writeRelativeLinks(state: IState) {
 
     for (const link of state.relativeLinks) {
         const relativeTypeData = ensureProperty(relativeLinks, link.relativeLinkType, {});
-        const fromTypeData = ensureProperty(relativeTypeData!, link.fromType, []);
-        fromTypeData!.push(link.toType);
+        const fromTypeData = ensureProperty(relativeTypeData, link.fromType, []);
+        fromTypeData.push(link.toType);
     }
 
     return relativeLinks;
@@ -60,8 +60,8 @@ function writePlayerLinks(state: IState) {
 
     for (const link of state.playerLinks) {
         const playerTypeData = ensureProperty(playerLinks, link.playerLinkType, {});
-        const playerData = ensureProperty(playerTypeData!, link.player, []);
-        playerData!.push(link.linkType);
+        const playerData = ensureProperty(playerTypeData, link.player, []);
+        playerData.push(link.linkType);
     }
 
     return playerLinks;
@@ -72,12 +72,20 @@ function writeLinkGroups(state: IState) {
 
     for (const linkItem of state.linkGroupItems) {
         const groupItems = ensureProperty(linkGroups, linkItem.groupType, []);
-        groupItems!.push(linkItem.itemName);
+        groupItems.push(linkItem.itemName);
     }
 
     return linkGroups;
 }
 
 function writeRegions(state: IState) {
-    return {}; // TODO
+    const regions: Dictionary<string, Dictionary<number, string[]>> = {};
+
+    for (const regionCell of state.regionCells) {
+        const region = ensureProperty(regions, regionCell.region, {});
+        const playerData = ensureProperty(region, regionCell.player, []);
+        playerData.push(regionCell.cell);
+    }
+
+    return regions;
 }

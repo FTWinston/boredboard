@@ -131,7 +131,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                             cells={state.cells}
                             linkTypes={state.linkTypes}
                             links={state.links}
-                            regions={state.regions}
+                            regionCells={state.regionCells}
                             saveData={() => props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */)}
                         />
                     );

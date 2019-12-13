@@ -24,10 +24,10 @@ export interface IGroupItem {
     itemName: string;
 }
 
-export interface IRegion {
-    name: string;
+export interface IRegionCell {
+    region: string;
     player: number; // 0 for none, 1, 2 etc otherwise
-    cells: string[];
+    cell: string;
 }
 
 export interface IState {
@@ -41,7 +41,7 @@ export interface IState {
     playerLinks: IPlayerLink[];
     linkGroupTypes: string[];
     linkGroupItems: IGroupItem[];
-    regions: IRegion[];
+    regionCells: IRegionCell[];
 }
 
 export type BoardAction = {
@@ -162,9 +162,19 @@ export type BoardAction = {
     groupType: string;
     itemName: string;
 } | {
-    type: 'set regions';
-    regions: IRegion[];
-}
+    type: 'set region cells';
+    regionCells: IRegionCell[];
+} | {
+    type: 'add region cell';
+    region: string;
+    player: number;
+    cell: string;
+} | {
+    type: 'remove region cell';
+    region: string;
+    player: number;
+    cell: string;
+};
 
 export function getInitialState(board?: IBoardDefinition): IState {
     if (board !== undefined) {
@@ -178,7 +188,7 @@ export function getInitialState(board?: IBoardDefinition): IState {
         links: [],
         relativeLinkTypes: [],
         relativeLinks: [],
-        regions: [],
+        regionCells: [],
         playerLinkTypes: [],
         playerLinks: [],
         linkGroupTypes: [],
@@ -483,13 +493,40 @@ export function reducer(state: IState, action: BoardAction): IState {
                 ),
             }
 
-        case 'set regions':
+        case 'set region cells':
             return {
                 ...state,
-                regions: action.regions.map(r => ({ // only include valid cells
-                    ...r,
-                    cells: r.cells.filter(c => state.cells.has(c)),
-                })),
+                regionCells: action.regionCells.filter(rc => state.cells.has(rc.cell)), // only include valid cells
+            };
+    
+        case 'add region cell': {
+            const newRegionCell = {
+                region: action.region,
+                player: action.player,
+                cell: action.cell,
+            };
+
+            if (!state.cells.has(action.cell) || isDuplicateRegionCell(newRegionCell, state.regionCells)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                regionCells: [
+                    ...state.regionCells,
+                    newRegionCell
+                ],
+            };
+        }
+
+        case 'remove region cell':
+            return {
+                ...state,
+                regionCells: state.regionCells.filter(
+                    rc => rc.region !== action.region
+                        || rc.cell !== action.cell
+                        || rc.player !== action.player
+                ),
             };
     }
 }
@@ -502,10 +539,7 @@ function replaceCells(state: IState, cells: Set<string>) {
             l => cells.has(l.fromCell)
             && cells.has(l.toCell)
         ),
-        regions: state.regions.map(r => ({ // remove invalid cells from existing regions
-            ...r,
-            cells: r.cells.filter(c => cells.has(c)),
-        })),
+        regions: state.regionCells.filter(rc => cells.has(rc.cell)), // remove invalid cells from existing regions
     };
 }
 
@@ -577,5 +611,13 @@ export function isDuplicateGroupItem(groupItem: IGroupItem, existingGroupItems: 
     return existingGroupItems.find(
         r => r.groupType === groupItem.groupType
         && r.itemName === groupItem.itemName
+    ) !== undefined;
+}
+
+function isDuplicateRegionCell(cell: IRegionCell, existingCells: IRegionCell[]) {
+    return existingCells.find(
+        rc => rc.region === cell.region
+        && rc.cell === cell.cell
+        && rc.player === cell.player
     ) !== undefined;
 }

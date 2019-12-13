@@ -1,5 +1,5 @@
 import { IBoardDefinition } from '../../data/IBoardDefinition';
-import { ILink, IRelativeLink, IPlayerLink, IGroupItem, IRegion } from './boardReducer';
+import { ILink, IRelativeLink, IPlayerLink, IGroupItem, IRegionCell } from './boardReducer';
 
 export function readStateFromBoard(board: IBoardDefinition) {
     const linkTypes = new Set<string>();
@@ -25,7 +25,7 @@ export function readStateFromBoard(board: IBoardDefinition) {
         playerLinks: playerLinks,
         linkGroupTypes: [...linkGroupTypes],
         linkGroupItems,
-        regions: readBoardRegions(board),
+        regionCells: readBoardRegions(board),
     };
 }
 
@@ -120,20 +120,23 @@ function readBoardLinkGroups(board: IBoardDefinition, linkGroupTypes: Set<string
 }
 
 function readBoardRegions(board: IBoardDefinition) {
-    const regions: IRegion[] = [];
+    const regionCells: IRegionCell[] = [];
 
-    for (const name in board.regions) {
-        const playerRegions = board.regions[name];
+    for (const region in board.regions) {
+        const playerRegions = board.regions[region]!;
         
         for (const player in playerRegions) {
             const cells = playerRegions[player as unknown as number]!;
 
-            regions.push({
-                name,
-                player: parseInt(player),
-                cells,
-            });
+            for (const cell of cells) {
+                regionCells.push({
+                    region,
+                    cell,
+                    player: parseInt(player),
+                });
+            }
         }
     }
-    return regions;
+
+    return regionCells;
 }

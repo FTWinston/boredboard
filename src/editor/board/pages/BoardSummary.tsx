@@ -4,14 +4,14 @@ import './BoardSummary.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { ICellItem } from '../../../components/board/ICellItem';
 import { LabelStyle } from '../../../data/LabelSize';
-import { ILink, IRegion } from '../boardReducer';
+import { ILink, IRegionCell } from '../boardReducer';
 
 interface Props extends RouteComponentProps {
     boardUrl: string;
     cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
-    regions: IRegion[];
+    regionCells: IRegionCell[];
     saveData: () => void;
 }
 
@@ -34,17 +34,19 @@ const BoardSummary: React.FunctionComponent<Props> = props => {
                 display: l.type,
             }));
 
-            const regions = props.regions.filter(r => r.cells.indexOf(selectedCell) !== -1);
+            const regions = props.regionCells
+                .filter(r => r.cell === selectedCell)
+                .map(r => r.region);
             
             contentItems.push({
                 key: selectedCell,
                 cell: selectedCell,
-                display: regions.map((r, i) => <div key={i}>{r}</div>),
+                display: regions.map(r => <div key={r}>{r}</div>),
             });
 
             return [destCells, contentItems];
         },
-        [selectedCell, props.links, props.regions]
+        [selectedCell, props.links, props.regionCells]
     );
 
     const directionLinks = props.linkTypes.length > 1

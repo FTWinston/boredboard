@@ -36,7 +36,7 @@ const BoardSummary: React.FunctionComponent<Props> = props => {
 
             const regions = props.regionCells
                 .filter(r => r.cell === selectedCell)
-                .map(r => r.region);
+                .map(r => r.player === 0 ? r.region : `${r.region} (player ${r.player})`);
             
             contentItems.push({
                 key: selectedCell,

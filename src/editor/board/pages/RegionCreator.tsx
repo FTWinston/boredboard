@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import './RegionCreator.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
+import { IRegionCell } from '../boardReducer';
 
 interface Props {
     boardUrl: string;
     cells: ReadonlySet<string>;
+    regionCells: IRegionCell[]
     numPlayers: number;
     prevPage: string;
     nextPage: string;

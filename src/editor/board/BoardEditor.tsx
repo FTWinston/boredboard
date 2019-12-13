@@ -116,6 +116,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                     <RegionCreator
                         boardUrl={state.imageUrl}
                         cells={state.cells}
+                        regionCells={state.regionCells}
                         numPlayers={props.numPlayers}
                         prevPage={`${url}/directiongroups`}
                         nextPage={url}

@@ -52,7 +52,7 @@ it('Detects threatened pieces in-place', () => {
 
         const [game, state] = createGame(testLocation, otherLocation);
 
-        const result = isThreatened(game, state, boardID, '1', testLocation);
+        const result = isThreatened(game, state, boardID, testLocation, '1');
 
         expect(result).toEqual(expectedResult);
     }

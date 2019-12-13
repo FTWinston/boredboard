@@ -2,30 +2,66 @@ import { GameDefinition } from '../../definitions';
 import { removePiece } from './removePiece';
 import { placePiece } from './placePiece';
 import { IGameState } from '../IGameState';
+import { IPlayerAction } from '../IPlayerAction';
+import { applyAction } from './applyAction';
+import { copyState } from './copyState';
+import { PieceFilter, getMatchingPieces } from './getMatchingPieces';
 
 export function isThreatened(
     game: GameDefinition,
     state: IGameState,
     board: string,
-    piece: string,
-    cell: string
+    cell: string,
+    piece: string
 ) {
     const boardData = state.boards[board];
     if (boardData === undefined) {
         return false;
     }
 
-    const pieceCellContent = boardData.cellContents[cell];
-    if (pieceCellContent === undefined) {
+    const cellContent = boardData.cellContents[cell];
+    if (cellContent === undefined) {
         return false;
     }
 
-    const pieceData = pieceCellContent[piece];
+    const pieceData = cellContent[piece];
     if (pieceData === undefined) {
         return false;
     }
 
     return checkThreat(game, state, board, piece, pieceData.owner);
+}
+
+export function anyThreatened(
+    game: GameDefinition,
+    state: IGameState,
+    pieceFilter: PieceFilter,
+) {
+    const matchingPieces = getMatchingPieces(state, pieceFilter);
+
+    for (const { board, piece, data } of matchingPieces) {
+        if (checkThreat(game, state, board, piece, data.owner)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+export function allThreatened(
+    game: GameDefinition,
+    state: IGameState,
+    pieceFilter: PieceFilter,
+) {
+    const matchingPieces = getMatchingPieces(state, pieceFilter);
+
+    for (const { board, piece, data } of matchingPieces) {
+        if (checkThreat(game, state, board, piece, data.owner)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 export function wouldBeThreatenedAt(
@@ -106,4 +142,38 @@ function checkThreat(
     }
 
     return false;
+}
+
+export function wouldAnyBeThreatenedAfter(
+    game: GameDefinition,
+    state: IGameState,
+    action: IPlayerAction,
+    pieceFilter: PieceFilter,
+) {
+    state = copyState(state);
+    const didApply = applyAction(action, state);
+
+    if (!didApply) {
+        return false; // If we can't move, not threatened.
+    }
+
+    // Threatened if any piece for any other player could capture one of the given pieces IF IT WAS THEIR TURN after action is applied.
+    return anyThreatened(game, state, pieceFilter);
+}
+
+export function wouldAllBeThreatenedAfter(
+    game: GameDefinition,
+    state: IGameState,
+    action: IPlayerAction,
+    pieceFilter: PieceFilter,
+) {
+    state = copyState(state);
+    const didApply = applyAction(action, state);
+
+    if (!didApply) {
+        return false; // If we can't move, not threatened.
+    }
+
+    // Threatened if each of the given pieces could be captured by any piece for any other player IF IT WAS THEIR TURN after action is applied.
+    return allThreatened(game, state, pieceFilter);
 }

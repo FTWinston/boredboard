@@ -1,37 +1,24 @@
 import { IGameState } from '../IGameState';
 import { IPlayerAction } from '../IPlayerAction';
 import { GameDefinition } from '../../definitions';
+import { getMatchingPieces } from './getMatchingPieces';
 
 export function getPossibleActions(game: GameDefinition, state: IGameState, player: number) {
     let actions: IPlayerAction[] = [];
 
-    // TODO: a lookup for where each piece is would be kinda handy...
+    const pieces = getMatchingPieces(state, p => p.owner === player);
 
-    for (const board in state.boards) {
-        const boardData = state.boards[board]!;
+    for (const { board, cell, piece, data } of pieces) {
+        const pieceDefinition = game.pieces.get(data.definition);
+        if (pieceDefinition === undefined) {
+            continue;
+        }
 
-        for (const cell in boardData.cellContents!) {
-            const cellContent = boardData.cellContents![cell];
-            
-            for (const piece in cellContent) {
-                const pieceData = cellContent[piece]!;
-
-                if (pieceData.owner !== player) {
-                    continue;
-                }
-
-                const pieceDefinition = game.pieces.get(pieceData.definition);
-                if (pieceDefinition === undefined) {
-                    continue;
-                }
-
-                for (const action of pieceDefinition.actions) {
-                    actions = [
-                        ...actions,
-                        ...action.getPossibleActions(state, board, cell, piece),
-                    ];
-                }
-            }
+        for (const action of pieceDefinition.actions) {
+            actions = [
+                ...actions,
+                ...action.getPossibleActions(state, board, cell, piece),
+            ];
         }
     }
 

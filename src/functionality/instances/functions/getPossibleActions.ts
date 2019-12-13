@@ -22,5 +22,5 @@ export function getPossibleActions(game: GameDefinition, state: IGameState, play
         }
     }
 
-    return actions;
+    return game.rules.filterActions(game, state, player, actions);
 }

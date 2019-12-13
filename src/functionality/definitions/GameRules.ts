@@ -1,4 +1,9 @@
 import { Relationship } from './Relationship';
+import { IPlayerAction } from '../instances/IPlayerAction';
+import { PieceFilter } from '../instances/functions/getMatchingPieces';
+import { wouldAnyBeThreatenedAfter, wouldAllBeThreatenedAfter } from '../instances/functions/isThreatened';
+import { GameDefinition } from './GameDefinition';
+import { IGameState } from '../instances/IGameState';
 
 export class GameRules {
     constructor() {
@@ -75,4 +80,33 @@ export class GameRules {
     }
 
     private readonly playerCaptureDestinations = new Map<number, [string, string]>();
+
+
+    public getAnyThreatenedPieceFilter: (player: number) => PieceFilter[]
+        = () => []; // TODO: populate these when parsing rules
+
+    public getAllThreatenedPieceFilter: (player: number) => PieceFilter[]
+        = () => []; // TODO: populate these when parsing rules
+
+    public filterActions(game: GameDefinition, state: IGameState, player: number, actions: IPlayerAction[]) {
+        const anyThreatenedFilters = this.getAnyThreatenedPieceFilter(player);
+
+        const allThreatenedFilters = this.getAllThreatenedPieceFilter(player);
+
+        return actions.filter(action => {
+            for (const filter of anyThreatenedFilters) {
+                if (wouldAnyBeThreatenedAfter(game, state, action, filter)) {
+                    return false;
+                }
+            }
+
+            for (const filter of allThreatenedFilters) {
+                if (wouldAllBeThreatenedAfter(game, state, action, filter)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
 }

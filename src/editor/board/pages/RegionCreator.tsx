@@ -22,8 +22,10 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
 
     const regionNames = useMemo(
         () => [
-            ...new Set<string>(props.regionCells.map(rc => rc.region)),
-            ...newRegionNames,
+            ...new Set<string>([
+                ...props.regionCells.map(rc => rc.region),
+                ...newRegionNames
+            ])
         ],
         [props.regionCells, newRegionNames]
     );
@@ -62,6 +64,73 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
         });
     };
 
+    const removeRegion = useMemo(() => 
+        () => {
+            if (!window.confirm(`Remove the "${selectedRegion}" region?`)) {
+                return;
+            }
+
+            context({
+                type: 'remove region',
+                region: selectedRegion
+            });
+
+            setSelectedRegion(regionNames.length > 0 ? regionNames[0] : '');
+
+            setNewRegionNames(newRegionNames.filter(n => n !== selectedRegion));
+        },
+        [context, regionNames, selectedRegion, newRegionNames]
+    )
+
+    const promptAddNew = useMemo(() =>
+        () => {
+            let name = window.prompt('Enter new region name');
+
+            if (name === null) {
+                return;
+            }
+
+            name = name.trim();
+
+            if (name.length === 0 || regionNames.includes(name) || newRegionNames.includes(name)) {
+                return;
+            }
+
+            setNewRegionNames([
+                ...newRegionNames,
+                name
+            ]);
+
+            setSelectedRegion(name);
+        },
+        [newRegionNames, regionNames]
+    )
+
+    const promptRename = () => {
+        let newName = window.prompt('Enter new name for this region', selectedRegion);
+        if (newName === null) {
+            return;
+        }
+
+        newName = newName.trim();
+
+        if (newName.length === 0) {
+            return;
+        }
+
+        setNewRegionNames(
+            newRegionNames.map(n => n === selectedRegion ? newName! : n)
+        );
+
+        context({
+            type: 'rename region',
+            oldName: selectedRegion,
+            newName: newName,
+        });
+
+        setSelectedRegion(newName);
+    };
+
     return (
         <div className="boardEditor regionCreator">
             <BoardDisplay
@@ -74,7 +143,7 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
 
             <div className="boardEditor__content">
                 <p>If pieces can behave differently in different parts of the board, you probably need to set up some regions.</p>
-                <p>Click on cells to add or remove them from the selected region, for the selected player(s).</p>
+                <p>Enter a new region name or pick an existing one, then click on cells to add or remove them from the region, for all players or for a specific player.</p>
 
                 <div className="boardEditor__listTitle">Region cells</div>
 
@@ -93,6 +162,12 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
                     selectedValue={playerNames[selectedPlayer]}
                     selectValue={(_option, index) => setSelectedPlayer(index)}
                 />
+
+                <div className="boardEditor__buttonRow">
+                    <button onClick={promptAddNew}>add new region</button>
+                    <button disabled={selectedRegion === ''} onClick={removeRegion}>remove region</button>
+                    <button disabled={selectedRegion === ''} onClick={promptRename}>rename region</button>
+                </div>
             </div>
 
             <div className="boardEditor__navigation">

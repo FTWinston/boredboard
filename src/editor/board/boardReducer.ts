@@ -174,6 +174,13 @@ export type BoardAction = {
     region: string;
     player: number;
     cell: string;
+} | {
+    type: 'remove region';
+    region: string;
+} | {
+    type: 'rename region';
+    oldName: string;
+    newName: string;
 };
 
 export function getInitialState(board?: IBoardDefinition): IState {
@@ -526,6 +533,27 @@ export function reducer(state: IState, action: BoardAction): IState {
                     rc => rc.region !== action.region
                         || rc.cell !== action.cell
                         || rc.player !== action.player
+                ),
+            };
+
+        case 'remove region':
+            return {
+                ...state,
+                regionCells: state.regionCells.filter(
+                    rc => rc.region !== action.region
+                ),
+            };
+
+        case 'rename region':
+            return {
+                ...state,
+                regionCells: state.regionCells.map(
+                    rc => ({
+                        ...rc,
+                        region: rc.region === action.oldName
+                            ? action.newName
+                            : rc.region,
+                    })
                 ),
             };
     }

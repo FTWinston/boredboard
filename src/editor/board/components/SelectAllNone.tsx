@@ -9,8 +9,8 @@ interface Props {
 
 export const SelectAllNone: React.FunctionComponent<Props> = props => {
     const classes = props.className === undefined
-        ? 'selectAllNone'
-        : props.className + ' selectAllNone';
+        ? 'boardEditor__buttonRow'
+        : props.className + ' boardEditor__buttonRow';
 
     return (
         <div className={classes}>

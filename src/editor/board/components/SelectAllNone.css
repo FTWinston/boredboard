@@ -1,8 +1,8 @@
-.selectAllNone {
+.boardEditor__buttonRow {
     display: flex;
     justify-content: center;
 }
 
-.selectAllNone > * + * {
+.boardEditor__buttonRow > * + * {
     margin-left: 2em;
 }

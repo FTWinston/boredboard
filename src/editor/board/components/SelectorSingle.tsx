@@ -7,14 +7,14 @@ interface Props {
     radioGroup: string;
     options: string[];
     selectedValue: string;
-    selectValue: (value: string) => void;
+    selectValue: (value: string, index: number) => void;
 }
 
 export const SelectorSingle: React.FunctionComponent<Props> = props => {
     const { options, selectedValue, selectValue, radioGroup } = props;
 
     const linkTypeSelectors = useMemo(
-        () => options.map(option => {
+        () => options.map((option, index) => {
             const selected = option === selectedValue;
 
             const classes = selected
@@ -27,7 +27,7 @@ export const SelectorSingle: React.FunctionComponent<Props> = props => {
                         type="radio"
                         radioGroup={radioGroup}
                         checked={selected}
-                        onChange={() => selectValue(option)}
+                        onChange={() => selectValue(option, index)}
                     />
                     {option}
                 </label>

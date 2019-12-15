@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import './ManualLinker.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
@@ -7,14 +6,16 @@ import { ILink } from '../boardReducer';
 import { BoardLinkList } from '../components/BoardLinkList';
 import { SingleLinkSetup } from '../components/SingleLinkSetup';
 import { LabelStyle } from '../../../data/LabelSize';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     boardUrl: string;
     cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
-    prevPage: string;
-    nextPage: string;
+    prevPage?: string;
+    nextPage?: string;
+    summaryPage?: string;
 }
 
 export const ManualLinker: React.FunctionComponent<Props> = props => {
@@ -108,11 +109,12 @@ export const ManualLinker: React.FunctionComponent<Props> = props => {
                     />
                 </div>
             </div>
-
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link to={props.nextPage}>Continue</Link>
-            </div>
+            
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

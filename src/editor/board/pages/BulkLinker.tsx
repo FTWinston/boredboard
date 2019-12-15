@@ -1,19 +1,20 @@
 import React, { useState, useMemo, CSSProperties, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import './BulkLinker.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { ICellItem } from '../../../components/board/ICellItem';
 import { ILink } from '../boardReducer';
 import { MultiLinkSetup, ScreenDirection, getAngle } from '../components/MultiLinkSetup';
 import { BoardLinkGroups } from '../components/BoardLinkGroups';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     boardUrl: string;
     cells: ReadonlySet<string>;
     linkTypes: string[];
     links: ILink[];
-    nextPage: string;
-    prevPage: string;
+    nextPage?: string;
+    prevPage?: string;
+    summaryPage?: string;
 }
 
 export const BulkLinker: React.FunctionComponent<Props> = props => {
@@ -92,11 +93,12 @@ export const BulkLinker: React.FunctionComponent<Props> = props => {
                     />
                 </div>
             </div>
-
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link to={props.nextPage}>Continue</Link>
-            </div>
+            
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

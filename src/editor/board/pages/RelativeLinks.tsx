@@ -1,19 +1,20 @@
 import React, { useContext, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import './RelativeLinks.css';
 import { BoardDispatch } from '../BoardEditor';
 import { UniqueList } from '../components/UniqueList';
 import { IRelativeLink } from '../boardReducer';
 import { SelectorMulti } from '../components/SelectorMulti';
 import { disallowedNames } from '../../../data/reservedWords';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     linkTypes: string[];
     relativeLinkTypes: string[];
     relativeLinks: IRelativeLink[];
     playerLinkTypes: string[];
-    prevPage: string;
-    nextPage: string;
+    prevPage?: string;
+    nextPage?: string;
+    summaryPage?: string;
 }
 
 export const RelativeLinks: React.FunctionComponent<Props> = props => {
@@ -112,10 +113,11 @@ export const RelativeLinks: React.FunctionComponent<Props> = props => {
                 {relativeLinkDisplays}
             </div>
 
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link to={props.nextPage}>Continue</Link>
-            </div>
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

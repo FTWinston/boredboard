@@ -1,18 +1,19 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import './RegionCreator.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
 import { IRegionCell } from '../boardReducer';
 import { SelectorSingle } from '../components/SelectorSingle';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     boardUrl: string;
     cells: ReadonlySet<string>;
     regionCells: IRegionCell[]
     numPlayers: number;
-    prevPage: string;
-    nextPage: string;
+    prevPage?: string;
+    nextPage?: string;
+    summaryPage?: string;
 }
 
 export const RegionCreator: React.FunctionComponent<Props> = props => {
@@ -170,10 +171,11 @@ export const RegionCreator: React.FunctionComponent<Props> = props => {
                 </div>
             </div>
 
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link to={props.nextPage}>Continue</Link>
-            </div>
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

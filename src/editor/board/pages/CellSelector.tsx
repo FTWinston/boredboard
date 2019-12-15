@@ -1,17 +1,18 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import './CellSelector.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
 import { SelectAllNone } from '../components/SelectAllNone';
 import { SelectorMulti } from '../components/SelectorMulti';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     boardUrl: string;
     cells: ReadonlySet<string>;
-    nextPage: string;
-    prevPage: string;
+    nextPage?: string;
+    prevPage?: string;
+    summaryPage?: string;
 }
 
 export const CellSelector: React.FunctionComponent<Props> = props => {
@@ -34,10 +35,6 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
             }
         }
     };
-
-    const continueLink = props.cells.size === 0
-        ? <div title="Cannot continue until cells are selected">Continue</div>
-        : <Link to={props.nextPage}>Continue</Link>
 
     return (
         <div className="boardEditor cellSelector">
@@ -92,10 +89,12 @@ export const CellSelector: React.FunctionComponent<Props> = props => {
                 />
             </div>
 
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                {continueLink}
-            </div>
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+                disableMessage={props.cells.size === 0 ? 'Cannot continue until cells are selected' : undefined}
+            />
         </div>
     );
 }

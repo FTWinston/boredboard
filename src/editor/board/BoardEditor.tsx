@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, Dispatch } from 'react';
+import React, { useReducer, createContext, Dispatch, useState } from 'react';
 import { Route, Switch, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import './BoardEditor.css';
@@ -23,6 +23,7 @@ interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     getInitialData: (id?: string) => IBoardDefinition | undefined;
     saveData: (id: string | undefined, board: IBoardDefinition, isValid: boolean) => void;
+    close: () => void;
 }
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
@@ -32,6 +33,8 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
     
     const { path, url } = props.match;
 
+    const [hasSeenSummary, setHasSeenSummary] = useState(false);
+
     return (
         <BoardDispatch.Provider value={dispatch}>
             <Switch>
@@ -39,6 +42,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                     <ImageSelector
                         initialUrl={state.imageUrl === '' ? undefined : state.imageUrl}
                         nextPage={`${url}/cells`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/cells`}>
@@ -47,6 +51,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         cells={state.cells}
                         prevPage={`${url}/image`}
                         nextPage={`${url}/linktypes`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/linktypes`}>
@@ -58,6 +63,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         playerLinkTypes={state.playerLinkTypes}
                         prevPage={`${url}/cells`}
                         nextPage={`${url}/bulklinks`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/bulklinks`}>
@@ -68,6 +74,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         links={state.links}
                         prevPage={`${url}/linktypes`}
                         nextPage={`${url}/manuallinks`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/manuallinks`}>
@@ -78,6 +85,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         links={state.links}
                         prevPage={`${url}/bulklinks`}
                         nextPage={state.linkTypes.length <= 1 ? `${url}/regions` : `${url}/directions`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/directions`}>
@@ -88,6 +96,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         playerLinkTypes={state.playerLinkTypes}
                         prevPage={`${url}/manuallinks`}
                         nextPage={`${url}/playerdirections`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/playerdirections`}>
@@ -99,6 +108,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         prevPage={`${url}/directions`}
                         nextPage={`${url}/directiongroups`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/directiongroups`}>
@@ -110,6 +120,7 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         linkGroupItems={state.linkGroupItems}
                         prevPage={`${url}/playerdirections`}
                         nextPage={`${url}/regions`}
+                        summaryPage={hasSeenSummary ? url : undefined}
                     />
                 </Route>
                 <Route path={`${path}/regions`}>
@@ -119,13 +130,15 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                         regionCells={state.regionCells}
                         numPlayers={props.numPlayers}
                         prevPage={`${url}/directiongroups`}
-                        nextPage={url}
+                        summaryPage={url}
                     />
                 </Route>
                 <Route exact render={() => {
                     if (state.imageUrl === '') {
                         return <Redirect to={`${url}/image`} />
                     }
+
+                    setHasSeenSummary(true);
                     return (
                         <BoardSummary
                             boardUrl={state.imageUrl}
@@ -133,7 +146,8 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regionCells={state.regionCells}
-                            saveData={() => props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */)}
+                            saveData={() => { props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */); props.close(); }}
+                            discard={props.close}
                         />
                     );
                 }} />

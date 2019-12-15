@@ -1,11 +1,11 @@
 import React, { useContext, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import './LinkTypes.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { BoardDispatch } from '../BoardEditor';
 import { LabelStyle } from '../../../data/LabelSize';
 import { UniqueList } from '../components/UniqueList';
 import { disallowedNames } from '../../../data/reservedWords';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     boardUrl: string;
@@ -13,8 +13,9 @@ interface Props {
     linkTypes: string[];
     relativeLinkTypes: string[];
     playerLinkTypes: string[];
-    nextPage: string;
-    prevPage: string;
+    nextPage?: string;
+    prevPage?: string;
+    summaryPage?: string;
 }
 
 export const LinkTypes: React.FunctionComponent<Props> = props => {
@@ -85,16 +86,13 @@ export const LinkTypes: React.FunctionComponent<Props> = props => {
                     />
                 </div>
             </div>
-
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link
-                    to={props.nextPage}
-                    onClick={() => { if (props.linkTypes.length === 0) { context({ type: 'set link types', linkTypes: [''] }); } }}
-                >
-                    Continue
-                </Link>
-            </div>
+            
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                nextClicked={() => { if (props.linkTypes.length === 0) { context({ type: 'set link types', linkTypes: [''] }); } }}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

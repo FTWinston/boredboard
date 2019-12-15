@@ -22,21 +22,31 @@ export const GameDispatch = createContext<Dispatch<GameAction>>(ignore => {});
 export const GameEditor: React.FunctionComponent<Props> = props => {
     const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
 
+    const closeBoard = useMemo(() => 
+        () => { } // TODO: need to be able to close this somehow
+        , []
+    );
+
     const saveBoard = useMemo(() => {
-        return (id: string | undefined, board: IBoardDefinition, isValid: boolean) => dispatch(id === 'new' || id === undefined
-            ? {
-                type: 'add board',
-                isValid,
-                board,
-            }
-            : {
-                type: 'set board',
-                id,
-                isValid,
-                board,
-            }
-        );
-    }, [dispatch]);
+        return (id: string | undefined, board: IBoardDefinition, isValid: boolean) => {
+            dispatch(id === 'new' || id === undefined
+                ? {
+                    type: 'add board',
+                    isValid,
+                    board,
+                }
+                : {
+                    type: 'set board',
+                    id,
+                    isValid,
+                    board,
+                }
+            );
+
+            closeBoard();
+        };
+    }, [dispatch, closeBoard]);
+
 
     const getBoard = useMemo(() => {
         return (id: string | undefined) => {
@@ -95,6 +105,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         getInitialData={getBoard}
                         saveData={saveBoard}
+                        close={closeBoard}
                     />
                 </Route>
                 <Route path={`${path}/piece/:id`}>

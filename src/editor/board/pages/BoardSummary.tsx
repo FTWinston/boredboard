@@ -13,6 +13,7 @@ interface Props extends RouteComponentProps {
     links: ILink[];
     regionCells: IRegionCell[];
     saveData: () => void;
+    discard: () => void;
 }
 
 const BoardSummary: React.FunctionComponent<Props> = props => {
@@ -95,6 +96,7 @@ const BoardSummary: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
+                <button onClick={props.discard}>discard changes</button>
                 <button onClick={props.saveData}>save board</button>
             </div>
         </div>

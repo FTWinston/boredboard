@@ -1,11 +1,11 @@
 import React, { useContext, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import './LinkGroups.css';
 import { BoardDispatch } from '../BoardEditor';
 import { IGroupItem } from '../boardReducer';
 import { UniqueList } from '../components/UniqueList';
 import { SelectorMulti } from '../components/SelectorMulti';
 import { disallowedNames } from '../../../data/reservedWords';
+import { NavLinks } from '../components/NavLinks';
 
 interface Props {
     linkTypes: string[];
@@ -13,8 +13,9 @@ interface Props {
     playerLinkTypes: string[];
     linkGroupTypes: string[];
     linkGroupItems: IGroupItem[];
-    prevPage: string;
-    nextPage: string;
+    prevPage?: string;
+    nextPage?: string;
+    summaryPage?: string;
 }
 
 export const LinkGroups: React.FunctionComponent<Props> = props => {
@@ -109,10 +110,11 @@ export const LinkGroups: React.FunctionComponent<Props> = props => {
                 {groupItemDisplays}
             </div>
 
-            <div className="boardEditor__navigation">
-                <Link to={props.prevPage}>Back</Link>
-                <Link to={props.nextPage}>Continue</Link>
-            </div>
+            <NavLinks
+                prevPage={props.prevPage}
+                nextPage={props.nextPage}
+                summaryPage={props.summaryPage}
+            />
         </div>
     );
 }

@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useMemo, useState, useLayoutEffect } from 'react';
-import { SvgLoader } from 'react-svgmt';
 import { BoardDisplay } from '../components/board/BoardDisplay';
 import './GameBoard.css';
 import { ICellItem } from '../components/board/ICellItem';
 import { GameDefinition } from '../functionality/definitions';
 import { IBoard } from '../functionality/instances/IBoard';
-import { IPiece } from '../functionality/instances/IPiece';
 import { IPlayerAction } from '../functionality/instances/IPlayerAction';
+import { PieceDisplay } from '../components/board/PieceDisplay';
 
 interface Props {
     game: GameDefinition;
@@ -33,7 +32,12 @@ export const GameBoard: FunctionComponent<Props> = props => {
                 output.push({
                     key: id,
                     cell,
-                    display: determinePieceDisplay(piece, props.game),
+                    display: <PieceDisplay
+                        className="board__piece"
+                        game={props.game}
+                        definition={piece.definition}
+                        owner={piece.owner}
+                    />,
                 });
             }
         }
@@ -115,26 +119,4 @@ export const GameBoard: FunctionComponent<Props> = props => {
             cellClicked={cellClicked}
         />
     );
-}
-
-function determinePieceDisplay(
-    piece: IPiece,
-    game: GameDefinition
-) {
-    const definition = game.pieces.get(piece.definition);
-    if (definition === undefined) {
-        console.log(`cannot find piece definition: ${piece.definition}`);
-        return `${piece.definition} error`;
-    }
-    
-    const imageUrl = definition.imageUrls.get(piece.owner);
-    if (imageUrl === undefined) {
-        console.log(`Piece has no image for player ${piece.owner}`, definition.imageUrls);
-        return `${piece.definition} error`;
-    }
-
-    return <SvgLoader
-        path={imageUrl}
-        className="board__piece"
-    />
 }

@@ -91,32 +91,32 @@ svg.board__image [data-stroke="dark"] {
 }
 
 /* piece colors */
-svg.board__piece [data-fill="light"] {
+svg.piece [data-fill="light"] {
     fill: #fff;
     fill: var(--piece-light-color, #fff);
 }
 
-svg.board__piece [data-fill="mid"] {
+svg.piece [data-fill="mid"] {
     fill: #666;
     fill: var(--piece-mid-color, #666);
 }
 
-svg.board__piece [data-fill="dark"] {
+svg.piece [data-fill="dark"] {
     fill: #000;
     fill: var(--piece-dark-color, #000);
 }
 
-svg.board__piece [data-stroke="light"] {
+svg.piece [data-stroke="light"] {
     stroke: #fff;
     stroke: var(--piece-light-color, #fff);
 }
 
-svg.board__piece [data-stroke="mid"] {
+svg.piece [data-stroke="mid"] {
     stroke: #666;
     stroke: var(--piece-mid-color, #666);
 }
 
-svg.board__piece [data-stroke="dark"] {
+svg.piece [data-stroke="dark"] {
     stroke: #000;
     stroke: var(--piece-dark-color, #000);
 }

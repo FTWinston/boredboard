@@ -5,7 +5,7 @@ import { ICellItem } from '../components/board/ICellItem';
 import { GameDefinition } from '../functionality/definitions';
 import { IBoard } from '../functionality/instances/IBoard';
 import { IPlayerAction } from '../functionality/instances/IPlayerAction';
-import { PieceDisplay } from '../components/board/PieceDisplay';
+import { PieceDisplay } from '../components/PieceDisplay';
 
 interface Props {
     game: GameDefinition;

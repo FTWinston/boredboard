@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { SvgLoader } from 'react-svgmt';
-import { GameDefinition } from '../../functionality/definitions/GameDefinition';
+import { GameDefinition } from '../functionality/definitions/GameDefinition';
 
 interface Props {
     className?: string;

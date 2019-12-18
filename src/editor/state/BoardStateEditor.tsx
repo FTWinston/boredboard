@@ -5,7 +5,7 @@ import { BoardDefinition } from '../../functionality/definitions/BoardDefinition
 import { IBoard } from '../../functionality/instances/IBoard';
 import { IPiece } from '../../functionality/instances/IPiece';
 import { GameDefinition } from '../../functionality/definitions';
-import { PieceDisplay } from '../../components/board/PieceDisplay';
+import { PieceDisplay } from '../../components/PieceDisplay';
 
 interface Props {
     board: BoardDefinition;

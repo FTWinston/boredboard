@@ -9,6 +9,8 @@ import { IPieceDefinition } from '../data/IPieceDefinition';
 import { PieceEditor } from './piece';
 import { GameDefinition } from '../functionality/definitions';
 import { writeGameFromState } from './writeGameFromState';
+import { BoardStateEditor } from './state';
+import { IBoard } from '../functionality/instances/IBoard';
 
 interface Props {
     name: string;
@@ -90,13 +92,26 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
         }
     }, [state.pieces])
 
+    const saveBoardState = useMemo(() => {
+        return (id: string, state: IBoard) => {
+            /*
+            // TODO: save this
+            dispatch({
+                type: 'set state',
+                board: id,
+                content: state,
+            });
+            */
+        }
+    }, [dispatch]);
+
     const { path, url } = useRouteMatch()!;
 
     const game = useMemo(
         () => new GameDefinition(writeGameFromState(state)),
         [state]
     );
-    
+
     return (
         <GameDispatch.Provider value={dispatch}>
             <Switch>
@@ -114,6 +129,13 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         getInitialData={getPiece}
                         saveData={savePiece}
+                    />
+                </Route>
+                <Route path={`${path}/state/:id`}>
+                    <BoardStateEditor
+                        game={game}
+                        numPlayers={props.numPlayers}
+                        saveData={saveBoardState}
                     />
                 </Route>
                 <Route path={path} exact>

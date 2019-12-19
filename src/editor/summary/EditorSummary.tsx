@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { IBoardDefinition } from '../../data/IBoardDefinition';
 import { IPieceDefinition } from '../../data/IPieceDefinition';
 import './EditorSummary.css';
@@ -32,6 +32,17 @@ const EditorSummary: FunctionComponent<Props> = props => {
                 rootUrl={props.match.url}
             />
 
+            <div className="editorItemList">
+                <h3 className="editorItemList__title">Initial state</h3>
+                <ul className="editorItemList__list">
+                {props.boards.map(board => (
+                    <li className="editorItemList__listItem editorListItem" key={board.id}>
+                        <span className="editorListItem__name">{board.id}</span>
+                        <Link className="editorListItem__edit" to={`${props.match.url}/state/${board.id}`}>Edit board layout</Link>
+                    </li>
+                ))}
+                </ul>
+            </div>
             
             <div className="editorItemList">
                 <h3 className="editorItemList__title">Rules</h3>

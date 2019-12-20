@@ -6,6 +6,8 @@ import { GameDefinition } from '../functionality/definitions';
 import { IBoard } from '../functionality/instances/IBoard';
 import { IPlayerAction } from '../functionality/instances/IPlayerAction';
 import { PieceDisplay } from '../components/PieceDisplay';
+import { Dictionary } from '../data/Dictionary';
+import { IPiece } from '../functionality/instances/IPiece';
 
 interface Props {
     game: GameDefinition;
@@ -20,29 +22,10 @@ export const GameBoard: FunctionComponent<Props> = props => {
         [props.game, props.state]
     );
 
-    const contents = useMemo(() => {
-        const output: ICellItem[] = [];
-        const cellContents = props.state.cellContents;
-
-        for (const cell in cellContents) {
-            const cellContent = cellContents[cell]!;
-            for (const id in cellContent) {
-                const piece = cellContent[id]!;
-
-                output.push({
-                    key: id,
-                    cell,
-                    display: <PieceDisplay
-                        className="board__piece"
-                        game={props.game}
-                        definition={piece.definition}
-                        owner={piece.owner}
-                    />,
-                });
-            }
-        }
-        return output;
-    }, [props.state.cellContents, props.game]);
+    const contents = useMemo(
+        () => createPieceDisplays(props.game, props.state.cellContents),
+        [props.state.cellContents, props.game]
+    );
 
     const [selectedCell, setSelectedCell] = useState(undefined as string | undefined);
 
@@ -119,4 +102,24 @@ export const GameBoard: FunctionComponent<Props> = props => {
             cellClicked={cellClicked}
         />
     );
+}
+
+export function createPieceDisplays(game: GameDefinition, cellContents: Dictionary<string, Dictionary<string, IPiece>>) {
+    const output: ICellItem[] = [];
+
+    for (const cell in cellContents) {
+        const cellContent = cellContents[cell]!;
+
+        for (const id in cellContent) {
+            const piece = cellContent[id]!;
+
+            output.push({
+                key: id,
+                cell,
+                display: <PieceDisplay className="board__piece" game={game} definition={piece.definition} owner={piece.owner} />,
+            });
+        }
+    }
+
+    return output;
 }

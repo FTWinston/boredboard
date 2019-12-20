@@ -17,10 +17,10 @@ interface Props extends RouteComponentProps<Match>{
 const BoardStateEditor: FunctionComponent<Props> = props => {
     const id = props.match.params.id;
 
-    const board = useMemo(
-        () => props.game.boards.get(id),
-        [id, props.game]
-    );
+    const initialState = useMemo(
+        () => ({ definition: id, cellContents: {}}),
+        [id]
+    )
 
     const { saveData } = props;
     const setState = useMemo(
@@ -30,14 +30,20 @@ const BoardStateEditor: FunctionComponent<Props> = props => {
         [saveData, id]
     );
 
-    if (board === undefined) {
-        return <div>Board not recognised: {props.match.params.id}</div>;
-    }
+    const board = useMemo(
+        () => props.game.boards.get(id),
+        [id, props.game]
+    );
 
+    if (board === undefined) {
+        return <div>Board not recognised: {id}</div>;
+    }
+    
     return <PiecePlacement
-        board={board}
         game={props.game}
+        board={id}
         numPlayers={props.numPlayers}
+        initialState={initialState}
         setState={setState}
     />
 }

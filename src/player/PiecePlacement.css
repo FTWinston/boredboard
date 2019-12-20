@@ -1,0 +1,8 @@
+.piecePlacement__option {
+    width: 4em;
+    height: 4em;
+}
+
+.piecePlacement__option--selected {
+    background-color: #08f;
+}

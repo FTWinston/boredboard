@@ -42,7 +42,7 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
         [props.game.pieces, props.numPlayers]
     )
 
-    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const pieceOptionDisplay = useMemo(() => {
             return pieceOptions.map((piece, index) => (
@@ -105,7 +105,7 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
                 className="boardEditor__board"
                 filePath={boardDefinition.imageUrl}
                 cells={boardDefinition.cells}
-                labelStyle={LabelStyle.FillCell}
+                labelStyle={LabelStyle.SmallCorner}
                 selectableCells={boardDefinition.cells}
                 contents={contents}
                 cellClicked={cellClicked}

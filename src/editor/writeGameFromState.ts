@@ -7,6 +7,10 @@ export function writeGameFromState(state: IState): IGameDefinition {
         boards: createDictionary(state.boards),
         pieces: createDictionary(state.pieces),
         rules: state.rules,
+        initialState: {
+            boards: {},
+            currentTurn: 1,
+        },
     };
 }
 

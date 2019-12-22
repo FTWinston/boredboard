@@ -2,6 +2,7 @@ import { IGameDefinition } from '../../data/IGameDefinition';
 import { IPieceDefinition } from '../../data/IPieceDefinition.js';
 import { IBoardDefinition } from '../../data/IBoardDefinition.js';
 import board from './board.json';
+import state from './state.json';
 import pawn from './pieces/pawn.json';
 import rook from './pieces/rook.json';
 import knight from './pieces/knight.json';
@@ -76,4 +77,5 @@ export default {
             }
         }
     },
+    initialState: state,
 } as IGameDefinition;

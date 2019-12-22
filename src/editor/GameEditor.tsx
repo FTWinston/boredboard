@@ -24,11 +24,6 @@ export const GameDispatch = createContext<Dispatch<GameAction>>(ignore => {});
 export const GameEditor: React.FunctionComponent<Props> = props => {
     const [state, dispatch] = useReducer(reducer, getInitialState(props.initialData));
 
-    const closeBoard = useMemo(() => 
-        () => { } // TODO: need to be able to close this somehow
-        , []
-    );
-
     const saveBoard = useMemo(() => {
         return (id: string | undefined, board: IBoardDefinition, isValid: boolean) => {
             dispatch(id === 'new' || id === undefined
@@ -44,10 +39,8 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                     board,
                 }
             );
-
-            closeBoard();
         };
-    }, [dispatch, closeBoard]);
+    }, [dispatch]);
 
 
     const getBoard = useMemo(() => {
@@ -120,7 +113,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         getInitialData={getBoard}
                         saveData={saveBoard}
-                        close={closeBoard}
+                        closeUrl={url}
                     />
                 </Route>
                 <Route path={`${path}/piece/:id`}>
@@ -136,6 +129,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         game={game}
                         numPlayers={props.numPlayers}
                         saveData={saveBoardState}
+                        closeUrl={url}
                     />
                 </Route>
                 <Route path={path} exact>

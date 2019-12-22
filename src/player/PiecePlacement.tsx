@@ -7,13 +7,15 @@ import { BoardDisplay } from '../components/board/BoardDisplay';
 import { LabelStyle } from '../data/LabelSize';
 import './PiecePlacement.css';
 import { createPieceDisplays } from './GameBoard';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
     game: GameDefinition;
     board: string;
     numPlayers: number;
     initialState: IBoard;
-    setState: (state: IBoard) => void;
+    save: (state: IBoard) => void;
+    closeUrl: string;
 }
 
 export const PiecePlacement: FunctionComponent<Props> = props => {
@@ -23,6 +25,24 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
     );
 
     const [boardState, setBoardState] = useState<IBoard>(props.initialState);
+
+    const history = useHistory();
+
+    const close = useMemo(() =>
+        () => {
+            history.push(props.closeUrl);
+        },
+        [props.closeUrl, history]
+    );
+
+    const { save } = props;
+    const saveAndClose = useMemo(() =>
+        () => {
+            save(boardState);
+            close();
+        },
+        [close, save, boardState]
+    );
 
     const pieceOptions = useMemo(() =>
         {
@@ -120,6 +140,11 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
                 <div className="piecePlacement__options">
                     {pieceOptionDisplay}
                 </div>
+            </div>
+
+            <div className="boardEditor__navigation">
+                <button onClick={close}>Cancel</button>
+                <button onClick={saveAndClose}>Save layout</button>
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter, useHistory } from 'react-router-dom';
 import './BoardSummary.css';
 import { BoardDisplay } from '../../../components/board/BoardDisplay';
 import { ICellItem } from '../../../components/board/ICellItem';
@@ -13,10 +13,26 @@ interface Props extends RouteComponentProps {
     links: ILink[];
     regionCells: IRegionCell[];
     saveData: () => void;
-    discard: () => void;
+    closeUrl: string;
 }
 
 const BoardSummary: React.FunctionComponent<Props> = props => {
+    const history = useHistory();
+
+    const close = useMemo(() => 
+        () => history.push(props.closeUrl),
+        [props.closeUrl, history]
+    );
+
+    const { saveData } = props;
+    const saveAndClose = useMemo(() => 
+        () => {
+            saveData();
+            close();
+        },
+        [saveData, close]
+    );
+
     const [selectedCell, setSelectedCell] = useState(undefined as string | undefined);
     
     const [destinationCells, cellContents] = useMemo(
@@ -96,8 +112,8 @@ const BoardSummary: React.FunctionComponent<Props> = props => {
             </div>
 
             <div className="boardEditor__navigation">
-                <button onClick={props.discard}>discard changes</button>
-                <button onClick={props.saveData}>save board</button>
+                <button onClick={close}>discard changes</button>
+                <button onClick={saveAndClose}>save board</button>
             </div>
         </div>
     );

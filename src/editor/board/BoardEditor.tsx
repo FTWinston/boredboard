@@ -23,7 +23,7 @@ interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     getInitialData: (id?: string) => IBoardDefinition | undefined;
     saveData: (id: string | undefined, board: IBoardDefinition, isValid: boolean) => void;
-    close: () => void;
+    closeUrl: string;
 }
 
 export const BoardDispatch = createContext<Dispatch<BoardAction>>(ignore => {});
@@ -146,8 +146,8 @@ const BoardEditor: React.FunctionComponent<Props> = props => {
                             linkTypes={state.linkTypes}
                             links={state.links}
                             regionCells={state.regionCells}
-                            saveData={() => { props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */); props.close(); }}
-                            discard={props.close}
+                            saveData={() => { props.saveData(props.match.params.id, writeBoardFromState(state), false /* TODO: validate */); }}
+                            closeUrl={props.closeUrl}
                         />
                     );
                 }} />

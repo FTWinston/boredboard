@@ -8,6 +8,8 @@ export function readStateFromGame(game: IGameDefinition): IState {
         rulesValid: false, // TODO: validate
         boards: readDictionary(game.boards),
         pieces: readDictionary(game.pieces),
+        nextUnusedPieceID: 1, // TODO: calculate this
+        // TODO: read initial state
     };
 
     return result;

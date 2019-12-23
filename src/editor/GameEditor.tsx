@@ -130,6 +130,7 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
                         numPlayers={props.numPlayers}
                         saveData={saveBoardState}
                         closeUrl={url}
+                        firstPieceID={state.nextUnusedPieceID}
                     />
                 </Route>
                 <Route path={path} exact>

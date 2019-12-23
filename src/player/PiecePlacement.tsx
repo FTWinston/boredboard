@@ -16,12 +16,20 @@ interface Props {
     initialState: IBoard;
     save: (state: IBoard) => void;
     closeUrl: string;
+    firstPieceID: number;
 }
 
 export const PiecePlacement: FunctionComponent<Props> = props => {
     const boardDefinition = useMemo(
         () => props.game.boards.get(props.board)!,
         [props.game, props.board]
+    );
+
+    const [nextPieceID, setNextPieceID] = useState(props.firstPieceID);
+
+    const incrementNextPieceID = useMemo(() =>
+        () => setNextPieceID(prevID => prevID++),
+        []
     );
 
     const [boardState, setBoardState] = useState<IBoard>(props.initialState);
@@ -77,7 +85,7 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
             ));
         },
         [pieceOptions, props.game, selectedIndex]
-    )
+    );
 
     const contents = useMemo(
         () => createPieceDisplays(props.game, boardState.cellContents),
@@ -89,8 +97,9 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
             const piecesInCell = boardState.cellContents[cell];
 
             if (piecesInCell === undefined) {
-                const newId = '1'; // TODO: get a unique ID for this piece ... from where?
                 const newPiece = { ...pieceOptions[selectedIndex] };
+                const newId = nextPieceID;
+                incrementNextPieceID();
 
                 // add to cell
                 setBoardState(state => ({
@@ -116,7 +125,7 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
                 });
             }
         },
-        [selectedIndex, pieceOptions, boardState.cellContents]
+        [selectedIndex, pieceOptions, boardState.cellContents, nextPieceID, incrementNextPieceID]
     );
 
     return (

@@ -14,6 +14,7 @@ export interface IState {
     pieces: IValidationItem<IPieceDefinition>[];
     rules: string;
     rulesValid: boolean;
+    nextUnusedPieceID: number;
 }
 
 export type GameAction = {
@@ -64,6 +65,7 @@ export function getInitialState(game?: IGameDefinition): IState {
         pieces: [],
         rules: '',
         rulesValid: false,
+        nextUnusedPieceID: 1,
     };
 }
 

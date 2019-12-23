@@ -13,6 +13,7 @@ interface Props extends RouteComponentProps<Match>{
     numPlayers: number;
     saveData: (id: string, state: IBoard) => void;
     closeUrl: string;
+    firstPieceID: number;
 }
 
 const BoardStateEditor: FunctionComponent<Props> = props => {
@@ -47,6 +48,7 @@ const BoardStateEditor: FunctionComponent<Props> = props => {
         initialState={initialState}
         save={setState}
         closeUrl={props.closeUrl}
+        firstPieceID={props.firstPieceID}
     />
 }
 

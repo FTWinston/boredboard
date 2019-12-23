@@ -5,10 +5,10 @@
   "dependencies": {
     "natural-configuration": "git+https://github.com/FTWinston/NaturalConfigurationJS.git",
     "natural-configuration-ui": "git+https://github.com/FTWinston/NaturalConfigurationUI.git",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.0.1",
+    "react-scripts": "^3.3.0",
     "react-svgmt": "^1.1.9",
     "resize-observer-polyfill": "^1.5.1"
   },
@@ -34,11 +34,11 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^24.0.22",
-    "@types/node": "^12.12.6",
-    "@types/react": "^16.9.11",
+    "@types/jest": "^24.0.24",
+    "@types/node": "^12.12.21",
+    "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
-    "@types/react-router-dom": "^5.1.2",
-    "typescript": "^3.7.2"
+    "@types/react-router-dom": "^5.1.3",
+    "typescript": "^3.7.4"
   }
 }

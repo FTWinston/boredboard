@@ -12,6 +12,7 @@ export class GameDefinition {
     public readonly rules: Readonly<GameRules>;
     public readonly boards: ReadonlyMap<string, BoardDefinition>;
     public readonly pieces: ReadonlyMap<string, PieceDefinition>;
+    public readonly initialState: IGameState;
     // TODO: this needs a way of indicating that everything loaded correctly
 
     constructor(data: IGameDefinition) {
@@ -22,6 +23,8 @@ export class GameDefinition {
         this.pieces = loadPieces(this, data, allAllowedDirections);
 
         const rulesResult = parseGameRules(data.rules, this.boards, this.pieces, 2 /* TODO: where is this specified, if not in the rules? */);
+
+        this.initialState = data.initialState;
 
         if (rulesResult.success) {
             this.rules = rulesResult.rules;

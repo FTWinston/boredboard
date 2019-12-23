@@ -28,7 +28,7 @@ export const PiecePlacement: FunctionComponent<Props> = props => {
     const [nextPieceID, setNextPieceID] = useState(props.firstPieceID);
 
     const incrementNextPieceID = useMemo(() =>
-        () => setNextPieceID(prevID => prevID++),
+        () => setNextPieceID(prevID => prevID + 1),
         []
     );
 

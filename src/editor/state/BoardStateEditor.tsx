@@ -20,8 +20,8 @@ const BoardStateEditor: FunctionComponent<Props> = props => {
     const id = props.match.params.id;
 
     const initialState = useMemo(
-        () => ({ definition: id, cellContents: {}}),
-        [id]
+        () => props.game.initialState.boards[id] ?? { definition: id, cellContents: {}},
+        [id, props.game.initialState.boards]
     )
 
     const { saveData } = props;

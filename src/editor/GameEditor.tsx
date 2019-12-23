@@ -87,14 +87,11 @@ export const GameEditor: React.FunctionComponent<Props> = props => {
 
     const saveBoardState = useMemo(() => {
         return (id: string, state: IBoard) => {
-            /*
-            // TODO: save this
             dispatch({
-                type: 'set state',
+                type: 'set initial state',
                 board: id,
-                content: state,
+                state,
             });
-            */
         }
     }, [dispatch]);
 

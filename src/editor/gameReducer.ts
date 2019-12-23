@@ -1,7 +1,8 @@
 import { IBoardDefinition } from '../data/IBoardDefinition';
 import { IGameDefinition } from '../data/IGameDefinition';
 import { IPieceDefinition } from '../data/IPieceDefinition';
-import { readStateFromGame } from './readStateFromGame';
+import { readStateFromGame, getNextPieceID } from './readStateFromGame';
+import { IBoard } from '../functionality/instances/IBoard';
 
 export interface IValidationItem<T> {
     id: string;
@@ -12,6 +13,7 @@ export interface IValidationItem<T> {
 export interface IState {
     boards: IValidationItem<IBoardDefinition>[];
     pieces: IValidationItem<IPieceDefinition>[];
+    initialState: IValidationItem<IBoard>[];
     rules: string;
     rulesValid: boolean;
     nextUnusedPieceID: number;
@@ -53,6 +55,10 @@ export type GameAction = {
     type: 'set rules';
     rules: string;
     isValid: boolean;
+} | {
+    type: 'set initial state';
+    board: string;
+    state: IBoard;
 }
 
 export function getInitialState(game?: IGameDefinition): IState {
@@ -63,6 +69,7 @@ export function getInitialState(game?: IGameDefinition): IState {
     return {
         boards: [],
         pieces: [],
+        initialState: [],
         rules: '',
         rulesValid: false,
         nextUnusedPieceID: 1,
@@ -178,6 +185,37 @@ export function reducer(state: IState, action: GameAction): IState {
                 ...state,
                 rules: action.rules,
                 rulesValid: action.isValid,
+            };
+
+        case 'set initial state':
+            const existingItem = state.initialState.find(b => b.id === action.board);
+            const newItem = {
+                id: action.board,
+                isValid: true,
+                value: action.state
+            };
+
+            // TODO: adding/removing boards and pieces should either update initial state
+            // ... or mark it as invalid
+            
+            const initialState = existingItem === undefined
+                ? [
+                    ...state.initialState,
+                    newItem
+                ]
+                : state.initialState.map(b => b.id === action.board
+                    ? {
+                        id: action.board,
+                        isValid: true,
+                        value: action.state
+                    }
+                    : b
+                );
+
+            return {
+                ...state,
+                initialState,
+                nextUnusedPieceID: getNextPieceID(initialState),
             };
     }
 }
